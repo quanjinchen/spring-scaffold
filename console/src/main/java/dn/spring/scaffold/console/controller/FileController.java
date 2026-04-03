@@ -1,0 +1,53 @@
+package dn.spring.scaffold.console.controller;
+
+import dn.spring.scaffold.common.pojo.RespInfo;
+import dn.spring.scaffold.console.pojo.resp.FileUploadRespData;
+import dn.spring.scaffold.console.service.FileService;
+import dn.spring.scaffold.framework.operationlog.annotation.OperateLog;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
+
+@RestController
+@RequestMapping("/file")
+public class FileController {
+
+    private final FileService fileService;
+
+    @Value("${project.file.public-url-prefix:}")
+    private String publicUrlPrefix;
+
+    public FileController(FileService fileService) {
+        this.fileService = fileService;
+    }
+
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @OperateLog(module = "file", action = "upload")
+    @SaCheckPermission("system:file:upload")
+    public RespInfo<FileUploadRespData> upload(@RequestParam("file") MultipartFile file) {
+        return fileService.upload(file, publicUrlPrefix);
+    }
+
+    @GetMapping("/{fileId}")
+    @SaCheckPermission("system:file:download")
+    public void download(@PathVariable String fileId, HttpServletResponse response) {
+        fileService.download(fileId, response);
+    }
+
+    @PostMapping("/delete")
+    @OperateLog(module = "file", action = "delete")
+    @SaCheckPermission("system:file:delete")
+    public RespInfo<Void> delete(@RequestParam String fileId) {
+        fileService.delete(fileId);
+        return RespInfo.success(null);
+    }
+}

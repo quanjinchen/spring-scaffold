@@ -1,0 +1,74 @@
+server:
+  port: 18080
+
+spring:
+  application:
+    name: spring-scaffold
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/spring_scaffold?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    database: 0
+    timeout: 5s
+    client-name: spring-scaffold
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+  flyway:
+    enabled: false
+    locations: classpath:db/migration
+
+sa-token:
+  token-name: Authorization
+  timeout: 2592000
+  active-timeout: -1
+  is-concurrent: true
+  is-share: true
+  token-style: uuid
+  servlet-filter:
+    exclude-paths:
+      - /admin/get-captcha
+      - /admin/login
+      - /swagger-ui.html
+      - /swagger-ui/**
+      - /v3/api-docs/**
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+project:
+  encryptor:
+    key: 1234567890abcdef
+    iv: abcdef1234567890
+  captcha:
+    width: 160
+    height: 60
+    code-count: 4
+    circle-count: 20
+    expire-seconds: 300
+  web:
+    interceptor:
+      exclude-paths:
+        - /swagger-ui.html
+        - /swagger-ui/**
+        - /v3/api-docs/**
+  file:
+    endpoint: http://127.0.0.1:9000
+    region: us-east-1
+    access-key: minioadmin
+    secret-key: minioadmin
+    bucket-name: spring-scaffold
+    path-style-access-enabled: true
+    public-url-prefix: ""
+
+logging:
+  level:
+    dn.spring.scaffold: info
