@@ -1,19 +1,17 @@
 package dn.spring.scaffold.framework.satoken;
 
 import dn.spring.scaffold.system.entity.User;
-import dn.spring.scaffold.system.mapper.UserMapper;
+import dn.spring.scaffold.system.manager.UserManager;
 import cn.dev33.satoken.stp.StpUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 @Component
 public class LoginUserContext {
 
-    private final UserMapper userMapper;
-
-    public LoginUserContext(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
+    @Resource
+    private UserManager userManager;
 
     public Long getLoginUserId() {
         if (!StpUtil.isLogin()) {
@@ -28,9 +26,7 @@ public class LoginUserContext {
             return "anonymous";
         }
 
-        User user = userMapper.selectOne(new LambdaQueryWrapper<User>()
-                .eq(User::getId, loginUserId)
-                .last("limit 1"));
+        User user = userManager.getById(loginUserId);
         if (user == null) {
             return "anonymous";
         }

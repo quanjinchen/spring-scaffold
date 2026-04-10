@@ -7,6 +7,10 @@ public class TraceContext {
 
     private String traceId;
 
+    private String requestId;
+
+    private Long clientReqTime;
+
     private String method;
 
     private String path;

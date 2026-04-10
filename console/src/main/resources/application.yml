@@ -1,11 +1,15 @@
 server:
   port: 18080
+  servlet:
+    context-path: /api
 
 spring:
   application:
     name: spring-scaffold
+  profiles:
+    active: local
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/spring_scaffold?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://127.0.0.1:3306/java_project?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -32,6 +36,8 @@ sa-token:
   token-style: uuid
   servlet-filter:
     exclude-paths:
+      - /api/admin/get-captcha
+      - /api/admin/login
       - /admin/get-captcha
       - /admin/login
       - /swagger-ui.html
@@ -52,7 +58,7 @@ project:
     width: 160
     height: 60
     code-count: 4
-    circle-count: 20
+    circle-count: 0
     expire-seconds: 300
   web:
     interceptor:
@@ -60,6 +66,12 @@ project:
         - /swagger-ui.html
         - /swagger-ui/**
         - /v3/api-docs/**
+    request-security:
+      enabled: true
+      check-timestamp: true
+      check-request-id-repeat: true
+      timestamp-tolerance-millis: 300000
+      request-id-expire-seconds: 600
   file:
     endpoint: http://127.0.0.1:9000
     region: us-east-1

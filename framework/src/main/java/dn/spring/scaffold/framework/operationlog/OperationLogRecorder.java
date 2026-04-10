@@ -1,19 +1,18 @@
 package dn.spring.scaffold.framework.operationlog;
 
 import dn.spring.scaffold.system.entity.OperationLog;
-import dn.spring.scaffold.system.mapper.OperationLogMapper;
+import dn.spring.scaffold.system.manager.OperationLogManager;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 @Component
 public class OperationLogRecorder {
 
-    private final OperationLogMapper operationLogMapper;
-
-    public OperationLogRecorder(OperationLogMapper operationLogMapper) {
-        this.operationLogMapper = operationLogMapper;
-    }
+    @Resource
+    private OperationLogManager operationLogManager;
 
     public void record(OperationLog operationLog) {
-        operationLogMapper.insert(operationLog);
+        operationLogManager.save(operationLog);
     }
 }

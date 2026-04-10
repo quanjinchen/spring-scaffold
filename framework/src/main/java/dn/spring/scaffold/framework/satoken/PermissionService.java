@@ -4,15 +4,15 @@ import dn.spring.scaffold.system.entity.SysMenu;
 import dn.spring.scaffold.system.entity.SysRole;
 import dn.spring.scaffold.system.entity.SysRoleMenu;
 import dn.spring.scaffold.system.entity.SysUserRole;
-import dn.spring.scaffold.system.mapper.SysMenuMapper;
-import dn.spring.scaffold.system.mapper.SysRoleMapper;
-import dn.spring.scaffold.system.mapper.SysRoleMenuMapper;
-import dn.spring.scaffold.system.mapper.SysUserRoleMapper;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import dn.spring.scaffold.system.manager.SysMenuManager;
+import dn.spring.scaffold.system.manager.SysRoleManager;
+import dn.spring.scaffold.system.manager.SysRoleMenuManager;
+import dn.spring.scaffold.system.manager.SysUserRoleManager;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -21,23 +21,14 @@ import java.util.Set;
 @Service
 public class PermissionService {
 
-    private final SysUserRoleMapper sysUserRoleMapper;
-
-    private final SysRoleMapper sysRoleMapper;
-
-    private final SysRoleMenuMapper sysRoleMenuMapper;
-
-    private final SysMenuMapper sysMenuMapper;
-
-    public PermissionService(SysUserRoleMapper sysUserRoleMapper,
-                             SysRoleMapper sysRoleMapper,
-                             SysRoleMenuMapper sysRoleMenuMapper,
-                             SysMenuMapper sysMenuMapper) {
-        this.sysUserRoleMapper = sysUserRoleMapper;
-        this.sysRoleMapper = sysRoleMapper;
-        this.sysRoleMenuMapper = sysRoleMenuMapper;
-        this.sysMenuMapper = sysMenuMapper;
-    }
+    @Resource
+    private SysUserRoleManager sysUserRoleManager;
+    @Resource
+    private SysRoleManager sysRoleManager;
+    @Resource
+    private SysRoleMenuManager sysRoleMenuManager;
+    @Resource
+    private SysMenuManager sysMenuManager;
 
     public List<String> getPermissionList(Long userId) {
         Set<String> permissions = new LinkedHashSet<String>();
@@ -46,8 +37,7 @@ public class PermissionService {
             return new ArrayList<String>();
         }
 
-        List<SysRoleMenu> roleMenus = sysRoleMenuMapper.selectList(new LambdaQueryWrapper<SysRoleMenu>()
-                .in(SysRoleMenu::getRoleId, roleIds));
+        List<SysRoleMenu> roleMenus = sysRoleMenuManager.listByRoleIds(roleIds);
         if (CollectionUtils.isEmpty(roleMenus)) {
             return new ArrayList<String>();
         }
@@ -57,7 +47,7 @@ public class PermissionService {
             menuIds.add(roleMenu.getMenuId());
         }
 
-        List<SysMenu> menus = sysMenuMapper.selectBatchIds(menuIds);
+        List<SysMenu> menus = sysMenuManager.listByIds(menuIds);
         for (SysMenu menu : menus) {
             if (StringUtils.hasText(menu.getPermissionCode())) {
                 permissions.add(menu.getPermissionCode());
@@ -71,7 +61,7 @@ public class PermissionService {
         if (CollectionUtils.isEmpty(roleIds)) {
             return new ArrayList<String>();
         }
-        List<SysRole> roles = sysRoleMapper.selectBatchIds(roleIds);
+        List<SysRole> roles = sysRoleManager.listByIds(roleIds);
         List<String> result = new ArrayList<String>(roles.size());
         for (SysRole role : roles) {
             if (StringUtils.hasText(role.getCode())) {
@@ -82,8 +72,7 @@ public class PermissionService {
     }
 
     private List<Long> listUserRoleIds(Long userId) {
-        List<SysUserRole> userRoles = sysUserRoleMapper.selectList(new LambdaQueryWrapper<SysUserRole>()
-                .eq(SysUserRole::getUserId, userId));
+        List<SysUserRole> userRoles = sysUserRoleManager.listByUserId(userId);
         List<Long> roleIds = new ArrayList<Long>(userRoles.size());
         for (SysUserRole userRole : userRoles) {
             roleIds.add(userRole.getRoleId());

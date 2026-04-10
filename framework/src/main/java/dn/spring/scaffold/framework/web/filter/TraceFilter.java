@@ -29,6 +29,7 @@ public class TraceFilter extends HttpFilter {
         traceContext.setClientIp(IpUtils.getIpAddr(request));
         TraceContextHolder.set(traceContext);
         MDC.put("traceId", traceContext.getTraceId());
+        response.setHeader("X-Request-Id", request.getHeader("X-REQUEST-ID"));
         response.setHeader("X-Trace-Id", traceContext.getTraceId());
         try {
             chain.doFilter(request, response);

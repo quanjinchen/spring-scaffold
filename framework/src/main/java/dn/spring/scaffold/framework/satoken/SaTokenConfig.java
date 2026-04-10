@@ -11,9 +11,11 @@ import cn.dev33.satoken.jwt.StpLogicJwtForSimple;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.stp.StpUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+@Slf4j
 @Configuration
 public class SaTokenConfig {
 
@@ -40,8 +42,9 @@ public class SaTokenConfig {
                 .addExclude(servletFilterConfig.getExcludePaths())
                 .setAuth(obj -> SaRouter.match("/**", StpUtil::checkLogin))
                 .setError(error -> {
+                    log.warn("sa-token filter error: {}", error.getMessage(), error);
                     SaHolder.getResponse().setHeader("Content-Type", "application/json;charset=UTF-8");
-                    return JsonUtils.toJson(RespInfo.failed(ResultCode.UNAUTHORIZED, error.getMessage()));
+                    return JsonUtils.toJson(RespInfo.failed(ResultCode.UNAUTHORIZED));
                 });
     }
 }

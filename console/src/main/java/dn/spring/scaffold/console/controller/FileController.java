@@ -5,6 +5,9 @@ import dn.spring.scaffold.console.pojo.resp.FileUploadRespData;
 import dn.spring.scaffold.console.service.FileService;
 import dn.spring.scaffold.framework.operationlog.annotation.OperateLog;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 
+@Tag(name = "文件管理")
 @RestController
 @RequestMapping("/file")
 public class FileController {
@@ -30,6 +34,7 @@ public class FileController {
         this.fileService = fileService;
     }
 
+    @Operation(summary = "上传文件")
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @OperateLog(module = "file", action = "upload")
     @SaCheckPermission("system:file:upload")
@@ -37,16 +42,18 @@ public class FileController {
         return fileService.upload(file, publicUrlPrefix);
     }
 
+    @Operation(summary = "下载文件")
     @GetMapping("/{fileId}")
     @SaCheckPermission("system:file:download")
-    public void download(@PathVariable String fileId, HttpServletResponse response) {
+    public void download(@Parameter(description = "文件 ID") @PathVariable String fileId, HttpServletResponse response) {
         fileService.download(fileId, response);
     }
 
+    @Operation(summary = "删除文件")
     @PostMapping("/delete")
     @OperateLog(module = "file", action = "delete")
     @SaCheckPermission("system:file:delete")
-    public RespInfo<Void> delete(@RequestParam String fileId) {
+    public RespInfo<Void> delete(@Parameter(description = "文件 ID") @RequestParam String fileId) {
         fileService.delete(fileId);
         return RespInfo.success(null);
     }

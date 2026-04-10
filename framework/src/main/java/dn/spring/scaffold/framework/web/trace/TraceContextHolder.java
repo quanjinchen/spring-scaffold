@@ -29,6 +29,8 @@ public final class TraceContextHolder {
             return map;
         }
         map.put("traceId", traceContext.getTraceId());
+        map.put("requestId", traceContext.getRequestId());
+        map.put("clientReqTime", traceContext.getClientReqTime() == null ? null : String.valueOf(traceContext.getClientReqTime()));
         map.put("method", traceContext.getMethod());
         map.put("path", traceContext.getPath());
         map.put("clientIp", traceContext.getClientIp());
@@ -44,6 +46,10 @@ public final class TraceContextHolder {
         }
         TraceContext traceContext = new TraceContext();
         traceContext.setTraceId(map.get("traceId"));
+        traceContext.setRequestId(map.get("requestId"));
+        if (map.get("clientReqTime") != null) {
+            traceContext.setClientReqTime(Long.valueOf(map.get("clientReqTime")));
+        }
         traceContext.setMethod(map.get("method"));
         traceContext.setPath(map.get("path"));
         traceContext.setClientIp(map.get("clientIp"));
