@@ -120,7 +120,7 @@ public class AdminAuthServiceImpl implements AdminAuthService {
 
         java.util.List<RoleGrantInfo> result = new java.util.ArrayList<RoleGrantInfo>();
         for (dn.spring.scaffold.console.pojo.resp.UserRoleInfo userRole : userRoles) {
-            result.add(roleService.getGrantInfo(userRole.getRoleId()));
+            result.add(roleService.getRoleGrantInfoByRoleId(userRole.getRoleId()).getData());
         }
         return result;
     }

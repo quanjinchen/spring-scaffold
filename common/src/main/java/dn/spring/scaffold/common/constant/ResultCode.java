@@ -38,8 +38,12 @@ public enum ResultCode implements Assert {
     USER_NOT_FOUND(8005, "用户不存在"),
 
     // ========== 角色错误段 [15000, 16000) ==========
+    ROLE_CODE_ALREADY_EXISTS(15001, "角色编码已存在"),
+    ROLE_NAME_ALREADY_EXISTS(15002, "角色名称已存在"),
     ROLE_NOT_FOUND(15003, "角色不存在"),
     ROLE_IN_USE(15004, "角色已分配给用户，无法删除"),
+    ROLE_CODE_REQUIRED(15005, "角色编码不能为空"),
+    ROLE_NAME_REQUIRED(15006, "角色名称不能为空"),
 
     // ========== 菜单错误段 [18000, 19000) ==========
     MENU_NOT_FOUND(18004, "菜单不存在"),

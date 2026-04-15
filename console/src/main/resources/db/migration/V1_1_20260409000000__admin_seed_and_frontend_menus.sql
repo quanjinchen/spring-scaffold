@@ -6,7 +6,6 @@ insert into sys_role (
     id,
     code,
     name,
-    data_scope,
     status,
     remark,
     create_by,
@@ -19,7 +18,6 @@ values (
     2,
     'SUPER_ADMIN',
     '超级管理员',
-    'ALL',
     1,
     '系统超级管理员角色',
     1,
@@ -31,7 +29,6 @@ values (
 on duplicate key update
     code = values(code),
     name = values(name),
-    data_scope = values(data_scope),
     status = values(status),
     remark = values(remark),
     update_by = values(update_by),

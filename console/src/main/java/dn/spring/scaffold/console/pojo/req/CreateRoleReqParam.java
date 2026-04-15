@@ -17,9 +17,6 @@ public class CreateRoleReqParam {
     @NotBlank(message = "角色名称不能为空")
     private String name;
 
-    @Schema(description = "数据权限范围", example = "1")
-    private String dataScope;
-
     @Schema(description = "状态，1 启用，0 禁用", example = "1")
     private Integer status;
 

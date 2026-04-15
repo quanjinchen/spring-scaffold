@@ -33,7 +33,6 @@ create table if not exists sys_role (
     id bigint primary key,
     code varchar(64) not null,
     name varchar(128) not null,
-    data_scope varchar(32) not null default 'ALL',
     status tinyint not null default 1,
     remark varchar(255) null,
     create_by bigint null,
@@ -113,8 +112,8 @@ insert into sys_org (id, parent_id, org_code, name, leader_name, sort_order, sta
 values (1, 0, 'ROOT', '总部', '系统负责人', 1, 1, now(), 0)
 on duplicate key update name = values(name);
 
-insert into sys_role (id, code, name, data_scope, status, remark, create_time, deleted)
-values (1, 'ADMIN', '系统管理员', 'ALL', 1, '系统初始化管理员角色', now(), 0)
+insert into sys_role (id, code, name, status, remark, create_time, deleted)
+values (1, 'ADMIN', '系统管理员', 1, '系统初始化管理员角色', now(), 0)
 on duplicate key update name = values(name), remark = values(remark);
 
 insert into sys_user (id, username, nickname, email, phone, org_id, password, status, create_time, deleted)

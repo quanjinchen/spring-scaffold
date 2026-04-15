@@ -16,15 +16,13 @@ public interface RoleService {
 
     RespInfo<RoleDTO> getRoleById(Long roleId);
 
-    RespInfo<RoleDTO> saveRole(CreateRoleReqParam reqParam);
+    RespInfo<RoleDTO> createRole(CreateRoleReqParam reqParam);
 
     RespInfo<RoleDTO> updateRole(UpdateRoleReqParam reqParam);
 
     RespInfo<Void> deleteRole(DeleteRoleReqParam reqParam);
 
-    RoleGrantInfo getGrantInfo(Long roleId);
-
-    RespInfo<RoleGrantInfo> getRoleGrantInfo(Long roleId);
+    RespInfo<RoleGrantInfo> getRoleGrantInfoByRoleId(Long roleId);
 
     RespInfo<RoleGrantInfo> grantRoleMenus(GrantRoleMenusReqParam reqParam);
 }

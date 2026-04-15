@@ -49,15 +49,15 @@ public class RoleController {
 
     @Operation(summary = "保存角色")
     @PostMapping("/save")
-    @OperateLog(module = "role", action = "保存角色")
+    @OperateLog(module = "role", action = "创建角色")
     @SaCheckPermission("system:role:update")
     public RespInfo<RoleDTO> save(@Valid @RequestBody CreateRoleReqParam reqParam) {
-        return roleService.saveRole(reqParam);
+        return roleService.createRole(reqParam);
     }
 
     @Operation(summary = "编辑角色")
     @PostMapping("/update")
-    @OperateLog(module = "role", action = "编辑角色")
+    @OperateLog(module = "role", action = "更新角色")
     @SaCheckPermission("system:role:update")
     public RespInfo<RoleDTO> update(@Valid @RequestBody UpdateRoleReqParam reqParam) {
         return roleService.updateRole(reqParam);
@@ -75,7 +75,7 @@ public class RoleController {
     @GetMapping("/{id}/grants")
     @SaCheckPermission("system:role:query")
     public RespInfo<RoleGrantInfo> grants(@Parameter(description = "角色 ID") @PathVariable Long id) {
-        return roleService.getRoleGrantInfo(id);
+        return roleService.getRoleGrantInfoByRoleId(id);
     }
 
     @Operation(summary = "分配角色菜单")

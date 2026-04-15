@@ -18,9 +18,6 @@ public class RoleDTO {
     @Schema(description = "角色名称")
     private String name;
 
-    @Schema(description = "数据权限范围")
-    private String dataScope;
-
     @Schema(description = "状态，1 启用，0 禁用")
     private Integer status;
 

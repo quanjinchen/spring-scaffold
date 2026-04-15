@@ -22,13 +22,11 @@ import dn.spring.scaffold.system.manager.SysUserRoleManager;
 import dn.spring.scaffold.system.pojo.query.ListRoleQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -60,30 +58,56 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public RespInfo<RoleDTO> getRoleById(Long roleId) {
-        return RespInfo.success(RoleConverter.INSTANCE.convert(loadRoleById(roleId)));
+        SysRole role = sysRoleManager.getById(roleId);
+        ResultCode.ROLE_NOT_FOUND.assertNotNull(role);
+        return RespInfo.success(RoleConverter.INSTANCE.convert(role));
     }
 
     @Override
-    public RespInfo<RoleDTO> saveRole(CreateRoleReqParam reqParam) {
-        SysRole role = RoleConverter.INSTANCE.convert(reqParam);
+    public RespInfo<RoleDTO> createRole(CreateRoleReqParam reqParam) {
+        // 角色编码要求全局唯一，新增时直接按编码查库判重。
+        SysRole sameCodeRole = sysRoleManager.getByCode(reqParam.getCode());
+        ResultCode.ROLE_CODE_ALREADY_EXISTS.assertIsFalse(sameCodeRole != null);
+
+        // 角色名称同样要求唯一，避免出现多个语义相同但编码不同的角色。
+        SysRole sameNameRole = sysRoleManager.getByName(reqParam.getName());
+        ResultCode.ROLE_NAME_ALREADY_EXISTS.assertIsFalse(sameNameRole != null);
+
+        SysRole role = new SysRole();
+        role.setCode(reqParam.getCode());
+        role.setName(reqParam.getName());
+        role.setStatus(reqParam.getStatus());
+        role.setRemark(reqParam.getRemark());
         if (role.getStatus() == null) {
+            // 未显式传状态时，默认按启用处理，和当前后台角色管理默认行为保持一致。
             role.setStatus(1);
         }
 
-        validateBeforeSave(role, null);
         SysRole savedRole = sysRoleManager.save(role);
         return RespInfo.created(RoleConverter.INSTANCE.convert(savedRole));
     }
 
     @Override
     public RespInfo<RoleDTO> updateRole(UpdateRoleReqParam reqParam) {
-        SysRole existedRole = loadRoleById(reqParam.getId());
-        SysRole updateRole = RoleConverter.INSTANCE.convert(reqParam);
-        updateRole.setDataScope(reqParam.getDataScope() != null ? reqParam.getDataScope() : existedRole.getDataScope());
+        SysRole existedRole = sysRoleManager.getById(reqParam.getId());
+        ResultCode.ROLE_NOT_FOUND.assertNotNull(existedRole);
+
+        // 修改角色编码时，需要排除当前正在编辑的角色本身，避免把自己误判成重复数据。
+        SysRole sameCodeRole = sysRoleManager.getByCode(reqParam.getCode());
+        ResultCode.ROLE_CODE_ALREADY_EXISTS.assertIsFalse(sameCodeRole != null && !sameCodeRole.getId().equals(existedRole.getId()));
+
+        // 修改角色名称时同样要排除自己，只拦截真正的其他重复角色。
+        SysRole sameNameRole = sysRoleManager.getByName(reqParam.getName());
+        ResultCode.ROLE_NAME_ALREADY_EXISTS.assertIsFalse(sameNameRole != null && !sameNameRole.getId().equals(existedRole.getId()));
+
+        SysRole updateRole = new SysRole();
+        updateRole.setId(existedRole.getId());
+        updateRole.setCode(reqParam.getCode());
+        updateRole.setName(reqParam.getName());
+        // 更新接口允许部分字段不传，不传时继续沿用数据库中的原值，避免把已有配置覆盖成空。
         updateRole.setStatus(reqParam.getStatus() != null ? reqParam.getStatus() : existedRole.getStatus());
         updateRole.setRemark(reqParam.getRemark() != null ? reqParam.getRemark() : existedRole.getRemark());
 
-        validateBeforeSave(updateRole, existedRole.getId());
         SysRole savedRole = sysRoleManager.save(updateRole);
         return RespInfo.success(RoleConverter.INSTANCE.convert(savedRole));
     }
@@ -92,70 +116,64 @@ public class RoleServiceImpl implements RoleService {
     @Transactional(rollbackFor = Exception.class)
     public RespInfo<Void> deleteRole(DeleteRoleReqParam reqParam) {
         Long roleId = reqParam.getRoleId();
-        loadRoleById(roleId);
+        SysRole role = sysRoleManager.getById(roleId);
+        ResultCode.ROLE_NOT_FOUND.assertNotNull(role);
+        // 已分配给用户的角色不允许直接删除，避免留下用户角色脏数据。
         ResultCode.ROLE_IN_USE.assertIsFalse(sysUserRoleManager.existsByRoleId(roleId));
+
+        // 先删角色菜单关联，再删角色本体，保证关系数据和主数据保持一致。
         sysRoleMenuManager.deleteByRoleId(roleId);
         sysRoleManager.deleteById(roleId);
         return RespInfo.success();
     }
 
     @Override
-    public RoleGrantInfo getGrantInfo(Long roleId) {
-        SysRole role = loadRoleById(roleId);
+    public RespInfo<RoleGrantInfo> getRoleGrantInfoByRoleId(Long roleId) {
+        SysRole role = sysRoleManager.getById(roleId);
+        ResultCode.ROLE_NOT_FOUND.assertNotNull(role);
 
         RoleGrantInfo grantInfo = new RoleGrantInfo();
         grantInfo.setRoleId(role.getId());
         grantInfo.setRoleCode(role.getCode());
         grantInfo.setRoleName(role.getName());
-        grantInfo.setMenuIds(listRoleMenuIds(roleId));
-        return grantInfo;
-    }
-
-    @Override
-    public RespInfo<RoleGrantInfo> getRoleGrantInfo(Long roleId) {
-        return RespInfo.success(getGrantInfo(roleId));
+        List<SysRoleMenu> roleMenus = sysRoleMenuManager.listByRoleId(roleId);
+        if (roleMenus.isEmpty()) {
+            grantInfo.setMenuIds(Collections.emptyList());
+            return RespInfo.success(grantInfo);
+        }
+        List<Long> menuIds = new ArrayList<Long>(roleMenus.size());
+        for (SysRoleMenu roleMenu : roleMenus) {
+            menuIds.add(roleMenu.getMenuId());
+        }
+        grantInfo.setMenuIds(menuIds);
+        return RespInfo.success(grantInfo);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public RespInfo<RoleGrantInfo> grantRoleMenus(GrantRoleMenusReqParam reqParam) {
-        loadRoleById(reqParam.getRoleId());
-        sysRoleMenuManager.replaceRoleMenus(reqParam.getRoleId(), reqParam.getMenuIds());
-        return RespInfo.success(getGrantInfo(reqParam.getRoleId()));
-    }
-
-    private SysRole loadRoleById(Long roleId) {
-        SysRole role = sysRoleManager.getById(roleId);
+        SysRole role = sysRoleManager.getById(reqParam.getRoleId());
         ResultCode.ROLE_NOT_FOUND.assertNotNull(role);
-        return role;
-    }
 
-    private void validateBeforeSave(SysRole role, Long excludeRoleId) {
-        ResultCode.BAD_REQUEST.assertIsTrue(StringUtils.hasText(role.getCode()), "角色编码不能为空");
-        ResultCode.BAD_REQUEST.assertIsTrue(StringUtils.hasText(role.getName()), "角色名称不能为空");
+        // 前端未传菜单列表时，按清空授权处理，避免 manager 层出现空指针。
+        List<Long> menuIds = reqParam.getMenuIds();
+        sysRoleMenuManager.replaceRoleMenus(reqParam.getRoleId(), menuIds == null ? Collections.emptyList() : menuIds);
 
-        SysRole sameCodeRole = sysRoleManager.getByCode(role.getCode());
-        ResultCode.BAD_REQUEST.assertIsFalse(existsOtherRole(sameCodeRole, excludeRoleId), "角色编码已存在");
+        RoleGrantInfo grantInfo = new RoleGrantInfo();
+        grantInfo.setRoleId(role.getId());
+        grantInfo.setRoleCode(role.getCode());
+        grantInfo.setRoleName(role.getName());
 
-        SysRole sameNameRole = sysRoleManager.getByName(role.getName());
-        ResultCode.BAD_REQUEST.assertIsFalse(existsOtherRole(sameNameRole, excludeRoleId), "角色名称已存在");
-    }
-
-    private boolean existsOtherRole(SysRole sameRole, Long excludeRoleId) {
-        if (sameRole == null) {
-            return false;
-        }
-        if (excludeRoleId == null) {
-            return true;
-        }
-        return !Objects.equals(sameRole.getId(), excludeRoleId);
-    }
-
-    private List<Long> listRoleMenuIds(Long roleId) {
-        List<SysRoleMenu> roleMenus = sysRoleMenuManager.listByRoleId(roleId);
+        List<SysRoleMenu> roleMenus = sysRoleMenuManager.listByRoleId(reqParam.getRoleId());
         if (roleMenus.isEmpty()) {
-            return Collections.emptyList();
+            grantInfo.setMenuIds(Collections.emptyList());
+            return RespInfo.success(grantInfo);
         }
-        return roleMenus.stream().map(SysRoleMenu::getMenuId).collect(Collectors.toList());
+        List<Long> grantedMenuIds = new ArrayList<Long>(roleMenus.size());
+        for (SysRoleMenu roleMenu : roleMenus) {
+            grantedMenuIds.add(roleMenu.getMenuId());
+        }
+        grantInfo.setMenuIds(grantedMenuIds);
+        return RespInfo.success(grantInfo);
     }
 }
