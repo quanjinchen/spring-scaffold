@@ -1,7 +1,7 @@
 package dn.spring.scaffold.console.service;
 
-import dn.spring.scaffold.common.page.PageQuery;
-import dn.spring.scaffold.common.page.PageResult;
+import dn.spring.scaffold.common.page.PageData;
+import dn.spring.scaffold.common.page.PageReqParam;
 import dn.spring.scaffold.common.pojo.RespInfo;
 import dn.spring.scaffold.console.pojo.req.GrantOrgUsersReqParam;
 import dn.spring.scaffold.system.entity.Org;
@@ -14,9 +14,9 @@ public interface OrgService {
 
     RespInfo<List<Org>> treeResp();
 
-    PageResult<Org> page(PageQuery pageQuery);
+    PageData<Org> page(PageReqParam reqParam);
 
-    RespInfo<PageResult<Org>> pageResp(PageQuery pageQuery);
+    RespInfo<PageData<Org>> pageResp(PageReqParam reqParam);
 
     Org detail(Long id);
 

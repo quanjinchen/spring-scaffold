@@ -1,7 +1,8 @@
 package dn.spring.scaffold.console.service.impl;
 
-import dn.spring.scaffold.common.page.PageQuery;
-import dn.spring.scaffold.common.page.PageResult;
+import dn.spring.scaffold.common.page.PageData;
+import dn.spring.scaffold.common.page.PageReqParam;
+import dn.spring.scaffold.common.page.PageUtils;
 import dn.spring.scaffold.common.constant.ResultCode;
 import dn.spring.scaffold.common.pojo.RespInfo;
 import dn.spring.scaffold.console.pojo.req.GrantOrgUsersReqParam;
@@ -40,14 +41,14 @@ public class OrgServiceImpl implements OrgService {
     }
 
     @Override
-    public PageResult<Org> page(PageQuery pageQuery) {
-        com.baomidou.mybatisplus.extension.plugins.pagination.Page<Org> page = orgManager.page(pageQuery);
-        return PageResult.of(page.getRecords(), page.getTotal(), pageQuery);
+    public PageData<Org> page(PageReqParam reqParam) {
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<Org> page = orgManager.page(reqParam);
+        return PageUtils.of(page);
     }
 
     @Override
-    public RespInfo<PageResult<Org>> pageResp(PageQuery pageQuery) {
-        return RespInfo.success(page(pageQuery));
+    public RespInfo<PageData<Org>> pageResp(PageReqParam reqParam) {
+        return RespInfo.success(page(reqParam));
     }
 
     @Override

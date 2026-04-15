@@ -1,6 +1,6 @@
 package dn.spring.scaffold.system.manager;
 
-import dn.spring.scaffold.common.page.PageQuery;
+import dn.spring.scaffold.common.page.PageReqParam;
 import dn.spring.scaffold.system.entity.Org;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
@@ -10,7 +10,7 @@ public interface OrgManager {
 
     List<Org> listAll();
 
-    Page<Org> page(PageQuery pageQuery);
+    Page<Org> page(PageReqParam reqParam);
 
     Org getById(Long orgId);
 

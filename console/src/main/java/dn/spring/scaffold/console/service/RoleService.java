@@ -1,7 +1,7 @@
 package dn.spring.scaffold.console.service;
 
-import dn.spring.scaffold.common.page.PageQuery;
-import dn.spring.scaffold.common.page.PageResult;
+import dn.spring.scaffold.common.page.PageData;
+import dn.spring.scaffold.common.page.PageReqParam;
 import dn.spring.scaffold.common.pojo.RespInfo;
 import dn.spring.scaffold.console.pojo.req.GrantRoleMenusReqParam;
 import dn.spring.scaffold.console.pojo.resp.RoleGrantInfo;
@@ -11,9 +11,9 @@ import java.util.List;
 
 public interface RoleService {
 
-    PageResult<SysRole> page(PageQuery pageQuery);
+    PageData<SysRole> page(PageReqParam reqParam);
 
-    RespInfo<PageResult<SysRole>> pageResp(PageQuery pageQuery);
+    RespInfo<PageData<SysRole>> pageResp(PageReqParam reqParam);
 
     SysRole detail(Long id);
 

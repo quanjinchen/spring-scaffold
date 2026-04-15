@@ -1,15 +1,15 @@
 package dn.spring.scaffold.console.service;
 
-import dn.spring.scaffold.common.page.PageQuery;
-import dn.spring.scaffold.common.page.PageResult;
+import dn.spring.scaffold.common.page.PageData;
+import dn.spring.scaffold.common.page.PageReqParam;
 import dn.spring.scaffold.common.pojo.RespInfo;
 import dn.spring.scaffold.console.pojo.resp.UserDetailResp;
 
 public interface UserService {
 
-    PageResult<UserDetailResp> page(PageQuery pageQuery);
+    PageData<UserDetailResp> page(PageReqParam reqParam);
 
-    RespInfo<PageResult<UserDetailResp>> pageResp(PageQuery pageQuery);
+    RespInfo<PageData<UserDetailResp>> pageResp(PageReqParam reqParam);
 
     UserDetailResp detail(Long id);
 

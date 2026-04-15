@@ -1,6 +1,6 @@
 package dn.spring.scaffold.system.manager.impl;
 
-import dn.spring.scaffold.common.page.PageQuery;
+import dn.spring.scaffold.common.page.PageReqParam;
 import dn.spring.scaffold.system.entity.Org;
 import dn.spring.scaffold.system.manager.OrgManager;
 import dn.spring.scaffold.system.mapper.OrgMapper;
@@ -25,9 +25,9 @@ public class OrgManagerImpl implements OrgManager {
     }
 
     @Override
-    public Page<Org> page(PageQuery pageQuery) {
+    public Page<Org> page(PageReqParam reqParam) {
         return orgMapper.selectPage(
-                new Page<Org>(pageQuery.getPageNum(), pageQuery.getPageSize()),
+                new Page<Org>(reqParam.getPageNum(), reqParam.getPageSize()),
                 new LambdaQueryWrapper<Org>()
                         .orderByAsc(Org::getSortOrder)
                         .orderByAsc(Org::getId)

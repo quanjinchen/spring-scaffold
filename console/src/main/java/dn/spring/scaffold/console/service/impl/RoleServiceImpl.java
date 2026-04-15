@@ -1,7 +1,8 @@
 package dn.spring.scaffold.console.service.impl;
 
-import dn.spring.scaffold.common.page.PageQuery;
-import dn.spring.scaffold.common.page.PageResult;
+import dn.spring.scaffold.common.page.PageData;
+import dn.spring.scaffold.common.page.PageReqParam;
+import dn.spring.scaffold.common.page.PageUtils;
 import dn.spring.scaffold.common.constant.ResultCode;
 import dn.spring.scaffold.common.pojo.RespInfo;
 import dn.spring.scaffold.console.pojo.req.GrantRoleMenusReqParam;
@@ -29,14 +30,14 @@ public class RoleServiceImpl implements RoleService {
     private SysUserRoleManager sysUserRoleManager;
 
     @Override
-    public PageResult<SysRole> page(PageQuery pageQuery) {
-        com.baomidou.mybatisplus.extension.plugins.pagination.Page<SysRole> page = sysRoleManager.page(pageQuery);
-        return PageResult.of(page.getRecords(), page.getTotal(), pageQuery);
+    public PageData<SysRole> page(PageReqParam reqParam) {
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<SysRole> page = sysRoleManager.page(reqParam);
+        return PageUtils.of(page);
     }
 
     @Override
-    public RespInfo<PageResult<SysRole>> pageResp(PageQuery pageQuery) {
-        return RespInfo.success(page(pageQuery));
+    public RespInfo<PageData<SysRole>> pageResp(PageReqParam reqParam) {
+        return RespInfo.success(page(reqParam));
     }
 
     @Override

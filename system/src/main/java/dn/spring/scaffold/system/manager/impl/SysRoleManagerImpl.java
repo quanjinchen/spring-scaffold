@@ -1,6 +1,6 @@
 package dn.spring.scaffold.system.manager.impl;
 
-import dn.spring.scaffold.common.page.PageQuery;
+import dn.spring.scaffold.common.page.PageReqParam;
 import dn.spring.scaffold.system.entity.SysRole;
 import dn.spring.scaffold.system.manager.SysRoleManager;
 import dn.spring.scaffold.system.mapper.SysRoleMapper;
@@ -20,9 +20,9 @@ public class SysRoleManagerImpl implements SysRoleManager {
     private SysRoleMapper sysRoleMapper;
 
     @Override
-    public Page<SysRole> page(PageQuery pageQuery) {
+    public Page<SysRole> page(PageReqParam reqParam) {
         return sysRoleMapper.selectPage(
-                new Page<SysRole>(pageQuery.getPageNum(), pageQuery.getPageSize()),
+                new Page<SysRole>(reqParam.getPageNum(), reqParam.getPageSize()),
                 new LambdaQueryWrapper<SysRole>().orderByAsc(SysRole::getId)
         );
     }

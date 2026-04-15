@@ -1,6 +1,6 @@
 package dn.spring.scaffold.console.controller;
 
-import dn.spring.scaffold.common.page.PageQuery;
+import dn.spring.scaffold.common.page.PageReqParam;
 import dn.spring.scaffold.common.pojo.RespInfo;
 import dn.spring.scaffold.console.pojo.req.GrantUserRolesReqParam;
 import dn.spring.scaffold.console.pojo.resp.UserDetailResp;
@@ -37,8 +37,8 @@ public class UserController {
     @Operation(summary = "分页查询用户")
     @GetMapping("/page")
     @SaCheckPermission("system:user:query")
-    public RespInfo<?> page(PageQuery pageQuery) {
-        return userService.pageResp(pageQuery);
+    public RespInfo<?> page(@Valid PageReqParam reqParam) {
+        return userService.pageResp(reqParam);
     }
 
     @Operation(summary = "根据 ID 查询用户详情")

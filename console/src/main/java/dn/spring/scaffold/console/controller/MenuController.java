@@ -1,6 +1,6 @@
 package dn.spring.scaffold.console.controller;
 
-import dn.spring.scaffold.common.page.PageQuery;
+import dn.spring.scaffold.common.page.PageReqParam;
 import dn.spring.scaffold.common.pojo.RespInfo;
 import dn.spring.scaffold.console.service.MenuService;
 import dn.spring.scaffold.framework.operationlog.annotation.OperateLog;
@@ -9,6 +9,7 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import javax.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,8 +39,8 @@ public class MenuController {
     @Operation(summary = "分页查询菜单")
     @GetMapping("/page")
     @SaCheckPermission("system:menu:query")
-    public RespInfo<?> page(PageQuery pageQuery) {
-        return menuService.pageResp(pageQuery);
+    public RespInfo<?> page(@Valid PageReqParam reqParam) {
+        return menuService.pageResp(reqParam);
     }
 
     @Operation(summary = "根据 ID 查询菜单详情")

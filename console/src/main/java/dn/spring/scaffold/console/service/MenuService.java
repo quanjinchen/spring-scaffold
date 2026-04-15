@@ -1,7 +1,7 @@
 package dn.spring.scaffold.console.service;
 
-import dn.spring.scaffold.common.page.PageQuery;
-import dn.spring.scaffold.common.page.PageResult;
+import dn.spring.scaffold.common.page.PageData;
+import dn.spring.scaffold.common.page.PageReqParam;
 import dn.spring.scaffold.common.pojo.RespInfo;
 import dn.spring.scaffold.console.pojo.resp.MenuTreeNode;
 import dn.spring.scaffold.system.entity.SysMenu;
@@ -18,9 +18,9 @@ public interface MenuService {
 
     List<MenuTreeNode> treeByUserId(Long userId);
 
-    PageResult<SysMenu> page(PageQuery pageQuery);
+    PageData<SysMenu> page(PageReqParam reqParam);
 
-    RespInfo<PageResult<SysMenu>> pageResp(PageQuery pageQuery);
+    RespInfo<PageData<SysMenu>> pageResp(PageReqParam reqParam);
 
     SysMenu detail(Long id);
 

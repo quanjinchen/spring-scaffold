@@ -1,6 +1,6 @@
 package dn.spring.scaffold.system.manager.impl;
 
-import dn.spring.scaffold.common.page.PageQuery;
+import dn.spring.scaffold.common.page.PageReqParam;
 import dn.spring.scaffold.system.entity.OperationLog;
 import dn.spring.scaffold.system.manager.OperationLogManager;
 import dn.spring.scaffold.system.mapper.OperationLogMapper;
@@ -17,9 +17,9 @@ public class OperationLogManagerImpl implements OperationLogManager {
     private OperationLogMapper operationLogMapper;
 
     @Override
-    public Page<OperationLog> page(PageQuery pageQuery) {
+    public Page<OperationLog> page(PageReqParam reqParam) {
         return operationLogMapper.selectPage(
-                new Page<OperationLog>(pageQuery.getPageNum(), pageQuery.getPageSize()),
+                new Page<OperationLog>(reqParam.getPageNum(), reqParam.getPageSize()),
                 new LambdaQueryWrapper<OperationLog>()
                         .orderByDesc(OperationLog::getRequestTime)
                         .orderByDesc(OperationLog::getId)

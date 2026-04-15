@@ -1,7 +1,8 @@
 package dn.spring.scaffold.console.service.impl;
 
-import dn.spring.scaffold.common.page.PageQuery;
-import dn.spring.scaffold.common.page.PageResult;
+import dn.spring.scaffold.common.page.PageData;
+import dn.spring.scaffold.common.page.PageReqParam;
+import dn.spring.scaffold.common.page.PageUtils;
 import dn.spring.scaffold.common.constant.ResultCode;
 import dn.spring.scaffold.common.pojo.RespInfo;
 import dn.spring.scaffold.console.pojo.resp.MenuTreeNode;
@@ -94,14 +95,14 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public PageResult<SysMenu> page(PageQuery pageQuery) {
+    public PageData<SysMenu> page(PageReqParam reqParam) {
         List<SysMenu> records = listAll();
-        return PageResult.of(records, records.size(), pageQuery);
+        return PageUtils.of(reqParam.getPageNum(), reqParam.getPageSize(), records.size(), records);
     }
 
     @Override
-    public RespInfo<PageResult<SysMenu>> pageResp(PageQuery pageQuery) {
-        return RespInfo.success(page(pageQuery));
+    public RespInfo<PageData<SysMenu>> pageResp(PageReqParam reqParam) {
+        return RespInfo.success(page(reqParam));
     }
 
     @Override

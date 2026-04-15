@@ -1,7 +1,7 @@
 package dn.spring.scaffold.system.manager.impl;
 
 import dn.spring.scaffold.common.entity.EncryptField;
-import dn.spring.scaffold.common.page.PageQuery;
+import dn.spring.scaffold.common.page.PageReqParam;
 import dn.spring.scaffold.system.entity.User;
 import dn.spring.scaffold.system.manager.UserManager;
 import dn.spring.scaffold.system.mapper.UserMapper;
@@ -21,9 +21,9 @@ public class UserManagerImpl implements UserManager {
     private UserMapper userMapper;
 
     @Override
-    public Page<User> page(PageQuery pageQuery) {
+    public Page<User> page(PageReqParam reqParam) {
         return userMapper.selectPage(
-                new Page<User>(pageQuery.getPageNum(), pageQuery.getPageSize()),
+                new Page<User>(reqParam.getPageNum(), reqParam.getPageSize()),
                 new LambdaQueryWrapper<User>().orderByAsc(User::getId)
         );
     }

@@ -15,20 +15,18 @@ public final class PageUtils {
 
     public static <T> PageData<T> of(IPage<T> page) {
         PageData<T> pageData = new PageData<T>();
-        pageData.setCurrent(page.getCurrent());
-        pageData.setSize(page.getSize());
+        pageData.setPageNum(page.getCurrent());
+        pageData.setPageSize(page.getSize());
         pageData.setTotal(page.getTotal());
-        pageData.setPages(page.getPages());
         pageData.setRecords(page.getRecords());
         return pageData;
     }
 
     public static <T> PageData<T> of(long current, long size, long total, List<T> records) {
         PageData<T> pageData = new PageData<T>();
-        pageData.setCurrent(current);
-        pageData.setSize(size);
+        pageData.setPageNum(current);
+        pageData.setPageSize(size);
         pageData.setTotal(total);
-        pageData.setPages(size <= 0 ? 0 : (total + size - 1) / size);
         pageData.setRecords(records == null ? Collections.<T>emptyList() : records);
         return pageData;
     }

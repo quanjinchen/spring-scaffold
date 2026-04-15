@@ -1,7 +1,8 @@
 package dn.spring.scaffold.console.service.impl;
 
-import dn.spring.scaffold.common.page.PageQuery;
-import dn.spring.scaffold.common.page.PageResult;
+import dn.spring.scaffold.common.page.PageData;
+import dn.spring.scaffold.common.page.PageReqParam;
+import dn.spring.scaffold.common.page.PageUtils;
 import dn.spring.scaffold.common.pojo.RespInfo;
 import dn.spring.scaffold.console.service.OperationLogService;
 import dn.spring.scaffold.system.entity.OperationLog;
@@ -17,14 +18,14 @@ public class OperationLogServiceImpl implements OperationLogService {
     private OperationLogManager operationLogManager;
 
     @Override
-    public PageResult<OperationLog> page(PageQuery pageQuery) {
-        com.baomidou.mybatisplus.extension.plugins.pagination.Page<OperationLog> page = operationLogManager.page(pageQuery);
-        return PageResult.of(page.getRecords(), page.getTotal(), pageQuery);
+    public PageData<OperationLog> page(PageReqParam reqParam) {
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<OperationLog> page = operationLogManager.page(reqParam);
+        return PageUtils.of(page);
     }
 
     @Override
-    public RespInfo<PageResult<OperationLog>> pageResp(PageQuery pageQuery) {
-        return RespInfo.success(page(pageQuery));
+    public RespInfo<PageData<OperationLog>> pageResp(PageReqParam reqParam) {
+        return RespInfo.success(page(reqParam));
     }
 
     @Override

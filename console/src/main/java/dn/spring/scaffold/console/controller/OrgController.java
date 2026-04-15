@@ -1,6 +1,6 @@
 package dn.spring.scaffold.console.controller;
 
-import dn.spring.scaffold.common.page.PageQuery;
+import dn.spring.scaffold.common.page.PageReqParam;
 import dn.spring.scaffold.common.pojo.RespInfo;
 import dn.spring.scaffold.console.pojo.req.GrantOrgUsersReqParam;
 import dn.spring.scaffold.console.service.OrgService;
@@ -10,6 +10,7 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import javax.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,8 +40,8 @@ public class OrgController {
     @Operation(summary = "分页查询组织机构")
     @GetMapping("/page")
     @SaCheckPermission("system:org:query")
-    public RespInfo<?> page(PageQuery pageQuery) {
-        return orgService.pageResp(pageQuery);
+    public RespInfo<?> page(@Valid PageReqParam reqParam) {
+        return orgService.pageResp(reqParam);
     }
 
     @Operation(summary = "根据 ID 查询组织机构详情")

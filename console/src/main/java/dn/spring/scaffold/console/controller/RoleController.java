@@ -1,6 +1,6 @@
 package dn.spring.scaffold.console.controller;
 
-import dn.spring.scaffold.common.page.PageQuery;
+import dn.spring.scaffold.common.page.PageReqParam;
 import dn.spring.scaffold.common.pojo.RespInfo;
 import dn.spring.scaffold.console.pojo.req.GrantRoleMenusReqParam;
 import dn.spring.scaffold.console.service.RoleService;
@@ -37,8 +37,8 @@ public class RoleController {
     @Operation(summary = "分页查询角色")
     @GetMapping("/page")
     @SaCheckPermission("system:role:query")
-    public RespInfo<?> page(PageQuery pageQuery) {
-        return roleService.pageResp(pageQuery);
+    public RespInfo<?> page(@Valid PageReqParam reqParam) {
+        return roleService.pageResp(reqParam);
     }
 
     @Operation(summary = "根据 ID 查询角色详情")

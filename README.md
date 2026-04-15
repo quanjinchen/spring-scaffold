@@ -97,8 +97,6 @@ console
 
 核心类：
 
-- `PageQuery`
-- `PageResult`
 - `PageReqParam`
 - `PageData`
 - `PageUtils`

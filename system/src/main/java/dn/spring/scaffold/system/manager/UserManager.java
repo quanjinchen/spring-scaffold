@@ -1,6 +1,6 @@
 package dn.spring.scaffold.system.manager;
 
-import dn.spring.scaffold.common.page.PageQuery;
+import dn.spring.scaffold.common.page.PageReqParam;
 import dn.spring.scaffold.system.entity.User;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface UserManager {
 
-    Page<User> page(PageQuery pageQuery);
+    Page<User> page(PageReqParam reqParam);
 
     User getById(Long userId);
 

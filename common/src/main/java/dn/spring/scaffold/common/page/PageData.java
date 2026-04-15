@@ -14,17 +14,23 @@ public class PageData<T> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "当前页码")
-    private long current = 1L;
+    private long pageNum = 1L;
 
     @Schema(description = "每页条数")
-    private long size = 10L;
+    private long pageSize = 10L;
 
     @Schema(description = "总记录数")
     private long total = 0L;
 
-    @Schema(description = "总页数")
-    private long pages = 0L;
-
     @Schema(description = "当前页数据列表")
     private List<T> records = Collections.emptyList();
+
+    public static PageData empty(int pageNum, int pageSize) {
+        PageData pageData = new PageData<>();
+        pageData.setPageNum(pageNum);
+        pageData.setPageSize(pageSize);
+        pageData.setTotal(0L);
+        pageData.setRecords(Collections.emptyList());
+        return pageData;
+    }
 }
