@@ -22,7 +22,7 @@ public class LoginData {
     private List<String> roleCodes;
 
     @Schema(description = "角色授权信息列表")
-    private List<RoleGrantInfo> roles;
+    private List<RoleGrantInfoDTO> roles;
 
     @Schema(description = "菜单树")
     private List<MenuTreeNode> menus;

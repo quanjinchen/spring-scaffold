@@ -12,7 +12,7 @@ import dn.spring.scaffold.console.pojo.req.GrantRoleMenusReqParam;
 import dn.spring.scaffold.console.pojo.req.ListRoleReqParam;
 import dn.spring.scaffold.console.pojo.req.UpdateRoleReqParam;
 import dn.spring.scaffold.console.pojo.resp.RoleDTO;
-import dn.spring.scaffold.console.pojo.resp.RoleGrantInfo;
+import dn.spring.scaffold.console.pojo.resp.RoleGrantInfoDTO;
 import dn.spring.scaffold.console.service.RoleService;
 import dn.spring.scaffold.system.entity.SysRole;
 import dn.spring.scaffold.system.entity.SysRoleMenu;
@@ -128,11 +128,11 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public RespInfo<RoleGrantInfo> getRoleGrantInfoByRoleId(Long roleId) {
+    public RespInfo<RoleGrantInfoDTO> getRoleGrantInfoByRoleId(Long roleId) {
         SysRole role = sysRoleManager.getById(roleId);
         ResultCode.ROLE_NOT_FOUND.assertNotNull(role);
 
-        RoleGrantInfo grantInfo = new RoleGrantInfo();
+        RoleGrantInfoDTO grantInfo = new RoleGrantInfoDTO();
         grantInfo.setRoleId(role.getId());
         grantInfo.setRoleCode(role.getCode());
         grantInfo.setRoleName(role.getName());
@@ -151,7 +151,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public RespInfo<RoleGrantInfo> grantRoleMenus(GrantRoleMenusReqParam reqParam) {
+    public RespInfo<RoleGrantInfoDTO> grantRoleMenus(GrantRoleMenusReqParam reqParam) {
         SysRole role = sysRoleManager.getById(reqParam.getRoleId());
         ResultCode.ROLE_NOT_FOUND.assertNotNull(role);
 
@@ -159,7 +159,7 @@ public class RoleServiceImpl implements RoleService {
         List<Long> menuIds = reqParam.getMenuIds();
         sysRoleMenuManager.replaceRoleMenus(reqParam.getRoleId(), menuIds == null ? Collections.emptyList() : menuIds);
 
-        RoleGrantInfo grantInfo = new RoleGrantInfo();
+        RoleGrantInfoDTO grantInfo = new RoleGrantInfoDTO();
         grantInfo.setRoleId(role.getId());
         grantInfo.setRoleCode(role.getCode());
         grantInfo.setRoleName(role.getName());

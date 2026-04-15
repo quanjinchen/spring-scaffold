@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @Schema(description = "角色授权信息")
-public class RoleGrantInfo {
+public class RoleGrantInfoDTO {
 
     @Schema(description = "角色 ID")
     private Long roleId;

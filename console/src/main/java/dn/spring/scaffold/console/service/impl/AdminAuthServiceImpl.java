@@ -5,7 +5,7 @@ import dn.spring.scaffold.common.pojo.RespInfo;
 import dn.spring.scaffold.console.pojo.req.SysAdminLoginReqParam;
 import dn.spring.scaffold.console.pojo.resp.CaptchaData;
 import dn.spring.scaffold.console.pojo.resp.LoginData;
-import dn.spring.scaffold.console.pojo.resp.RoleGrantInfo;
+import dn.spring.scaffold.console.pojo.resp.RoleGrantInfoDTO;
 import dn.spring.scaffold.console.pojo.resp.SysAdminLoginData;
 import dn.spring.scaffold.console.service.AdminAuthService;
 import dn.spring.scaffold.console.service.MenuService;
@@ -109,16 +109,16 @@ public class AdminAuthServiceImpl implements AdminAuthService {
     }
 
     private java.util.List<String> userRoleCodes(Long userId) {
-        return roleGrantInfos(userId).stream().map(RoleGrantInfo::getRoleCode).collect(Collectors.toList());
+        return roleGrantInfos(userId).stream().map(RoleGrantInfoDTO::getRoleCode).collect(Collectors.toList());
     }
 
-    private java.util.List<RoleGrantInfo> roleGrantInfos(Long userId) {
+    private java.util.List<RoleGrantInfoDTO> roleGrantInfos(Long userId) {
         java.util.List<dn.spring.scaffold.console.pojo.resp.UserRoleInfo> userRoles = userRoleService.listUserRoles(userId);
         if (userRoles.isEmpty()) {
             return java.util.Collections.emptyList();
         }
 
-        java.util.List<RoleGrantInfo> result = new java.util.ArrayList<RoleGrantInfo>();
+        java.util.List<RoleGrantInfoDTO> result = new java.util.ArrayList<RoleGrantInfoDTO>();
         for (dn.spring.scaffold.console.pojo.resp.UserRoleInfo userRole : userRoles) {
             result.add(roleService.getRoleGrantInfoByRoleId(userRole.getRoleId()).getData());
         }

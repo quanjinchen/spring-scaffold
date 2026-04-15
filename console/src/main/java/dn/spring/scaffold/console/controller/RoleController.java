@@ -9,7 +9,7 @@ import dn.spring.scaffold.console.pojo.req.GrantRoleMenusReqParam;
 import dn.spring.scaffold.console.pojo.req.ListRoleReqParam;
 import dn.spring.scaffold.console.pojo.req.UpdateRoleReqParam;
 import dn.spring.scaffold.console.pojo.resp.RoleDTO;
-import dn.spring.scaffold.console.pojo.resp.RoleGrantInfo;
+import dn.spring.scaffold.console.pojo.resp.RoleGrantInfoDTO;
 import dn.spring.scaffold.console.service.RoleService;
 import dn.spring.scaffold.framework.operationlog.annotation.OperateLog;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,55 +34,55 @@ public class RoleController {
     private RoleService roleService;
 
     @Operation(summary = "分页查询角色")
-    @PostMapping("/page")
+    @PostMapping("/list-role")
     @SaCheckPermission("system:role:query")
-    public RespInfo<PageData<RoleDTO>> page(@Valid @RequestBody ListRoleReqParam reqParam) {
+    public RespInfo<PageData<RoleDTO>> listRole(@Valid @RequestBody ListRoleReqParam reqParam) {
         return roleService.listRole(reqParam);
     }
 
     @Operation(summary = "根据 ID 查询角色详情")
-    @GetMapping("/{id}")
+    @GetMapping("/get-role-by-id/{id}")
     @SaCheckPermission("system:role:query")
-    public RespInfo<RoleDTO> detail(@Parameter(description = "角色 ID") @PathVariable Long id) {
+    public RespInfo<RoleDTO> getRoleById(@Parameter(description = "角色 ID") @PathVariable Long id) {
         return roleService.getRoleById(id);
     }
 
-    @Operation(summary = "保存角色")
-    @PostMapping("/save")
+    @Operation(summary = "创建角色")
+    @PostMapping("/create-role")
     @OperateLog(module = "role", action = "创建角色")
     @SaCheckPermission("system:role:update")
-    public RespInfo<RoleDTO> save(@Valid @RequestBody CreateRoleReqParam reqParam) {
+    public RespInfo<RoleDTO> createRole(@Valid @RequestBody CreateRoleReqParam reqParam) {
         return roleService.createRole(reqParam);
     }
 
-    @Operation(summary = "编辑角色")
-    @PostMapping("/update")
+    @Operation(summary = "更新角色")
+    @PostMapping("/update-role")
     @OperateLog(module = "role", action = "更新角色")
     @SaCheckPermission("system:role:update")
-    public RespInfo<RoleDTO> update(@Valid @RequestBody UpdateRoleReqParam reqParam) {
+    public RespInfo<RoleDTO> updateRole(@Valid @RequestBody UpdateRoleReqParam reqParam) {
         return roleService.updateRole(reqParam);
     }
 
     @Operation(summary = "删除角色")
-    @PostMapping("/delete")
+    @PostMapping("/delete-role")
     @OperateLog(module = "role", action = "删除角色")
     @SaCheckPermission("system:role:delete")
-    public RespInfo<Void> delete(@Valid @RequestBody DeleteRoleReqParam reqParam) {
+    public RespInfo<Void> deleteRole(@Valid @RequestBody DeleteRoleReqParam reqParam) {
         return roleService.deleteRole(reqParam);
     }
 
     @Operation(summary = "查询角色授权信息")
-    @GetMapping("/{id}/grants")
+    @GetMapping("/get-role-grant-info-by-role-id/{id}")
     @SaCheckPermission("system:role:query")
-    public RespInfo<RoleGrantInfo> grants(@Parameter(description = "角色 ID") @PathVariable Long id) {
+    public RespInfo<RoleGrantInfoDTO> getRoleGrantInfoByRoleId(@Parameter(description = "角色 ID") @PathVariable Long id) {
         return roleService.getRoleGrantInfoByRoleId(id);
     }
 
     @Operation(summary = "分配角色菜单")
-    @PostMapping("/grant-menus")
+    @PostMapping("/grant-role-menus")
     @OperateLog(module = "role", action = "分配角色菜单")
     @SaCheckPermission("system:role:update")
-    public RespInfo<RoleGrantInfo> grantMenus(@Valid @RequestBody GrantRoleMenusReqParam reqParam) {
+    public RespInfo<RoleGrantInfoDTO> grantRoleMenus(@Valid @RequestBody GrantRoleMenusReqParam reqParam) {
         return roleService.grantRoleMenus(reqParam);
     }
 }

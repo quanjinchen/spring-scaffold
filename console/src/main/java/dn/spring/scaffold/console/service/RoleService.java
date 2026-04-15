@@ -8,7 +8,7 @@ import dn.spring.scaffold.console.pojo.req.GrantRoleMenusReqParam;
 import dn.spring.scaffold.console.pojo.req.ListRoleReqParam;
 import dn.spring.scaffold.console.pojo.req.UpdateRoleReqParam;
 import dn.spring.scaffold.console.pojo.resp.RoleDTO;
-import dn.spring.scaffold.console.pojo.resp.RoleGrantInfo;
+import dn.spring.scaffold.console.pojo.resp.RoleGrantInfoDTO;
 
 public interface RoleService {
 
@@ -22,7 +22,7 @@ public interface RoleService {
 
     RespInfo<Void> deleteRole(DeleteRoleReqParam reqParam);
 
-    RespInfo<RoleGrantInfo> getRoleGrantInfoByRoleId(Long roleId);
+    RespInfo<RoleGrantInfoDTO> getRoleGrantInfoByRoleId(Long roleId);
 
-    RespInfo<RoleGrantInfo> grantRoleMenus(GrantRoleMenusReqParam reqParam);
+    RespInfo<RoleGrantInfoDTO> grantRoleMenus(GrantRoleMenusReqParam reqParam);
 }
