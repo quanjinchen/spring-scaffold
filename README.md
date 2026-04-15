@@ -324,10 +324,6 @@ console
 
 核心类：
 
-- `datapermission/DataPermissionConfig`
-- `datapermission/DataPermissionAnnotationInterceptor`
-- `datapermission/DataPermissionContextHolder`
-- `common/annotation/DataPermission`
 
 能力：
 

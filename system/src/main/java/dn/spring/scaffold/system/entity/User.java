@@ -2,7 +2,6 @@ package dn.spring.scaffold.system.entity;
 
 import dn.spring.scaffold.common.entity.BaseEntity;
 import dn.spring.scaffold.common.entity.EncryptField;
-import dn.spring.scaffold.common.mybatisplus.typehandler.EncryptTypeHandler;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -19,7 +18,6 @@ public class User extends BaseEntity {
 
     private String email;
 
-    @TableField(typeHandler = EncryptTypeHandler.class)
     private EncryptField phone;
 
     @TableField("org_id")

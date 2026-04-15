@@ -1,4 +1,4 @@
-package dn.spring.scaffold.common.mybatisplus.typehandler;
+package dn.spring.scaffold.framework.mybatisplus.typehandler;
 
 import dn.spring.scaffold.common.entity.EncryptField;
 import dn.spring.scaffold.common.encryptor.Encryptor;

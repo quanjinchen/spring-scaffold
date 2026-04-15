@@ -7,8 +7,7 @@ import java.util.Objects;
 
 /**
  * 业务断言接口。
- * <p>
- * 参考 IAM 项目的断言设计，允许 {@code ResultCode} 直接实现本接口，
+ * 允许 {@code ResultCode} 直接实现本接口，
  * 这样业务侧可以通过 {@code ResultCode.xxx.assert...(...)} 的方式直接完成校验并抛出异常，
  * 避免重复手写 {@code throw} 逻辑。
  */

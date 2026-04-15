@@ -2,13 +2,11 @@ package dn.spring.scaffold.framework.mybatisplus.config;
 
 import dn.spring.scaffold.common.encryptor.DefaultEncryptor;
 import dn.spring.scaffold.common.encryptor.Encryptor;
-import dn.spring.scaffold.common.mybatisplus.typehandler.AutoEnumTypeHandler;
-import dn.spring.scaffold.common.mybatisplus.typehandler.EncryptTypeHandler;
+import dn.spring.scaffold.framework.mybatisplus.typehandler.AutoEnumTypeHandler;
+import dn.spring.scaffold.framework.mybatisplus.typehandler.EncryptTypeHandler;
 import com.baomidou.mybatisplus.autoconfigure.SqlSessionFactoryBeanCustomizer;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.handler.MultiDataPermissionHandler;
-import com.baomidou.mybatisplus.extension.plugins.inner.DataPermissionInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.mybatis.spring.annotation.MapperScan;
@@ -26,18 +24,11 @@ public class MyBatisPlusConfig {
 
     public static final String CONFIG_ENCRYPTOR_IV = "project.encryptor.iv";
 
-    private final MultiDataPermissionHandler multiDataPermissionHandler;
-
-    public MyBatisPlusConfig(MultiDataPermissionHandler multiDataPermissionHandler) {
-        this.multiDataPermissionHandler = multiDataPermissionHandler;
-    }
-
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
         interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
-        interceptor.addInnerInterceptor(new DataPermissionInterceptor(multiDataPermissionHandler));
         return interceptor;
     }
 
