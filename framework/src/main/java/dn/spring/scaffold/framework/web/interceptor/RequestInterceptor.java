@@ -1,7 +1,6 @@
 package dn.spring.scaffold.framework.web.interceptor;
 
 import dn.spring.scaffold.common.constant.ResultCode;
-import dn.spring.scaffold.common.exception.BizException;
 import dn.spring.scaffold.framework.web.cache.RequestIdCache;
 import dn.spring.scaffold.framework.web.config.RequestSecurityProperties;
 import dn.spring.scaffold.framework.utils.IpUtils;
@@ -53,31 +52,27 @@ public class RequestInterceptor implements HandlerInterceptor {
 
         String requestId = request.getHeader(REQUEST_ID_HEADER_NAME);
         if (!StringUtils.hasText(requestId)) {
-            throw new BizException(ResultCode.INVALID_REQUEST_ID, "请求头 X-REQUEST-ID 不能为空");
+            ResultCode.INVALID_REQUEST_ID.assertFail("请求头 X-REQUEST-ID 不能为空");
         }
         if (requestId.length() < 8 || requestId.length() > 64) {
-            throw new BizException(ResultCode.INVALID_REQUEST_ID, "请求头 X-REQUEST-ID 长度必须在 8 到 64 之间");
+            ResultCode.INVALID_REQUEST_ID.assertFail("请求头 X-REQUEST-ID 长度必须在 8 到 64 之间");
         }
         traceContext.setRequestId(requestId);
 
         if (requestSecurityProperties.isCheckRequestIdRepeat()) {
             boolean saved = requestIdCache.saveRequestId(requestId, requestSecurityProperties.getRequestIdExpireSeconds());
-            if (!saved) {
-                throw new BizException(ResultCode.DUPLICATE_REQUEST_ID);
-            }
+            ResultCode.DUPLICATE_REQUEST_ID.assertIsTrue(saved);
         }
 
         Long timestamp = getTimestamp(request);
         if (timestamp == null) {
-            throw new BizException(ResultCode.INVALID_REQUEST_TIMESTAMP, "请求头 X-TIMESTAMP 不能为空");
+            ResultCode.INVALID_REQUEST_TIMESTAMP.assertFail("请求头 X-TIMESTAMP 不能为空");
         }
         traceContext.setClientReqTime(timestamp);
 
         if (requestSecurityProperties.isCheckTimestamp()) {
             long diff = Math.abs(System.currentTimeMillis() - timestamp.longValue());
-            if (diff > requestSecurityProperties.getTimestampToleranceMillis()) {
-                throw new BizException(ResultCode.INVALID_REQUEST_TIMESTAMP);
-            }
+            ResultCode.INVALID_REQUEST_TIMESTAMP.assertIsFalse(diff > requestSecurityProperties.getTimestampToleranceMillis());
         }
     }
 
@@ -90,7 +85,8 @@ public class RequestInterceptor implements HandlerInterceptor {
         try {
             return Long.valueOf(timestamp);
         } catch (Exception exception) {
-            throw new BizException(ResultCode.INVALID_REQUEST_TIMESTAMP, "请求头 X-TIMESTAMP 不合法");
+            ResultCode.INVALID_REQUEST_TIMESTAMP.assertFail("请求头 X-TIMESTAMP 不合法");
+            return null;
         }
     }
 }

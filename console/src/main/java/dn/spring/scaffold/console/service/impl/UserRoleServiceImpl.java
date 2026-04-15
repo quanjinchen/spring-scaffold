@@ -1,5 +1,6 @@
 package dn.spring.scaffold.console.service.impl;
 
+import dn.spring.scaffold.common.pojo.RespInfo;
 import dn.spring.scaffold.console.pojo.req.GrantUserRolesReqParam;
 import dn.spring.scaffold.console.pojo.resp.UserRoleInfo;
 import dn.spring.scaffold.console.service.RoleService;
@@ -42,8 +43,18 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     @Override
+    public RespInfo<List<UserRoleInfo>> listUserRolesResp(Long userId) {
+        return RespInfo.success(listUserRoles(userId));
+    }
+
+    @Override
     public List<UserRoleInfo> grantUserRoles(GrantUserRolesReqParam reqParam) {
         sysUserRoleManager.replaceUserRoles(reqParam.getUserId(), reqParam.getRoleIds());
         return listUserRoles(reqParam.getUserId());
+    }
+
+    @Override
+    public RespInfo<List<UserRoleInfo>> grantUserRolesResp(GrantUserRolesReqParam reqParam) {
+        return RespInfo.success(grantUserRoles(reqParam));
     }
 }

@@ -3,16 +3,14 @@ package dn.spring.scaffold.framework.redis.manager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 @Component
 public class RedisManagerImpl implements RedisManager {
 
-    private final RedisTemplate<String, Object> redisTemplate;
-
-    public RedisManagerImpl(RedisTemplate<String, Object> redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
+    @Resource
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public void set(String key, Object value) {

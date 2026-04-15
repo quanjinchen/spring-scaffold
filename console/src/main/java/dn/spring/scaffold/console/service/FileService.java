@@ -16,5 +16,5 @@ public interface FileService {
 
     void download(String fileId, HttpServletResponse response);
 
-    void delete(String fileId);
+    RespInfo<Void> delete(String fileId);
 }

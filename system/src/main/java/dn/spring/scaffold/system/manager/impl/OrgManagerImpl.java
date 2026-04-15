@@ -48,4 +48,18 @@ public class OrgManagerImpl implements OrgManager {
         orgMapper.updateById(org);
         return orgMapper.selectById(org.getId());
     }
+
+    @Override
+    public boolean existsChildren(Long orgId) {
+        if (orgId == null) {
+            return false;
+        }
+        Long count = orgMapper.selectCount(new LambdaQueryWrapper<Org>().eq(Org::getParentId, orgId));
+        return count != null && count > 0;
+    }
+
+    @Override
+    public void deleteById(Long orgId) {
+        orgMapper.deleteById(orgId);
+    }
 }

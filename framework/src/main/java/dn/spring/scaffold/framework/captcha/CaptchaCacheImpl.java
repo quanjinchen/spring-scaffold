@@ -3,16 +3,15 @@ package dn.spring.scaffold.framework.captcha;
 import dn.spring.scaffold.framework.redis.manager.RedisManager;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+
 @Component
 public class CaptchaCacheImpl implements CaptchaCache {
 
     private static final String CAPTCHA_CACHE_PREFIX = "captcha:";
 
-    private final RedisManager redisManager;
-
-    public CaptchaCacheImpl(RedisManager redisManager) {
-        this.redisManager = redisManager;
-    }
+    @Resource
+    private RedisManager redisManager;
 
     @Override
     public void put(String uuid, String code, int expireSeconds) {

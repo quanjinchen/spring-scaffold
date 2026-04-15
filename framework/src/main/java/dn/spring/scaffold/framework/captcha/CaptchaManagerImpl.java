@@ -6,17 +6,16 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+
 @Component
 public class CaptchaManagerImpl implements CaptchaManager {
 
-    private final CaptchaProperties properties;
+    @Resource
+    private CaptchaProperties properties;
 
-    private final CaptchaCache captchaCache;
-
-    public CaptchaManagerImpl(CaptchaProperties properties, CaptchaCache captchaCache) {
-        this.properties = properties;
-        this.captchaCache = captchaCache;
-    }
+    @Resource
+    private CaptchaCache captchaCache;
 
     @Override
     public Captcha generate() {

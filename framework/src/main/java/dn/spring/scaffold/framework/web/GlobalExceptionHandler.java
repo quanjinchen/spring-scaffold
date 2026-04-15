@@ -27,6 +27,9 @@ import javax.validation.ConstraintViolationException;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * 全局统一异常处理
+ */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -42,12 +45,12 @@ public class GlobalExceptionHandler {
         if (exception instanceof BizException) {
             BizException bizException = (BizException) exception;
             log.warn("biz exception: {}", bizException.getMessage(), bizException);
-            return new RespInfo<Void>(bizException.getCode(), bizException.getMessage(), null);
+            return new RespInfo<Void>(bizException.getCode(), bizException.getMsg(), null);
         }
 
         if (exception instanceof HttpRequestMethodNotSupportedException) {
             log.warn("http method not supported: {}", exception.getMessage());
-            return RespInfo.failed(ResultCode.BAD_REQUEST, "invalid request method");
+            return RespInfo.failed(ResultCode.METHOD_NOT_ALLOWED, "invalid request method");
         }
 
         if (exception instanceof HttpMessageNotReadableException) {

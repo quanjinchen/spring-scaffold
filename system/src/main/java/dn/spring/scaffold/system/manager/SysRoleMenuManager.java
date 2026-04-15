@@ -11,5 +11,11 @@ public interface SysRoleMenuManager {
 
     List<SysRoleMenu> listByRoleIds(Collection<Long> roleIds);
 
+    boolean existsByMenuId(Long menuId);
+
     void replaceRoleMenus(Long roleId, List<Long> menuIds);
+
+    void deleteByRoleId(Long roleId);
+
+    void deleteByMenuId(Long menuId);
 }

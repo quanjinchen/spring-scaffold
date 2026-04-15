@@ -16,4 +16,6 @@ public interface SysRoleManager {
     List<SysRole> listByIds(Collection<Long> roleIds);
 
     SysRole save(SysRole role);
+
+    void deleteById(Long roleId);
 }

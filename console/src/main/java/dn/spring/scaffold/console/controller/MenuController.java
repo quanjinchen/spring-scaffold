@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "菜单管理")
@@ -31,21 +32,21 @@ public class MenuController {
     @GetMapping("/tree")
     @SaCheckPermission("system:menu:query")
     public RespInfo<?> tree() {
-        return RespInfo.success(menuService.tree());
+        return menuService.treeResp();
     }
 
     @Operation(summary = "分页查询菜单")
     @GetMapping("/page")
     @SaCheckPermission("system:menu:query")
     public RespInfo<?> page(PageQuery pageQuery) {
-        return RespInfo.success(menuService.page(pageQuery));
+        return menuService.pageResp(pageQuery);
     }
 
     @Operation(summary = "根据 ID 查询菜单详情")
     @GetMapping("/{id}")
     @SaCheckPermission("system:menu:query")
     public RespInfo<?> detail(@Parameter(description = "菜单 ID") @PathVariable Long id) {
-        return RespInfo.success(menuService.detail(id));
+        return menuService.detailResp(id);
     }
 
     @Operation(summary = "保存菜单")
@@ -53,6 +54,22 @@ public class MenuController {
     @OperateLog(module = "menu", action = "save")
     @SaCheckPermission("system:menu:update")
     public RespInfo<?> save(@RequestBody SysMenu menu) {
-        return RespInfo.created(menuService.save(menu));
+        return menuService.saveResp(menu);
+    }
+
+    @Operation(summary = "编辑菜单")
+    @PostMapping("/update")
+    @OperateLog(module = "menu", action = "update")
+    @SaCheckPermission("system:menu:update")
+    public RespInfo<?> update(@RequestBody SysMenu menu) {
+        return menuService.updateResp(menu);
+    }
+
+    @Operation(summary = "删除菜单")
+    @PostMapping("/delete")
+    @OperateLog(module = "menu", action = "delete")
+    @SaCheckPermission("system:menu:delete")
+    public RespInfo<?> delete(@Parameter(description = "菜单 ID") @RequestParam Long menuId) {
+        return menuService.deleteResp(menuId);
     }
 }

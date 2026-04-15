@@ -26,9 +26,18 @@ public class SysUserRoleManagerImpl implements SysUserRoleManager {
     }
 
     @Override
+    public boolean existsByRoleId(Long roleId) {
+        if (roleId == null) {
+            return false;
+        }
+        Long count = sysUserRoleMapper.selectCount(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getRoleId, roleId));
+        return count != null && count > 0;
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void replaceUserRoles(Long userId, List<Long> roleIds) {
-        sysUserRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getUserId, userId));
+        deleteByUserId(userId);
         if (roleIds == null || roleIds.isEmpty()) {
             return;
         }
@@ -38,5 +47,15 @@ public class SysUserRoleManagerImpl implements SysUserRoleManager {
             userRole.setRoleId(roleId);
             sysUserRoleMapper.insert(userRole);
         }
+    }
+
+    @Override
+    public void deleteByUserId(Long userId) {
+        sysUserRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getUserId, userId));
+    }
+
+    @Override
+    public void deleteByRoleId(Long roleId) {
+        sysUserRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getRoleId, roleId));
     }
 }

@@ -49,4 +49,9 @@ public class SysRoleManagerImpl implements SysRoleManager {
         sysRoleMapper.updateById(role);
         return sysRoleMapper.selectById(role.getId());
     }
+
+    @Override
+    public void deleteById(Long roleId) {
+        sysRoleMapper.deleteById(roleId);
+    }
 }

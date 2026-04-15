@@ -34,9 +34,27 @@ public class OrgUserManagerImpl implements OrgUserManager {
     }
 
     @Override
+    public boolean existsByUserId(Long userId) {
+        if (userId == null) {
+            return false;
+        }
+        Long count = orgUserMapper.selectCount(new LambdaQueryWrapper<OrgUser>().eq(OrgUser::getUserId, userId));
+        return count != null && count > 0;
+    }
+
+    @Override
+    public boolean existsByOrgId(Long orgId) {
+        if (orgId == null) {
+            return false;
+        }
+        Long count = orgUserMapper.selectCount(new LambdaQueryWrapper<OrgUser>().eq(OrgUser::getOrgId, orgId));
+        return count != null && count > 0;
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void replaceOrgUsers(Long orgId, List<Long> userIds) {
-        orgUserMapper.delete(new LambdaQueryWrapper<OrgUser>().eq(OrgUser::getOrgId, orgId));
+        deleteByOrgId(orgId);
         if (userIds == null || userIds.isEmpty()) {
             return;
         }
@@ -46,5 +64,15 @@ public class OrgUserManagerImpl implements OrgUserManager {
             orgUser.setUserId(userId);
             orgUserMapper.insert(orgUser);
         }
+    }
+
+    @Override
+    public void deleteByUserId(Long userId) {
+        orgUserMapper.delete(new LambdaQueryWrapper<OrgUser>().eq(OrgUser::getUserId, userId));
+    }
+
+    @Override
+    public void deleteByOrgId(Long orgId) {
+        orgUserMapper.delete(new LambdaQueryWrapper<OrgUser>().eq(OrgUser::getOrgId, orgId));
     }
 }

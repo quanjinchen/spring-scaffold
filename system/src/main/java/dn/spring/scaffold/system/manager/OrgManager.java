@@ -15,4 +15,8 @@ public interface OrgManager {
     Org getById(Long orgId);
 
     Org save(Org org);
+
+    boolean existsChildren(Long orgId);
+
+    void deleteById(Long orgId);
 }

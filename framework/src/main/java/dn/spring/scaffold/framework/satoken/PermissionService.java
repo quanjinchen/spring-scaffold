@@ -21,6 +21,8 @@ import java.util.Set;
 @Service
 public class PermissionService {
 
+    private static final String SYSTEM_ADMIN_ROLE_CODE = "systemAdmin";
+
     @Resource
     private SysUserRoleManager sysUserRoleManager;
     @Resource
@@ -35,6 +37,11 @@ public class PermissionService {
         List<Long> roleIds = listUserRoleIds(userId);
         if (CollectionUtils.isEmpty(roleIds)) {
             return new ArrayList<String>();
+        }
+
+        if (containsSystemAdminRole(roleIds)) {
+            permissions.add("*");
+            return new ArrayList<String>(permissions);
         }
 
         List<SysRoleMenu> roleMenus = sysRoleMenuManager.listByRoleIds(roleIds);
@@ -69,6 +76,16 @@ public class PermissionService {
             }
         }
         return result;
+    }
+
+    private boolean containsSystemAdminRole(List<Long> roleIds) {
+        List<SysRole> roles = sysRoleManager.listByIds(roleIds);
+        for (SysRole role : roles) {
+            if (role != null && StringUtils.hasText(role.getCode()) && SYSTEM_ADMIN_ROLE_CODE.equals(role.getCode())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private List<Long> listUserRoleIds(Long userId) {

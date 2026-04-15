@@ -10,5 +10,13 @@ public interface OrgUserManager {
 
     List<OrgUser> listByUserId(Long userId);
 
+    boolean existsByUserId(Long userId);
+
+    boolean existsByOrgId(Long orgId);
+
     void replaceOrgUsers(Long orgId, List<Long> userIds);
+
+    void deleteByUserId(Long userId);
+
+    void deleteByOrgId(Long orgId);
 }

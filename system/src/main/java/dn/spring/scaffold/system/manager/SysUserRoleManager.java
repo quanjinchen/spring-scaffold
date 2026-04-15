@@ -8,5 +8,11 @@ public interface SysUserRoleManager {
 
     List<SysUserRole> listByUserId(Long userId);
 
+    boolean existsByRoleId(Long roleId);
+
     void replaceUserRoles(Long userId, List<Long> roleIds);
+
+    void deleteByUserId(Long userId);
+
+    void deleteByRoleId(Long roleId);
 }

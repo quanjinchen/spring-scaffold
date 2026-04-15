@@ -52,6 +52,15 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
+    public boolean existsByOrgId(Long orgId) {
+        if (orgId == null) {
+            return false;
+        }
+        Long count = userMapper.selectCount(new LambdaQueryWrapper<User>().eq(User::getOrgId, orgId));
+        return count != null && count > 0;
+    }
+
+    @Override
     public User save(User user) {
         if (user.getId() == null) {
             userMapper.insert(user);
@@ -59,5 +68,10 @@ public class UserManagerImpl implements UserManager {
         }
         userMapper.updateById(user);
         return userMapper.selectById(user.getId());
+    }
+
+    @Override
+    public void deleteById(Long userId) {
+        userMapper.deleteById(userId);
     }
 }

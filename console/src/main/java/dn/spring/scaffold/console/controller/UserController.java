@@ -38,14 +38,14 @@ public class UserController {
     @GetMapping("/page")
     @SaCheckPermission("system:user:query")
     public RespInfo<?> page(PageQuery pageQuery) {
-        return RespInfo.success(userService.page(pageQuery));
+        return userService.pageResp(pageQuery);
     }
 
     @Operation(summary = "根据 ID 查询用户详情")
     @GetMapping("/{id}")
     @SaCheckPermission("system:user:query")
     public RespInfo<?> detail(@Parameter(description = "用户 ID") @PathVariable Long id) {
-        return RespInfo.success(userService.detail(id));
+        return userService.detailResp(id);
     }
 
     @Operation(summary = "保存用户")
@@ -53,7 +53,23 @@ public class UserController {
     @OperateLog(module = "user", action = "save")
     @SaCheckPermission("system:user:update")
     public RespInfo<?> save(@RequestBody UserDetailResp user) {
-        return RespInfo.created(userService.save(user));
+        return userService.saveResp(user);
+    }
+
+    @Operation(summary = "编辑用户")
+    @PostMapping("/update")
+    @OperateLog(module = "user", action = "update")
+    @SaCheckPermission("system:user:update")
+    public RespInfo<?> update(@RequestBody UserDetailResp user) {
+        return userService.updateResp(user);
+    }
+
+    @Operation(summary = "删除用户")
+    @PostMapping("/delete")
+    @OperateLog(module = "user", action = "delete")
+    @SaCheckPermission("system:user:delete")
+    public RespInfo<?> delete(@Parameter(description = "用户 ID") @RequestParam Long userId) {
+        return userService.deleteResp(userId);
     }
 
     @Operation(summary = "重置用户密码")
@@ -61,14 +77,14 @@ public class UserController {
     @OperateLog(module = "user", action = "reset-password")
     @SaCheckPermission("system:user:resetPassword")
     public RespInfo<?> resetPassword(@Parameter(description = "用户 ID") @RequestParam Long userId) {
-        return RespInfo.success(userService.resetPassword(userId));
+        return userService.resetPasswordResp(userId);
     }
 
     @Operation(summary = "查询用户角色列表")
     @GetMapping("/{id}/roles")
     @SaCheckPermission("system:user:query")
     public RespInfo<?> listRoles(@Parameter(description = "用户 ID") @PathVariable Long id) {
-        return RespInfo.success(userRoleService.listUserRoles(id));
+        return userRoleService.listUserRolesResp(id);
     }
 
     @Operation(summary = "分配用户角色")
@@ -76,6 +92,6 @@ public class UserController {
     @OperateLog(module = "user", action = "grant-roles")
     @SaCheckPermission("system:user:update")
     public RespInfo<?> grantRoles(@Valid @RequestBody GrantUserRolesReqParam reqParam) {
-        return RespInfo.success(userRoleService.grantUserRoles(reqParam));
+        return userRoleService.grantUserRolesResp(reqParam);
     }
 }

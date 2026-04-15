@@ -110,33 +110,35 @@ create table if not exists tb_file (
 create index idx_tb_file_file_id on tb_file (file_id);
 
 insert into sys_org (id, parent_id, org_code, name, leader_name, sort_order, status, create_time, deleted)
-values (1, 0, 'ROOT', 'Headquarters', 'Template Owner', 1, 1, now(), 0)
+values (1, 0, 'ROOT', '总部', '系统负责人', 1, 1, now(), 0)
 on duplicate key update name = values(name);
 
 insert into sys_role (id, code, name, data_scope, status, remark, create_time, deleted)
-values (1, 'ADMIN', 'System Admin', 'ALL', 1, 'Bootstrap administrator role', now(), 0)
-on duplicate key update name = values(name);
+values (1, 'ADMIN', '系统管理员', 'ALL', 1, '系统初始化管理员角色', now(), 0)
+on duplicate key update name = values(name), remark = values(remark);
 
 insert into sys_user (id, username, nickname, email, phone, org_id, password, status, create_time, deleted)
-values (1, 'admin', 'Template Admin', 'admin@example.com', 'kGyYSFD/ZqsdmzSZp8sH9A==', 1, '$2a$10$7EqJtq98hPqEX7fNZaFWoOHiB7C9HfM9vDOMkMt2rt7NmBGG99nmW', 1, now(), 0)
+values (1, 'admin', '系统管理员', 'admin@example.com', 'kGyYSFD/ZqsdmzSZp8sH9A==', 1, '$2a$10$7EqJtq98hPqEX7fNZaFWoOHiB7C9HfM9vDOMkMt2rt7NmBGG99nmW', 1, now(), 0)
 on duplicate key update nickname = values(nickname);
 
 insert into sys_menu (id, parent_id, name, path, menu_type, permission_code, sort_order, visible, create_time, deleted)
 values
-    (1, 0, 'System Management', '/system', 'CATALOG', null, 1, 1, now(), 0),
-    (2, 1, 'Menu', '/system/menu', 'MENU', 'system:menu:query', 10, 1, now(), 0),
-    (3, 1, 'User', '/system/user', 'MENU', 'system:user:query', 20, 1, now(), 0),
-    (4, 1, 'Role', '/system/role', 'MENU', 'system:role:query', 30, 1, now(), 0),
-    (5, 1, 'Org', '/system/org', 'MENU', 'system:org:query', 40, 1, now(), 0),
-    (6, 1, 'Operation Log', '/system/operation-log', 'MENU', 'system:operationLog:query', 50, 1, now(), 0),
-    (7, 1, 'File Upload', '/system/file/upload', 'BUTTON', 'system:file:upload', 60, 1, now(), 0),
-    (8, 1, 'File Download', '/system/file/download', 'BUTTON', 'system:file:download', 70, 1, now(), 0),
-    (9, 1, 'File Delete', '/system/file/delete', 'BUTTON', 'system:file:delete', 80, 1, now(), 0),
-    (10, 3, 'User Save', '/system/user/save', 'BUTTON', 'system:user:update', 90, 1, now(), 0),
-    (11, 3, 'Reset Password', '/system/user/reset-password', 'BUTTON', 'system:user:resetPassword', 100, 1, now(), 0),
-    (12, 4, 'Role Save', '/system/role/save', 'BUTTON', 'system:role:update', 110, 1, now(), 0),
-    (13, 5, 'Org Save', '/system/org/save', 'BUTTON', 'system:org:update', 120, 1, now(), 0),
-    (14, 2, 'Menu Save', '/system/menu/save', 'BUTTON', 'system:menu:update', 130, 1, now(), 0)
+    (1, 0, '系统管理', '/system', 'CATALOG', null, 1, 1, now(), 0),
+    (2, 1, '菜单管理', '/system/menu', 'MENU', 'system:menu:query', 10, 1, now(), 0),
+    (3, 1, '用户管理', '/system/user', 'MENU', 'system:user:query', 20, 1, now(), 0),
+    (4, 1, '角色管理', '/system/role', 'MENU', 'system:role:query', 30, 1, now(), 0),
+    (5, 1, '组织管理', '/system/org', 'MENU', 'system:org:query', 40, 1, now(), 0),
+    (6, 1, '日志审计', '/system/operation-log', 'MENU', 'system:operationLog:query', 50, 1, now(), 0),
+    (7, 1, '文件上传', '/system/file/upload', 'BUTTON', 'system:file:upload', 60, 1, now(), 0),
+    (8, 1, '文件下载', '/system/file/download', 'BUTTON', 'system:file:download', 70, 1, now(), 0),
+    (9, 1, '文件删除', '/system/file/delete', 'BUTTON', 'system:file:delete', 80, 1, now(), 0),
+    (10, 3, '用户保存', '/system/user/save', 'BUTTON', 'system:user:update', 90, 1, now(), 0),
+    (11, 3, '重置密码', '/system/user/reset-password', 'BUTTON', 'system:user:resetPassword', 100, 1, now(), 0),
+    (12, 4, '角色保存', '/system/role/save', 'BUTTON', 'system:role:update', 110, 1, now(), 0),
+    (119, 4, '角色删除', '/system/role/delete', 'BUTTON', 'system:role:delete', 111, 1, now(), 0),
+    (13, 5, '组织保存', '/system/org/save', 'BUTTON', 'system:org:update', 120, 1, now(), 0),
+    (14, 2, '菜单保存', '/system/menu/save', 'BUTTON', 'system:menu:update', 130, 1, now(), 0),
+    (118, 2, '菜单删除', '/system/menu/delete', 'BUTTON', 'system:menu:delete', 131, 1, now(), 0)
 on duplicate key update name = values(name);
 
 insert into sys_user_role (user_id, role_id)
@@ -162,5 +164,7 @@ values
     (1, 11),
     (1, 12),
     (1, 13),
-    (1, 14)
+    (1, 14),
+    (1, 118),
+    (1, 119)
 on duplicate key update menu_id = values(menu_id);

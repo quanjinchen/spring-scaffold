@@ -54,7 +54,6 @@ public class FileController {
     @OperateLog(module = "file", action = "delete")
     @SaCheckPermission("system:file:delete")
     public RespInfo<Void> delete(@Parameter(description = "文件 ID") @RequestParam String fileId) {
-        fileService.delete(fileId);
-        return RespInfo.success(null);
+        return fileService.delete(fileId);
     }
 }

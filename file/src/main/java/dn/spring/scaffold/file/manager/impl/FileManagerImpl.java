@@ -23,6 +23,7 @@ import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -34,17 +35,14 @@ public class FileManagerImpl implements FileManager {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
-    private final FileRecordMapper fileRecordMapper;
-    private final S3Client ossClient;
-    private final FileStorageProperties fileStorageProperties;
+    @Resource
+    private FileRecordMapper fileRecordMapper;
 
-    public FileManagerImpl(FileRecordMapper fileRecordMapper,
-                           S3Client ossClient,
-                           FileStorageProperties fileStorageProperties) {
-        this.fileRecordMapper = fileRecordMapper;
-        this.ossClient = ossClient;
-        this.fileStorageProperties = fileStorageProperties;
-    }
+    @Resource
+    private S3Client ossClient;
+
+    @Resource
+    private FileStorageProperties fileStorageProperties;
 
     @Override
     public FileRecord upload(String fileName, String dataUrl) {

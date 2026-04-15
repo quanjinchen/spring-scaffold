@@ -29,27 +29,26 @@ public class AdminController {
     @Operation(summary = "获取图形验证码")
     @PostMapping("/get-captcha")
     public RespInfo<CaptchaData> getCaptcha() {
-        return RespInfo.success(adminAuthService.getCaptcha());
+        return adminAuthService.getCaptcha();
     }
 
     @Operation(summary = "账号密码登录")
     @PostMapping("/login")
     @OperateLog(module = "admin", action = "login")
     public RespInfo<SysAdminLoginData> login(@Valid @RequestBody SysAdminLoginReqParam reqParam) {
-        return RespInfo.success(adminAuthService.login(reqParam));
+        return adminAuthService.login(reqParam);
     }
 
     @Operation(summary = "获取当前登录信息")
     @PostMapping("/get-login-info")
     public RespInfo<LoginData> getLoginInfo() {
-        return RespInfo.success(adminAuthService.getLoginInfo());
+        return adminAuthService.getLoginInfo();
     }
 
     @Operation(summary = "退出登录")
     @PostMapping("/logout")
     @OperateLog(module = "admin", action = "logout")
     public RespInfo<Void> logout() {
-        adminAuthService.logout();
-        return RespInfo.success(null);
+        return adminAuthService.logout();
     }
 }

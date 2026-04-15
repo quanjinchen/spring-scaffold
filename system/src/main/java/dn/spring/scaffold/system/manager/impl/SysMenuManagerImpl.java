@@ -46,4 +46,18 @@ public class SysMenuManagerImpl implements SysMenuManager {
         sysMenuMapper.updateById(menu);
         return sysMenuMapper.selectById(menu.getId());
     }
+
+    @Override
+    public boolean existsChildren(Long menuId) {
+        if (menuId == null) {
+            return false;
+        }
+        Long count = sysMenuMapper.selectCount(new LambdaQueryWrapper<SysMenu>().eq(SysMenu::getParentId, menuId));
+        return count != null && count > 0;
+    }
+
+    @Override
+    public void deleteById(Long menuId) {
+        sysMenuMapper.deleteById(menuId);
+    }
 }

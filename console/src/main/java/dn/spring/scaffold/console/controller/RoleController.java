@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "角色管理")
@@ -37,14 +38,14 @@ public class RoleController {
     @GetMapping("/page")
     @SaCheckPermission("system:role:query")
     public RespInfo<?> page(PageQuery pageQuery) {
-        return RespInfo.success(roleService.page(pageQuery));
+        return roleService.pageResp(pageQuery);
     }
 
     @Operation(summary = "根据 ID 查询角色详情")
     @GetMapping("/{id}")
     @SaCheckPermission("system:role:query")
     public RespInfo<?> detail(@Parameter(description = "角色 ID") @PathVariable Long id) {
-        return RespInfo.success(roleService.detail(id));
+        return roleService.detailResp(id);
     }
 
     @Operation(summary = "保存角色")
@@ -52,17 +53,33 @@ public class RoleController {
     @OperateLog(module = "role", action = "save")
     @SaCheckPermission("system:role:update")
     public RespInfo<?> save(@RequestBody SysRole role) {
-        return RespInfo.created(roleService.save(role));
+        return roleService.saveResp(role);
+    }
+
+    @Operation(summary = "编辑角色")
+    @PostMapping("/update")
+    @OperateLog(module = "role", action = "update")
+    @SaCheckPermission("system:role:update")
+    public RespInfo<?> update(@RequestBody SysRole role) {
+        return roleService.updateResp(role);
+    }
+
+    @Operation(summary = "删除角色")
+    @PostMapping("/delete")
+    @OperateLog(module = "role", action = "delete")
+    @SaCheckPermission("system:role:delete")
+    public RespInfo<?> delete(@Parameter(description = "角色 ID") @RequestParam Long roleId) {
+        return roleService.deleteResp(roleId);
     }
 
     @Operation(summary = "查询角色授权信息")
     @GetMapping("/{id}/grants")
     @SaCheckPermission("system:role:query")
     public RespInfo<?> grants(@Parameter(description = "角色 ID") @PathVariable Long id) {
-        return RespInfo.success(roleService.getGrantInfo(
+        return roleService.getGrantInfoResp(
                 id,
                 menuService.listRoleMenuIds(id)
-        ));
+        );
     }
 
     @Operation(summary = "分配角色菜单")
@@ -70,6 +87,6 @@ public class RoleController {
     @OperateLog(module = "role", action = "grant-menus")
     @SaCheckPermission("system:role:update")
     public RespInfo<?> grantMenus(@Valid @RequestBody GrantRoleMenusReqParam reqParam) {
-        return RespInfo.success(roleService.grantMenus(reqParam));
+        return roleService.grantMenusResp(reqParam);
     }
 }

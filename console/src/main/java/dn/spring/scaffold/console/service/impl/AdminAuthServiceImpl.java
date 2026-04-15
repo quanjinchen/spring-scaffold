@@ -1,7 +1,7 @@
 package dn.spring.scaffold.console.service.impl;
 
 import dn.spring.scaffold.common.constant.ResultCode;
-import dn.spring.scaffold.common.exception.BizException;
+import dn.spring.scaffold.common.pojo.RespInfo;
 import dn.spring.scaffold.console.pojo.req.SysAdminLoginReqParam;
 import dn.spring.scaffold.console.pojo.resp.CaptchaData;
 import dn.spring.scaffold.console.pojo.resp.LoginData;
@@ -39,7 +39,7 @@ public class AdminAuthServiceImpl implements AdminAuthService {
     private CaptchaManager captchaManager;
 
     @Override
-    public CaptchaData getCaptcha() {
+    public RespInfo<CaptchaData> getCaptcha() {
         Captcha captcha = captchaManager.generate();
 
         CaptchaData captchaData = new CaptchaData();
@@ -48,29 +48,21 @@ public class AdminAuthServiceImpl implements AdminAuthService {
         captchaData.setImg(captcha.getImg());
         captchaData.setExpireSeconds(captcha.getExpireSeconds());
         captchaData.setTip("Use the image captcha returned by the service.");
-        return captchaData;
+        return RespInfo.success(captchaData);
     }
 
     @Override
-    public SysAdminLoginData login(SysAdminLoginReqParam reqParam) {
-        if (!captchaManager.exists(reqParam.getUuid())) {
-            throw new BizException(ResultCode.CAPTCHA_EXPIRED);
-        }
+    public RespInfo<SysAdminLoginData> login(SysAdminLoginReqParam reqParam) {
+        ResultCode.CAPTCHA_EXPIRED.assertIsTrue(captchaManager.exists(reqParam.getUuid()));
         boolean verified = captchaManager.verify(reqParam.getUuid(), reqParam.getCode(), true);
-        if (!verified) {
-            throw new BizException(ResultCode.CAPTCHA_INVALID);
-        }
+        ResultCode.CAPTCHA_INVALID.assertIsTrue(verified);
 
         User admin = loadUserByAccount(reqParam.getAccount());
         boolean accountMatched = admin.getUsername().equals(reqParam.getAccount());
-        if (!accountMatched) {
-            throw new BizException(ResultCode.ACCOUNT_OR_PASSWORD_INVALID);
-        }
+        ResultCode.ACCOUNT_OR_PASSWORD_INVALID.assertIsTrue(accountMatched);
 
         boolean passwordMatched = PASSWORD_ENCODER.matches(reqParam.getPassword(), admin.getPassword());
-        if (!passwordMatched) {
-            throw new BizException(ResultCode.ACCOUNT_OR_PASSWORD_INVALID);
-        }
+        ResultCode.ACCOUNT_OR_PASSWORD_INVALID.assertIsTrue(passwordMatched);
 
         StpUtil.login(admin.getId());
 
@@ -79,14 +71,12 @@ public class AdminAuthServiceImpl implements AdminAuthService {
         loginData.setUsername(admin.getUsername());
         loginData.setToken(StpUtil.getTokenValue());
         loginData.setSystemAdmin(true);
-        return loginData;
+        return RespInfo.success(loginData);
     }
 
     @Override
-    public LoginData getLoginInfo() {
-        if (!StpUtil.isLogin()) {
-            throw new BizException(ResultCode.NOT_LOGGED_IN);
-        }
+    public RespInfo<LoginData> getLoginInfo() {
+        ResultCode.NOT_LOGGED_IN.assertIsTrue(StpUtil.isLogin());
 
         Long loginUserId = StpUtil.getLoginIdAsLong();
         User admin = loadUserById(loginUserId);
@@ -96,28 +86,25 @@ public class AdminAuthServiceImpl implements AdminAuthService {
         loginData.setNickname(admin.getNickname());
         loginData.setRoleCodes(userRoleCodes(loginUserId));
         loginData.setRoles(roleGrantInfos(loginUserId));
-        loginData.setMenus(menuService.tree());
-        return loginData;
+        loginData.setMenus(menuService.treeByUserId(loginUserId));
+        return RespInfo.success(loginData);
     }
 
     @Override
-    public void logout() {
+    public RespInfo<Void> logout() {
         StpUtil.logout();
+        return RespInfo.success();
     }
 
     private User loadUserByAccount(String account) {
         User user = userManager.getByAccount(account);
-        if (user == null) {
-            throw new BizException(ResultCode.ACCOUNT_OR_PASSWORD_INVALID);
-        }
+        ResultCode.ACCOUNT_OR_PASSWORD_INVALID.assertNotNull(user);
         return user;
     }
 
     private User loadUserById(Long userId) {
         User user = userManager.getById(userId);
-        if (user == null) {
-            throw new BizException(ResultCode.NOT_LOGGED_IN);
-        }
+        ResultCode.NOT_LOGGED_IN.assertNotNull(user);
         return user;
     }
 

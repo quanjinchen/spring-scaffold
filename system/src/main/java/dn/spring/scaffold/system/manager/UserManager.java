@@ -17,5 +17,9 @@ public interface UserManager {
 
     List<User> listByIds(Collection<Long> userIds);
 
+    boolean existsByOrgId(Long orgId);
+
     User save(User user);
+
+    void deleteById(Long userId);
 }

@@ -115,14 +115,8 @@ values
     (107, 3, '用户删除', '/system/user/delete', 'BUTTON', 'system:user:delete', 22, 1, 1, now(), 1, now(), 0),
     (108, 5, '组织新增', '/system/org/create', 'BUTTON', 'system:org:add', 41, 1, 1, now(), 1, now(), 0),
     (109, 5, '组织删除', '/system/org/delete', 'BUTTON', 'system:org:delete', 42, 1, 1, now(), 1, now(), 0),
-    (110, 2, '菜单查询兼容权限', '/system/menu/query', 'BUTTON', 'system:sysMenu:query', 23, 1, 1, now(), 1, now(), 0),
-    (111, 2, '菜单新增兼容权限', '/system/menu/create', 'BUTTON', 'system:sysMenu:add', 24, 1, 1, now(), 1, now(), 0),
-    (112, 2, '菜单修改兼容权限', '/system/menu/update', 'BUTTON', 'system:sysMenu:update', 25, 1, 1, now(), 1, now(), 0),
-    (113, 2, '菜单删除兼容权限', '/system/menu/delete', 'BUTTON', 'system:sysMenu:delete', 26, 1, 1, now(), 1, now(), 0),
-    (114, 4, '角色查询兼容权限', '/system/role/query', 'BUTTON', 'system:sysRole:query', 31, 1, 1, now(), 1, now(), 0),
-    (115, 4, '角色新增兼容权限', '/system/role/create', 'BUTTON', 'system:sysRole:add', 32, 1, 1, now(), 1, now(), 0),
-    (116, 4, '角色修改兼容权限', '/system/role/update', 'BUTTON', 'system:sysRole:update', 33, 1, 1, now(), 1, now(), 0),
-    (117, 4, '角色删除兼容权限', '/system/role/delete', 'BUTTON', 'system:sysRole:delete', 34, 1, 1, now(), 1, now(), 0)
+    (118, 2, '菜单删除', '/system/menu/delete', 'BUTTON', 'system:menu:delete', 121, 1, 1, now(), 1, now(), 0),
+    (119, 4, '角色删除', '/system/role/delete', 'BUTTON', 'system:role:delete', 101, 1, 1, now(), 1, now(), 0)
 on duplicate key update
     parent_id = values(parent_id),
     name = values(name),
@@ -161,13 +155,7 @@ values
     (2, 107),
     (2, 108),
     (2, 109),
-    (2, 110),
-    (2, 111),
-    (2, 112),
-    (2, 113),
-    (2, 114),
-    (2, 115),
-    (2, 116),
-    (2, 117)
+    (2, 118),
+    (2, 119)
 on duplicate key update
     menu_id = values(menu_id);

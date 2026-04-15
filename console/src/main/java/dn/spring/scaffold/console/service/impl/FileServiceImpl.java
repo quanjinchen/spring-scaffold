@@ -44,7 +44,7 @@ public class FileServiceImpl implements FileService {
     public void download(String fileId, HttpServletResponse response) {
         FileRecord fileRecord = fileManager.getFileByFileId(fileId);
         if (fileRecord == null) {
-            throw new BizException(ResultCode.FILE_NOT_FOUND);
+            throw ResultCode.FILE_NOT_FOUND.newException();
         }
 
         byte[] content = fileManager.download(fileRecord.getObjectName());
@@ -63,8 +63,9 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void delete(String fileId) {
+    public RespInfo<Void> delete(String fileId) {
         fileManager.delete(fileId);
+        return RespInfo.success();
     }
 
     private FileUploadRespData buildUploadResp(String fileId, String publicUrlPrefix) {

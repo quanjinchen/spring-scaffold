@@ -38,9 +38,18 @@ public class SysRoleMenuManagerImpl implements SysRoleMenuManager {
     }
 
     @Override
+    public boolean existsByMenuId(Long menuId) {
+        if (menuId == null) {
+            return false;
+        }
+        Long count = sysRoleMenuMapper.selectCount(new LambdaQueryWrapper<SysRoleMenu>().eq(SysRoleMenu::getMenuId, menuId));
+        return count != null && count > 0;
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void replaceRoleMenus(Long roleId, List<Long> menuIds) {
-        sysRoleMenuMapper.delete(new LambdaQueryWrapper<SysRoleMenu>().eq(SysRoleMenu::getRoleId, roleId));
+        deleteByRoleId(roleId);
         if (menuIds == null || menuIds.isEmpty()) {
             return;
         }
@@ -50,5 +59,15 @@ public class SysRoleMenuManagerImpl implements SysRoleMenuManager {
             roleMenu.setMenuId(menuId);
             sysRoleMenuMapper.insert(roleMenu);
         }
+    }
+
+    @Override
+    public void deleteByRoleId(Long roleId) {
+        sysRoleMenuMapper.delete(new LambdaQueryWrapper<SysRoleMenu>().eq(SysRoleMenu::getRoleId, roleId));
+    }
+
+    @Override
+    public void deleteByMenuId(Long menuId) {
+        sysRoleMenuMapper.delete(new LambdaQueryWrapper<SysRoleMenu>().eq(SysRoleMenu::getMenuId, menuId));
     }
 }

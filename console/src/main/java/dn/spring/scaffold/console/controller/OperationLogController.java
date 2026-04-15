@@ -25,6 +25,6 @@ public class OperationLogController {
     @GetMapping("/page")
     @SaCheckPermission("system:operationLog:query")
     public RespInfo<?> page(PageQuery pageQuery) {
-        return RespInfo.success(operationLogService.page(pageQuery));
+        return operationLogService.pageResp(pageQuery);
     }
 }

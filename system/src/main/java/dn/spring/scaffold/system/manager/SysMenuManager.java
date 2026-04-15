@@ -14,4 +14,8 @@ public interface SysMenuManager {
     List<SysMenu> listByIds(Collection<Long> menuIds);
 
     SysMenu save(SysMenu menu);
+
+    boolean existsChildren(Long menuId);
+
+    void deleteById(Long menuId);
 }
