@@ -3,10 +3,10 @@ package dn.spring.scaffold.console.service.impl;
 import dn.spring.scaffold.common.pojo.RespInfo;
 import dn.spring.scaffold.console.pojo.req.GrantUserRolesReqParam;
 import dn.spring.scaffold.console.pojo.resp.UserRoleInfo;
-import dn.spring.scaffold.console.service.RoleService;
 import dn.spring.scaffold.console.service.UserRoleService;
 import dn.spring.scaffold.system.entity.SysRole;
 import dn.spring.scaffold.system.entity.SysUserRole;
+import dn.spring.scaffold.system.manager.SysRoleManager;
 import dn.spring.scaffold.system.manager.SysUserRoleManager;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +19,9 @@ import java.util.List;
 public class UserRoleServiceImpl implements UserRoleService {
 
     @Resource
-    private RoleService roleService;
-    @Resource
     private SysUserRoleManager sysUserRoleManager;
+    @Resource
+    private SysRoleManager sysRoleManager;
 
     @Override
     public List<UserRoleInfo> listUserRoles(Long userId) {
@@ -31,7 +31,10 @@ public class UserRoleServiceImpl implements UserRoleService {
         }
         List<UserRoleInfo> result = new ArrayList<UserRoleInfo>();
         for (SysUserRole userRole : userRoles) {
-            SysRole role = roleService.detail(userRole.getRoleId());
+            SysRole role = sysRoleManager.getById(userRole.getRoleId());
+            if (role == null) {
+                continue;
+            }
             UserRoleInfo roleInfo = new UserRoleInfo();
             roleInfo.setUserId(userId);
             roleInfo.setRoleId(role.getId());

@@ -16,6 +16,8 @@ public interface OrgUserManager {
 
     void replaceOrgUsers(Long orgId, List<Long> userIds);
 
+    void save(OrgUser orgUser);
+
     void deleteByUserId(Long userId);
 
     void deleteByOrgId(Long orgId);

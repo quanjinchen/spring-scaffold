@@ -4,8 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(description = "用户详情")
-public class UserDetailResp {
+@Schema(description = "用户信息")
+public class UserDTO {
 
     @Schema(description = "用户 ID")
     private Long id;

@@ -1,41 +1,30 @@
 package dn.spring.scaffold.console.service;
 
 import dn.spring.scaffold.common.page.PageData;
-import dn.spring.scaffold.common.page.PageReqParam;
 import dn.spring.scaffold.common.pojo.RespInfo;
+import dn.spring.scaffold.console.pojo.req.CreateRoleReqParam;
+import dn.spring.scaffold.console.pojo.req.DeleteRoleReqParam;
 import dn.spring.scaffold.console.pojo.req.GrantRoleMenusReqParam;
+import dn.spring.scaffold.console.pojo.req.ListRoleReqParam;
+import dn.spring.scaffold.console.pojo.req.UpdateRoleReqParam;
+import dn.spring.scaffold.console.pojo.resp.RoleDTO;
 import dn.spring.scaffold.console.pojo.resp.RoleGrantInfo;
-import dn.spring.scaffold.system.entity.SysRole;
-
-import java.util.List;
 
 public interface RoleService {
 
-    PageData<SysRole> page(PageReqParam reqParam);
+    RespInfo<PageData<RoleDTO>> listRole(ListRoleReqParam reqParam);
 
-    RespInfo<PageData<SysRole>> pageResp(PageReqParam reqParam);
+    RespInfo<RoleDTO> getRoleById(Long roleId);
 
-    SysRole detail(Long id);
+    RespInfo<RoleDTO> saveRole(CreateRoleReqParam reqParam);
 
-    RespInfo<SysRole> detailResp(Long id);
+    RespInfo<RoleDTO> updateRole(UpdateRoleReqParam reqParam);
 
-    SysRole save(SysRole role);
+    RespInfo<Void> deleteRole(DeleteRoleReqParam reqParam);
 
-    RespInfo<SysRole> saveResp(SysRole role);
+    RoleGrantInfo getGrantInfo(Long roleId);
 
-    SysRole update(SysRole role);
+    RespInfo<RoleGrantInfo> getRoleGrantInfo(Long roleId);
 
-    RespInfo<SysRole> updateResp(SysRole role);
-
-    void delete(Long roleId);
-
-    RespInfo<Void> deleteResp(Long roleId);
-
-    RoleGrantInfo getGrantInfo(Long roleId, List<Long> menuIds);
-
-    RespInfo<RoleGrantInfo> getGrantInfoResp(Long roleId, List<Long> menuIds);
-
-    RoleGrantInfo grantMenus(GrantRoleMenusReqParam reqParam);
-
-    RespInfo<RoleGrantInfo> grantMenusResp(GrantRoleMenusReqParam reqParam);
+    RespInfo<RoleGrantInfo> grantRoleMenus(GrantRoleMenusReqParam reqParam);
 }

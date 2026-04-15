@@ -1,33 +1,26 @@
 package dn.spring.scaffold.console.service;
 
 import dn.spring.scaffold.common.page.PageData;
-import dn.spring.scaffold.common.page.PageReqParam;
 import dn.spring.scaffold.common.pojo.RespInfo;
-import dn.spring.scaffold.console.pojo.resp.UserDetailResp;
+import dn.spring.scaffold.console.pojo.req.CreateUserReqParam;
+import dn.spring.scaffold.console.pojo.req.DeleteUserReqParam;
+import dn.spring.scaffold.console.pojo.req.GetUserByIdReqParam;
+import dn.spring.scaffold.console.pojo.req.ListUserReqParam;
+import dn.spring.scaffold.console.pojo.req.ResetUserPasswordReqParam;
+import dn.spring.scaffold.console.pojo.req.UpdateUserReqParam;
+import dn.spring.scaffold.console.pojo.resp.UserDTO;
 
 public interface UserService {
 
-    PageData<UserDetailResp> page(PageReqParam reqParam);
+    RespInfo<Void> createUser(CreateUserReqParam createUserReqParam);
 
-    RespInfo<PageData<UserDetailResp>> pageResp(PageReqParam reqParam);
+    RespInfo<UserDTO> getUserById(GetUserByIdReqParam getUserByIdReqParam);
 
-    UserDetailResp detail(Long id);
+    RespInfo<PageData<UserDTO>> listUser(ListUserReqParam listUserReqParam);
 
-    RespInfo<UserDetailResp> detailResp(Long id);
+    RespInfo<Void> updateUser(UpdateUserReqParam updateUserReqParam);
 
-    UserDetailResp save(UserDetailResp userDetailResp);
+    RespInfo<Void> deleteUser(DeleteUserReqParam deleteUserReqParam);
 
-    RespInfo<UserDetailResp> saveResp(UserDetailResp userDetailResp);
-
-    UserDetailResp update(UserDetailResp userDetailResp);
-
-    RespInfo<UserDetailResp> updateResp(UserDetailResp userDetailResp);
-
-    void delete(Long userId);
-
-    RespInfo<Void> deleteResp(Long userId);
-
-    String resetPassword(Long userId);
-
-    RespInfo<String> resetPasswordResp(Long userId);
+    RespInfo<Void> resetUserPassword(ResetUserPasswordReqParam resetUserPasswordReqParam);
 }

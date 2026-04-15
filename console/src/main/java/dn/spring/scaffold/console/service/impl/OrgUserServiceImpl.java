@@ -2,11 +2,11 @@ package dn.spring.scaffold.console.service.impl;
 
 import dn.spring.scaffold.console.pojo.req.GrantOrgUsersReqParam;
 import dn.spring.scaffold.console.pojo.resp.OrgUserInfo;
-import dn.spring.scaffold.console.pojo.resp.UserDetailResp;
 import dn.spring.scaffold.console.service.OrgUserService;
-import dn.spring.scaffold.console.service.UserService;
 import dn.spring.scaffold.system.entity.OrgUser;
+import dn.spring.scaffold.system.entity.User;
 import dn.spring.scaffold.system.manager.OrgUserManager;
+import dn.spring.scaffold.system.manager.UserManager;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -20,7 +20,7 @@ public class OrgUserServiceImpl implements OrgUserService {
     @Resource
     private OrgUserManager orgUserManager;
     @Resource
-    private UserService userService;
+    private UserManager userManager;
 
     @Override
     public List<OrgUserInfo> listOrgUsers(Long orgId) {
@@ -31,7 +31,10 @@ public class OrgUserServiceImpl implements OrgUserService {
 
         List<OrgUserInfo> result = new ArrayList<OrgUserInfo>();
         for (OrgUser orgUser : orgUsers) {
-            UserDetailResp user = userService.detail(orgUser.getUserId());
+            User user = userManager.getById(orgUser.getUserId());
+            if (user == null) {
+                continue;
+            }
             OrgUserInfo info = new OrgUserInfo();
             info.setOrgId(orgId);
             info.setUserId(user.getId());
@@ -50,7 +53,10 @@ public class OrgUserServiceImpl implements OrgUserService {
         }
 
         List<OrgUserInfo> result = new ArrayList<OrgUserInfo>();
-        UserDetailResp user = userService.detail(userId);
+        User user = userManager.getById(userId);
+        if (user == null) {
+            return Collections.emptyList();
+        }
         for (OrgUser orgUser : orgUsers) {
             OrgUserInfo info = new OrgUserInfo();
             info.setOrgId(orgUser.getOrgId());

@@ -5,9 +5,11 @@ import dn.spring.scaffold.common.page.PageReqParam;
 import dn.spring.scaffold.system.entity.User;
 import dn.spring.scaffold.system.manager.UserManager;
 import dn.spring.scaffold.system.mapper.UserMapper;
+import dn.spring.scaffold.system.pojo.query.ListUserQuery;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.Collection;
@@ -44,11 +46,54 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
+    public User getByUsername(String username) {
+        if (!StringUtils.hasText(username)) {
+            return null;
+        }
+        return userMapper.selectOne(new LambdaQueryWrapper<User>()
+                .eq(User::getUsername, username)
+                .last("limit 1"));
+    }
+
+    @Override
+    public User getByEmail(String email) {
+        if (!StringUtils.hasText(email)) {
+            return null;
+        }
+        return userMapper.selectOne(new LambdaQueryWrapper<User>()
+                .eq(User::getEmail, email)
+                .last("limit 1"));
+    }
+
+    @Override
+    public User getByPhone(String phone) {
+        if (!StringUtils.hasText(phone)) {
+            return null;
+        }
+        return userMapper.selectOne(new LambdaQueryWrapper<User>()
+                .eq(User::getPhone, new EncryptField(phone))
+                .last("limit 1"));
+    }
+
+    @Override
     public List<User> listByIds(Collection<Long> userIds) {
         if (userIds == null || userIds.isEmpty()) {
             return Collections.emptyList();
         }
         return userMapper.selectBatchIds(userIds);
+    }
+
+    @Override
+    public List<User> listUsers(ListUserQuery query) {
+        return userMapper.selectList(buildListUserQueryWrapper(query));
+    }
+
+    @Override
+    public Page<User> page(PageReqParam reqParam, ListUserQuery query) {
+        return userMapper.selectPage(
+                new Page<User>(reqParam.getPageNum(), reqParam.getPageSize()),
+                buildListUserQueryWrapper(query)
+        );
     }
 
     @Override
@@ -73,5 +118,30 @@ public class UserManagerImpl implements UserManager {
     @Override
     public void deleteById(Long userId) {
         userMapper.deleteById(userId);
+    }
+
+    private LambdaQueryWrapper<User> buildListUserQueryWrapper(ListUserQuery query) {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<User>()
+                .orderByAsc(User::getId);
+        if (query == null) {
+            return queryWrapper;
+        }
+        if (StringUtils.hasText(query.getKeyword())) {
+            queryWrapper.and(wrapper -> wrapper
+                    .like(User::getUsername, query.getKeyword())
+                    .or()
+                    .like(User::getNickname, query.getKeyword())
+                    .or()
+                    .like(User::getEmail, query.getKeyword())
+                    .or()
+                    .eq(User::getPhone, new EncryptField(query.getKeyword())));
+        }
+        if (query.getOrgId() != null) {
+            queryWrapper.eq(User::getOrgId, query.getOrgId());
+        }
+        if (query.getStatus() != null) {
+            queryWrapper.eq(User::getStatus, query.getStatus());
+        }
+        return queryWrapper;
     }
 }

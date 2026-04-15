@@ -67,6 +67,11 @@ public class OrgUserManagerImpl implements OrgUserManager {
     }
 
     @Override
+    public void save(OrgUser orgUser) {
+        orgUserMapper.insert(orgUser);
+    }
+
+    @Override
     public void deleteByUserId(Long userId) {
         orgUserMapper.delete(new LambdaQueryWrapper<OrgUser>().eq(OrgUser::getUserId, userId));
     }
