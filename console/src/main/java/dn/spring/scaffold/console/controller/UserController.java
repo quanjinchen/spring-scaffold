@@ -8,9 +8,11 @@ import dn.spring.scaffold.console.pojo.req.GetUserByIdReqParam;
 import dn.spring.scaffold.console.pojo.req.ListUserReqParam;
 import dn.spring.scaffold.console.pojo.req.ResetUserPasswordReqParam;
 import dn.spring.scaffold.console.pojo.req.UpdateUserReqParam;
+import dn.spring.scaffold.console.pojo.resp.UserDTO;
 import dn.spring.scaffold.console.service.UserService;
 import dn.spring.scaffold.framework.operationlog.annotation.OperateLog;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,17 +56,12 @@ public class UserController {
     }
 
     @Operation(summary = "根据 ID 查询用户")
-    @PostMapping("/get-user-by-id")
+    @GetMapping("/get-user-by-id/{id}")
     @SaCheckPermission("system:user:query")
-    public RespInfo<?> getUserById(@Valid @RequestBody GetUserByIdReqParam getUserByIdReqParam) {
-        return userService.getUserById(getUserByIdReqParam);
-    }
-
-    @Operation(summary = "查询用户列表")
-    @PostMapping("/list-user")
-    @SaCheckPermission("system:user:query")
-    public RespInfo<?> listUser(@Valid @RequestBody ListUserReqParam listUserReqParam) {
-        return userService.listUser(listUserReqParam);
+    public RespInfo<UserDTO> getUserById(@Parameter(description = "用户 ID") @PathVariable Long id) {
+        GetUserByIdReqParam reqParam = new GetUserByIdReqParam();
+        reqParam.setUserId(id);
+        return userService.getUserById(reqParam);
     }
 
     @Operation(summary = "重置用户密码")
@@ -75,51 +72,10 @@ public class UserController {
         return userService.resetUserPassword(resetUserPasswordReqParam);
     }
 
-    @Operation(summary = "根据 ID 查询用户详情")
-    @GetMapping("/{id}")
-    @SaCheckPermission("system:user:query")
-    public RespInfo<?> detail(@PathVariable Long id) {
-        GetUserByIdReqParam reqParam = new GetUserByIdReqParam();
-        reqParam.setUserId(id);
-        return userService.getUserById(reqParam);
-    }
-
     @Operation(summary = "分页查询用户")
-    @PostMapping("/page")
+    @PostMapping("/list-user")
     @SaCheckPermission("system:user:query")
-    public RespInfo<?> page(@Valid @RequestBody ListUserReqParam reqParam) {
+    public RespInfo<?> listUser(@Valid @RequestBody ListUserReqParam reqParam) {
         return userService.listUser(reqParam);
-    }
-
-    @Operation(summary = "保存用户")
-    @PostMapping("/save")
-    @OperateLog(module = "user", action = "保存用户")
-    @SaCheckPermission("system:user:update")
-    public RespInfo<Void> save(@Valid @RequestBody CreateUserReqParam createUserReqParam) {
-        return userService.createUser(createUserReqParam);
-    }
-
-    @Operation(summary = "编辑用户")
-    @PostMapping("/update")
-    @OperateLog(module = "user", action = "编辑用户")
-    @SaCheckPermission("system:user:update")
-    public RespInfo<Void> update(@Valid @RequestBody UpdateUserReqParam updateUserReqParam) {
-        return userService.updateUser(updateUserReqParam);
-    }
-
-    @Operation(summary = "删除用户")
-    @PostMapping("/delete")
-    @OperateLog(module = "user", action = "删除用户")
-    @SaCheckPermission("system:user:delete")
-    public RespInfo<Void> delete(@Valid @RequestBody DeleteUserReqParam reqParam) {
-        return userService.deleteUser(reqParam);
-    }
-
-    @Operation(summary = "重置用户密码")
-    @PostMapping("/reset-password")
-    @OperateLog(module = "user", action = "重置用户密码")
-    @SaCheckPermission("system:user:resetPassword")
-    public RespInfo<Void> resetPassword(@Valid @RequestBody ResetUserPasswordReqParam reqParam) {
-        return userService.resetUserPassword(reqParam);
     }
 }

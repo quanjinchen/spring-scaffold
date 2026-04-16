@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Component
 public class OperationLogManagerImpl implements OperationLogManager {
@@ -24,6 +25,13 @@ public class OperationLogManagerImpl implements OperationLogManager {
                         .orderByDesc(OperationLog::getRequestTime)
                         .orderByDesc(OperationLog::getId)
         );
+    }
+
+    @Override
+    public List<OperationLog> listOperationLogs() {
+        return operationLogMapper.selectList(new LambdaQueryWrapper<OperationLog>()
+                .orderByDesc(OperationLog::getRequestTime)
+                .orderByDesc(OperationLog::getId));
     }
 
     @Override

@@ -9,11 +9,15 @@ import dn.spring.scaffold.console.pojo.resp.RoleGrantInfoDTO;
 import dn.spring.scaffold.console.pojo.resp.SysAdminLoginData;
 import dn.spring.scaffold.console.service.AdminAuthService;
 import dn.spring.scaffold.console.service.MenuService;
-import dn.spring.scaffold.console.service.RoleService;
-import dn.spring.scaffold.console.service.UserRoleService;
 import dn.spring.scaffold.framework.captcha.Captcha;
 import dn.spring.scaffold.framework.captcha.CaptchaManager;
+import dn.spring.scaffold.system.entity.SysRole;
+import dn.spring.scaffold.system.entity.SysRoleMenu;
+import dn.spring.scaffold.system.entity.SysUserRole;
 import dn.spring.scaffold.system.entity.User;
+import dn.spring.scaffold.system.manager.SysRoleManager;
+import dn.spring.scaffold.system.manager.SysRoleMenuManager;
+import dn.spring.scaffold.system.manager.SysUserRoleManager;
 import dn.spring.scaffold.system.manager.UserManager;
 import cn.dev33.satoken.stp.StpUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,13 +32,15 @@ public class AdminAuthServiceImpl implements AdminAuthService {
     private static final BCryptPasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
     @Resource
-    private RoleService roleService;
-    @Resource
     private MenuService menuService;
     @Resource
-    private UserRoleService userRoleService;
-    @Resource
     private UserManager userManager;
+    @Resource
+    private SysUserRoleManager sysUserRoleManager;
+    @Resource
+    private SysRoleManager sysRoleManager;
+    @Resource
+    private SysRoleMenuManager sysRoleMenuManager;
     @Resource
     private CaptchaManager captchaManager;
 
@@ -57,7 +63,8 @@ public class AdminAuthServiceImpl implements AdminAuthService {
         boolean verified = captchaManager.verify(reqParam.getUuid(), reqParam.getCode(), true);
         ResultCode.CAPTCHA_INVALID.assertIsTrue(verified);
 
-        User admin = loadUserByAccount(reqParam.getAccount());
+        User admin = userManager.getByAccount(reqParam.getAccount());
+        ResultCode.ACCOUNT_OR_PASSWORD_INVALID.assertNotNull(admin);
         boolean accountMatched = admin.getUsername().equals(reqParam.getAccount());
         ResultCode.ACCOUNT_OR_PASSWORD_INVALID.assertIsTrue(accountMatched);
 
@@ -79,14 +86,40 @@ public class AdminAuthServiceImpl implements AdminAuthService {
         ResultCode.NOT_LOGGED_IN.assertIsTrue(StpUtil.isLogin());
 
         Long loginUserId = StpUtil.getLoginIdAsLong();
-        User admin = loadUserById(loginUserId);
+        User admin = userManager.getById(loginUserId);
+        ResultCode.NOT_LOGGED_IN.assertNotNull(admin);
         LoginData loginData = new LoginData();
         loginData.setAdminId(admin.getId());
         loginData.setUsername(admin.getUsername());
         loginData.setNickname(admin.getNickname());
-        loginData.setRoleCodes(userRoleCodes(loginUserId));
-        loginData.setRoles(roleGrantInfos(loginUserId));
-        loginData.setMenus(menuService.treeByUserId(loginUserId));
+
+        java.util.List<SysUserRole> userRoles = sysUserRoleManager.listByUserId(loginUserId);
+        java.util.List<RoleGrantInfoDTO> roleGrantInfoDTOList = new java.util.ArrayList<RoleGrantInfoDTO>(userRoles.size());
+        java.util.List<String> roleCodes = new java.util.ArrayList<String>(userRoles.size());
+        for (SysUserRole userRole : userRoles) {
+            SysRole role = sysRoleManager.getById(userRole.getRoleId());
+            if (role == null) {
+                continue;
+            }
+
+            RoleGrantInfoDTO roleGrantInfoDTO = new RoleGrantInfoDTO();
+            roleGrantInfoDTO.setRoleId(role.getId());
+            roleGrantInfoDTO.setRoleCode(role.getCode());
+            roleGrantInfoDTO.setRoleName(role.getName());
+
+            java.util.List<SysRoleMenu> roleMenus = sysRoleMenuManager.listByRoleId(role.getId());
+            java.util.List<Long> menuIds = new java.util.ArrayList<Long>(roleMenus.size());
+            for (SysRoleMenu roleMenu : roleMenus) {
+                menuIds.add(roleMenu.getMenuId());
+            }
+            roleGrantInfoDTO.setMenuIds(menuIds);
+            roleGrantInfoDTOList.add(roleGrantInfoDTO);
+            roleCodes.add(role.getCode());
+        }
+
+        loginData.setRoleCodes(roleCodes);
+        loginData.setRoles(roleGrantInfoDTOList);
+        loginData.setMenus(menuService.listMenuTreeByUserId(loginUserId));
         return RespInfo.success(loginData);
     }
 
@@ -94,34 +127,5 @@ public class AdminAuthServiceImpl implements AdminAuthService {
     public RespInfo<Void> logout() {
         StpUtil.logout();
         return RespInfo.success();
-    }
-
-    private User loadUserByAccount(String account) {
-        User user = userManager.getByAccount(account);
-        ResultCode.ACCOUNT_OR_PASSWORD_INVALID.assertNotNull(user);
-        return user;
-    }
-
-    private User loadUserById(Long userId) {
-        User user = userManager.getById(userId);
-        ResultCode.NOT_LOGGED_IN.assertNotNull(user);
-        return user;
-    }
-
-    private java.util.List<String> userRoleCodes(Long userId) {
-        return roleGrantInfos(userId).stream().map(RoleGrantInfoDTO::getRoleCode).collect(Collectors.toList());
-    }
-
-    private java.util.List<RoleGrantInfoDTO> roleGrantInfos(Long userId) {
-        java.util.List<dn.spring.scaffold.console.pojo.resp.UserRoleInfo> userRoles = userRoleService.listUserRoles(userId);
-        if (userRoles.isEmpty()) {
-            return java.util.Collections.emptyList();
-        }
-
-        java.util.List<RoleGrantInfoDTO> result = new java.util.ArrayList<RoleGrantInfoDTO>();
-        for (dn.spring.scaffold.console.pojo.resp.UserRoleInfo userRole : userRoles) {
-            result.add(roleService.getRoleGrantInfoByRoleId(userRole.getRoleId()).getData());
-        }
-        return result;
     }
 }

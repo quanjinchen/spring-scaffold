@@ -1,5 +1,7 @@
 package dn.spring.scaffold.console.service.impl;
 
+import dn.spring.scaffold.common.pojo.RespInfo;
+import dn.spring.scaffold.console.pojo.req.GetOrgUserListReqParam;
 import dn.spring.scaffold.console.pojo.req.GrantOrgUsersReqParam;
 import dn.spring.scaffold.console.pojo.resp.OrgUserInfo;
 import dn.spring.scaffold.console.service.OrgUserService;
@@ -23,7 +25,17 @@ public class OrgUserServiceImpl implements OrgUserService {
     private UserManager userManager;
 
     @Override
-    public List<OrgUserInfo> listOrgUsers(Long orgId) {
+    public RespInfo<List<OrgUserInfo>> listOrgUser(GetOrgUserListReqParam reqParam) {
+        return RespInfo.success(buildOrgUserInfoList(reqParam.getOrgId()));
+    }
+
+    @Override
+    public RespInfo<List<OrgUserInfo>> grantOrgUsers(GrantOrgUsersReqParam reqParam) {
+        orgUserManager.replaceOrgUsers(reqParam.getOrgId(), reqParam.getUserIds());
+        return RespInfo.success(buildOrgUserInfoList(reqParam.getOrgId()));
+    }
+
+    private List<OrgUserInfo> buildOrgUserInfoList(Long orgId) {
         List<OrgUser> orgUsers = orgUserManager.listByOrgId(orgId);
         if (orgUsers.isEmpty()) {
             return Collections.emptyList();
@@ -43,34 +55,5 @@ public class OrgUserServiceImpl implements OrgUserService {
             result.add(info);
         }
         return result;
-    }
-
-    @Override
-    public List<OrgUserInfo> listUserOrgsUsers(Long userId) {
-        List<OrgUser> orgUsers = orgUserManager.listByUserId(userId);
-        if (orgUsers.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        List<OrgUserInfo> result = new ArrayList<OrgUserInfo>();
-        User user = userManager.getById(userId);
-        if (user == null) {
-            return Collections.emptyList();
-        }
-        for (OrgUser orgUser : orgUsers) {
-            OrgUserInfo info = new OrgUserInfo();
-            info.setOrgId(orgUser.getOrgId());
-            info.setUserId(userId);
-            info.setUsername(user.getUsername());
-            info.setNickname(user.getNickname());
-            result.add(info);
-        }
-        return result;
-    }
-
-    @Override
-    public List<OrgUserInfo> grantOrgUsers(GrantOrgUsersReqParam reqParam) {
-        orgUserManager.replaceOrgUsers(reqParam.getOrgId(), reqParam.getUserIds());
-        return listOrgUsers(reqParam.getOrgId());
     }
 }

@@ -1,6 +1,7 @@
 package dn.spring.scaffold.console.controller;
 
 import dn.spring.scaffold.common.pojo.RespInfo;
+import dn.spring.scaffold.console.pojo.req.DeleteFileReqParam;
 import dn.spring.scaffold.console.pojo.resp.FileUploadRespData;
 import dn.spring.scaffold.console.service.FileService;
 import dn.spring.scaffold.framework.operationlog.annotation.OperateLog;
@@ -14,10 +15,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import javax.servlet.http.HttpServletResponse;
 
 @Tag(name = "文件管理")
@@ -35,25 +38,25 @@ public class FileController {
     }
 
     @Operation(summary = "上传文件")
-    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @OperateLog(module = "file", action = "upload")
+    @PostMapping(value = "/upload-file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @OperateLog(module = "file", action = "上传文件")
     @SaCheckPermission("system:file:upload")
-    public RespInfo<FileUploadRespData> upload(@RequestParam("file") MultipartFile file) {
+    public RespInfo<FileUploadRespData> uploadFile(@RequestParam("file") MultipartFile file) {
         return fileService.upload(file, publicUrlPrefix);
     }
 
     @Operation(summary = "下载文件")
-    @GetMapping("/{fileId}")
+    @GetMapping("/download-file/{fileId}")
     @SaCheckPermission("system:file:download")
-    public void download(@Parameter(description = "文件 ID") @PathVariable String fileId, HttpServletResponse response) {
+    public void downloadFile(@Parameter(description = "文件 ID") @PathVariable String fileId, HttpServletResponse response) {
         fileService.download(fileId, response);
     }
 
     @Operation(summary = "删除文件")
-    @PostMapping("/delete")
-    @OperateLog(module = "file", action = "delete")
+    @PostMapping("/delete-file")
+    @OperateLog(module = "file", action = "删除文件")
     @SaCheckPermission("system:file:delete")
-    public RespInfo<Void> delete(@Parameter(description = "文件 ID") @RequestParam String fileId) {
-        return fileService.delete(fileId);
+    public RespInfo<Void> deleteFile(@Valid @RequestBody DeleteFileReqParam reqParam) {
+        return fileService.deleteFile(reqParam);
     }
 }

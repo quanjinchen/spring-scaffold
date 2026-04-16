@@ -1,23 +1,28 @@
 package dn.spring.scaffold.console.controller;
 
-import dn.spring.scaffold.common.page.PageReqParam;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import dn.spring.scaffold.common.page.PageData;
 import dn.spring.scaffold.common.pojo.RespInfo;
-import dn.spring.scaffold.console.pojo.req.GrantOrgUsersReqParam;
+import dn.spring.scaffold.console.pojo.req.CreateOrgReqParam;
+import dn.spring.scaffold.console.pojo.req.DeleteOrgReqParam;
+import dn.spring.scaffold.console.pojo.req.GetOrgByIdReqParam;
+import dn.spring.scaffold.console.pojo.req.ListOrgReqParam;
+import dn.spring.scaffold.console.pojo.req.UpdateOrgReqParam;
+import dn.spring.scaffold.console.pojo.resp.OrgDTO;
 import dn.spring.scaffold.console.service.OrgService;
 import dn.spring.scaffold.framework.operationlog.annotation.OperateLog;
-import dn.spring.scaffold.system.entity.Org;
-import cn.dev33.satoken.annotation.SaCheckPermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import javax.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @Tag(name = "组织机构管理")
 @RestController
@@ -30,63 +35,50 @@ public class OrgController {
         this.orgService = orgService;
     }
 
-    @Operation(summary = "查询组织机构树")
-    @GetMapping("/tree")
+    @Operation(summary = "查询组织树")
+    @PostMapping("/list-all-org-tree")
     @SaCheckPermission("system:org:query")
-    public RespInfo<?> tree() {
-        return orgService.treeResp();
+    public RespInfo<List<OrgDTO>> listAllOrgTree() {
+        return orgService.listAllOrgTree();
     }
 
-    @Operation(summary = "分页查询组织机构")
-    @GetMapping("/page")
+    @Operation(summary = "分页查询组织")
+    @PostMapping("/list-org")
     @SaCheckPermission("system:org:query")
-    public RespInfo<?> page(@Valid PageReqParam reqParam) {
-        return orgService.pageResp(reqParam);
+    public RespInfo<PageData<OrgDTO>> listOrg(@Valid @RequestBody ListOrgReqParam reqParam) {
+        return orgService.listOrg(reqParam);
     }
 
-    @Operation(summary = "根据 ID 查询组织机构详情")
-    @GetMapping("/{id}")
+    @Operation(summary = "根据 ID 查询组织详情")
+    @GetMapping("/get-org-by-id/{id}")
     @SaCheckPermission("system:org:query")
-    public RespInfo<?> detail(@Parameter(description = "组织机构 ID") @PathVariable Long id) {
-        return orgService.detailResp(id);
+    public RespInfo<OrgDTO> getOrgById(@Parameter(description = "组织 ID") @PathVariable Long id) {
+        GetOrgByIdReqParam reqParam = new GetOrgByIdReqParam();
+        reqParam.setOrgId(id);
+        return orgService.getOrgById(reqParam);
     }
 
-    @Operation(summary = "保存组织机构")
-    @PostMapping("/save")
-    @OperateLog(module = "org", action = "save")
+    @Operation(summary = "创建组织")
+    @PostMapping("/create-org")
+    @OperateLog(module = "org", action = "创建组织")
     @SaCheckPermission("system:org:update")
-    public RespInfo<?> save(@RequestBody Org org) {
-        return orgService.saveResp(org);
+    public RespInfo<OrgDTO> createOrg(@Valid @RequestBody CreateOrgReqParam reqParam) {
+        return orgService.createOrg(reqParam);
     }
 
-    @Operation(summary = "编辑组织机构")
-    @PostMapping("/update")
-    @OperateLog(module = "org", action = "update")
+    @Operation(summary = "更新组织")
+    @PostMapping("/update-org")
+    @OperateLog(module = "org", action = "更新组织")
     @SaCheckPermission("system:org:update")
-    public RespInfo<?> update(@RequestBody Org org) {
-        return orgService.updateResp(org);
+    public RespInfo<OrgDTO> updateOrg(@Valid @RequestBody UpdateOrgReqParam reqParam) {
+        return orgService.updateOrg(reqParam);
     }
 
-    @Operation(summary = "删除组织机构")
-    @PostMapping("/delete")
-    @OperateLog(module = "org", action = "delete")
+    @Operation(summary = "删除组织")
+    @PostMapping("/delete-org")
+    @OperateLog(module = "org", action = "删除组织")
     @SaCheckPermission("system:org:delete")
-    public RespInfo<?> delete(@Parameter(description = "组织机构 ID") @RequestParam Long orgId) {
-        return orgService.deleteResp(orgId);
-    }
-
-    @Operation(summary = "查询组织机构下的用户")
-    @GetMapping("/users")
-    @SaCheckPermission("system:org:query")
-    public RespInfo<?> listOrgUsers(@Parameter(description = "组织机构 ID") @RequestParam Long orgId) {
-        return orgService.listOrgUsersResp(orgId);
-    }
-
-    @Operation(summary = "分配组织机构用户")
-    @PostMapping("/grant-users")
-    @OperateLog(module = "org", action = "grant-users")
-    @SaCheckPermission("system:org:update")
-    public RespInfo<?> grantOrgUsers(@RequestBody GrantOrgUsersReqParam reqParam) {
-        return orgService.grantOrgUsersResp(reqParam);
+    public RespInfo<Void> deleteOrg(@Valid @RequestBody DeleteOrgReqParam reqParam) {
+        return orgService.deleteOrg(reqParam);
     }
 }

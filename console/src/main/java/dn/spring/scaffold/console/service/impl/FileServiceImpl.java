@@ -3,6 +3,7 @@ package dn.spring.scaffold.console.service.impl;
 import dn.spring.scaffold.common.constant.ResultCode;
 import dn.spring.scaffold.common.exception.BizException;
 import dn.spring.scaffold.common.pojo.RespInfo;
+import dn.spring.scaffold.console.pojo.req.DeleteFileReqParam;
 import dn.spring.scaffold.console.pojo.resp.FileUploadRespData;
 import dn.spring.scaffold.console.service.FileService;
 import dn.spring.scaffold.file.entity.FileRecord;
@@ -63,8 +64,8 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public RespInfo<Void> delete(String fileId) {
-        fileManager.delete(fileId);
+    public RespInfo<Void> deleteFile(DeleteFileReqParam reqParam) {
+        fileManager.delete(reqParam.getFileId());
         return RespInfo.success();
     }
 

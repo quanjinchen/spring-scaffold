@@ -1,6 +1,7 @@
 package dn.spring.scaffold.console.service;
 
 import dn.spring.scaffold.common.pojo.RespInfo;
+import dn.spring.scaffold.console.pojo.req.DeleteFileReqParam;
 import dn.spring.scaffold.console.pojo.resp.FileUploadRespData;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,5 +17,5 @@ public interface FileService {
 
     void download(String fileId, HttpServletResponse response);
 
-    RespInfo<Void> delete(String fileId);
+    RespInfo<Void> deleteFile(DeleteFileReqParam reqParam);
 }

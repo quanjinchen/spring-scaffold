@@ -1,18 +1,26 @@
 package dn.spring.scaffold.console.service.impl;
 
 import dn.spring.scaffold.common.page.PageData;
-import dn.spring.scaffold.common.page.PageReqParam;
-import dn.spring.scaffold.common.page.PageUtils;
 import dn.spring.scaffold.common.constant.ResultCode;
 import dn.spring.scaffold.common.pojo.RespInfo;
+import dn.spring.scaffold.console.pojo.req.CreateMenuReqParam;
+import dn.spring.scaffold.console.pojo.req.DeleteMenuReqParam;
+import dn.spring.scaffold.console.pojo.req.GetMenuByIdReqParam;
+import dn.spring.scaffold.console.pojo.req.ListMenuReqParam;
+import dn.spring.scaffold.console.pojo.req.UpdateMenuReqParam;
+import dn.spring.scaffold.console.pojo.resp.MenuDTO;
 import dn.spring.scaffold.console.pojo.resp.MenuTreeNode;
-import dn.spring.scaffold.console.pojo.resp.UserRoleInfo;
 import dn.spring.scaffold.console.service.MenuService;
-import dn.spring.scaffold.console.service.UserRoleService;
 import dn.spring.scaffold.system.entity.SysMenu;
+import dn.spring.scaffold.system.entity.SysRole;
 import dn.spring.scaffold.system.entity.SysRoleMenu;
+import dn.spring.scaffold.system.entity.SysUserRole;
 import dn.spring.scaffold.system.manager.SysMenuManager;
+import dn.spring.scaffold.system.manager.SysRoleManager;
 import dn.spring.scaffold.system.manager.SysRoleMenuManager;
+import dn.spring.scaffold.system.manager.SysUserRoleManager;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 
@@ -34,46 +42,41 @@ public class MenuServiceImpl implements MenuService {
     @Resource
     private SysRoleMenuManager sysRoleMenuManager;
     @Resource
-    private UserRoleService userRoleService;
+    private SysUserRoleManager sysUserRoleManager;
+    @Resource
+    private SysRoleManager sysRoleManager;
 
     @Override
-    public List<SysMenu> listAll() {
-        return sysMenuManager.listAll();
+    public RespInfo<List<MenuTreeNode>> listAllMenuTree() {
+        return RespInfo.success(buildTree(sysMenuManager.listAll()));
     }
 
     @Override
-    public List<MenuTreeNode> tree() {
-        List<SysMenu> allMenus = listAll();
-        return buildTree(allMenus);
-    }
-
-    @Override
-    public RespInfo<List<MenuTreeNode>> treeResp() {
-        return RespInfo.success(tree());
-    }
-
-    @Override
-    public List<MenuTreeNode> treeByUserId(Long userId) {
-        List<UserRoleInfo> userRoles = userRoleService.listUserRoles(userId);
+    public List<MenuTreeNode> listMenuTreeByUserId(Long userId) {
+        List<SysUserRole> userRoles = sysUserRoleManager.listByUserId(userId);
         if (userRoles.isEmpty()) {
             return Collections.emptyList();
         }
 
-        for (UserRoleInfo userRole : userRoles) {
-            if (SYSTEM_ADMIN_ROLE_CODE.equals(userRole.getRoleCode())) {
-                return tree();
+        for (SysUserRole userRole : userRoles) {
+            SysRole role = sysRoleManager.getById(userRole.getRoleId());
+            if (role != null && SYSTEM_ADMIN_ROLE_CODE.equals(role.getCode())) {
+                return buildTree(sysMenuManager.listAll());
             }
         }
 
         Set<Long> menuIds = new LinkedHashSet<Long>();
-        for (UserRoleInfo userRole : userRoles) {
-            menuIds.addAll(listRoleMenuIds(userRole.getRoleId()));
+        for (SysUserRole userRole : userRoles) {
+            List<SysRoleMenu> roleMenus = sysRoleMenuManager.listByRoleId(userRole.getRoleId());
+            for (SysRoleMenu roleMenu : roleMenus) {
+                menuIds.add(roleMenu.getMenuId());
+            }
         }
         if (CollectionUtils.isEmpty(menuIds)) {
             return Collections.emptyList();
         }
 
-        List<SysMenu> allMenus = listAll();
+        List<SysMenu> allMenus = sysMenuManager.listAll();
         Set<Long> selectedMenuIds = new LinkedHashSet<Long>(menuIds);
         boolean changed = true;
         while (changed) {
@@ -95,70 +98,66 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public PageData<SysMenu> page(PageReqParam reqParam) {
-        List<SysMenu> records = listAll();
-        return PageUtils.of(reqParam.getPageNum(), reqParam.getPageSize(), records.size(), records);
+    public RespInfo<PageData<MenuDTO>> listMenu(ListMenuReqParam reqParam) {
+        PageHelper.startPage(reqParam.getPageNum(), reqParam.getPageSize());
+        List<SysMenu> menuList = sysMenuManager.listAll();
+        List<MenuDTO> menuDTOList = new ArrayList<MenuDTO>(menuList.size());
+        for (SysMenu menu : menuList) {
+            menuDTOList.add(toMenuDTO(menu));
+        }
+
+        PageData<MenuDTO> pageData = new PageData<MenuDTO>();
+        pageData.setTotal(new PageInfo<SysMenu>(menuList).getTotal());
+        pageData.setRecords(menuDTOList);
+        pageData.setPageNum(reqParam.getPageNum());
+        pageData.setPageSize(reqParam.getPageSize());
+        return RespInfo.success(pageData);
     }
 
     @Override
-    public RespInfo<PageData<SysMenu>> pageResp(PageReqParam reqParam) {
-        return RespInfo.success(page(reqParam));
+    public RespInfo<MenuDTO> getMenuById(GetMenuByIdReqParam reqParam) {
+        SysMenu menu = sysMenuManager.getById(reqParam.getMenuId());
+        ResultCode.MENU_NOT_FOUND.assertNotNull(menu);
+        return RespInfo.success(toMenuDTO(menu));
     }
 
     @Override
-    public SysMenu detail(Long id) {
-        SysMenu sysMenu = sysMenuManager.getById(id);
-        return sysMenu == null ? new SysMenu() : sysMenu;
+    public RespInfo<MenuDTO> createMenu(CreateMenuReqParam reqParam) {
+        SysMenu menu = new SysMenu();
+        menu.setParentId(reqParam.getParentId());
+        menu.setName(reqParam.getName());
+        menu.setPath(reqParam.getPath());
+        menu.setMenuType(reqParam.getMenuType());
+        menu.setPermissionCode(reqParam.getPermissionCode());
+        menu.setSortOrder(reqParam.getSortOrder() == null ? 0 : reqParam.getSortOrder());
+        menu.setVisible(reqParam.getVisible() == null ? Boolean.TRUE : reqParam.getVisible());
+        return RespInfo.created(toMenuDTO(sysMenuManager.save(menu)));
     }
 
     @Override
-    public RespInfo<SysMenu> detailResp(Long id) {
-        return RespInfo.success(detail(id));
+    public RespInfo<MenuDTO> updateMenu(UpdateMenuReqParam reqParam) {
+        SysMenu existedMenu = sysMenuManager.getById(reqParam.getId());
+        ResultCode.MENU_NOT_FOUND.assertNotNull(existedMenu);
+
+        existedMenu.setParentId(reqParam.getParentId());
+        existedMenu.setName(reqParam.getName());
+        existedMenu.setPath(reqParam.getPath());
+        existedMenu.setMenuType(reqParam.getMenuType());
+        existedMenu.setPermissionCode(reqParam.getPermissionCode());
+        existedMenu.setSortOrder(reqParam.getSortOrder() == null ? 0 : reqParam.getSortOrder());
+        existedMenu.setVisible(reqParam.getVisible() == null ? Boolean.TRUE : reqParam.getVisible());
+        return RespInfo.success(toMenuDTO(sysMenuManager.save(existedMenu)));
     }
 
     @Override
-    public SysMenu save(SysMenu menu) {
-        SysMenu latestMenu = sysMenuManager.save(menu);
-        return latestMenu == null ? new SysMenu() : latestMenu;
-    }
-
-    @Override
-    public RespInfo<SysMenu> saveResp(SysMenu menu) {
-        return RespInfo.created(save(menu));
-    }
-
-    @Override
-    public SysMenu update(SysMenu menu) {
-        return save(menu);
-    }
-
-    @Override
-    public RespInfo<SysMenu> updateResp(SysMenu menu) {
-        return RespInfo.success(update(menu));
-    }
-
-    @Override
-    public void delete(Long menuId) {
+    public RespInfo<Void> deleteMenu(DeleteMenuReqParam reqParam) {
+        Long menuId = reqParam.getMenuId();
         SysMenu menu = sysMenuManager.getById(menuId);
         ResultCode.MENU_NOT_FOUND.assertNotNull(menu);
         ResultCode.CAN_NOT_DELETE_MENU_BECAUSE_HAS_CHILDREN.assertIsFalse(sysMenuManager.existsChildren(menuId));
         ResultCode.MENU_IN_USE.assertIsFalse(sysRoleMenuManager.existsByMenuId(menuId));
         sysMenuManager.deleteById(menuId);
-    }
-
-    @Override
-    public RespInfo<Void> deleteResp(Long menuId) {
-        delete(menuId);
         return RespInfo.success();
-    }
-
-    @Override
-    public List<Long> listRoleMenuIds(Long roleId) {
-        List<SysRoleMenu> roleMenus = sysRoleMenuManager.listByRoleId(roleId);
-        if (roleMenus.isEmpty()) {
-            return Collections.emptyList();
-        }
-        return roleMenus.stream().map(SysRoleMenu::getMenuId).collect(Collectors.toList());
     }
 
     private List<MenuTreeNode> buildTree(List<SysMenu> menus) {
@@ -188,5 +187,20 @@ public class MenuServiceImpl implements MenuService {
                 .collect(Collectors.toList());
         node.setChildren(children);
         return node;
+    }
+
+    private MenuDTO toMenuDTO(SysMenu menu) {
+        MenuDTO menuDTO = new MenuDTO();
+        menuDTO.setId(menu.getId());
+        menuDTO.setParentId(menu.getParentId());
+        menuDTO.setName(menu.getName());
+        menuDTO.setPath(menu.getPath());
+        menuDTO.setMenuType(menu.getMenuType());
+        menuDTO.setPermissionCode(menu.getPermissionCode());
+        menuDTO.setSortOrder(menu.getSortOrder());
+        menuDTO.setVisible(menu.getVisible());
+        menuDTO.setCreateTime(menu.getCreateTime());
+        menuDTO.setUpdateTime(menu.getUpdateTime());
+        return menuDTO;
     }
 }

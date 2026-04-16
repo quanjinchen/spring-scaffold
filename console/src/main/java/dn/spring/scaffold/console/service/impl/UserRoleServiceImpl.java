@@ -1,6 +1,7 @@
 package dn.spring.scaffold.console.service.impl;
 
 import dn.spring.scaffold.common.pojo.RespInfo;
+import dn.spring.scaffold.console.pojo.req.GetUserRoleListReqParam;
 import dn.spring.scaffold.console.pojo.req.GrantUserRolesReqParam;
 import dn.spring.scaffold.console.pojo.resp.UserRoleInfo;
 import dn.spring.scaffold.console.service.UserRoleService;
@@ -24,7 +25,17 @@ public class UserRoleServiceImpl implements UserRoleService {
     private SysRoleManager sysRoleManager;
 
     @Override
-    public List<UserRoleInfo> listUserRoles(Long userId) {
+    public RespInfo<List<UserRoleInfo>> listUserRole(GetUserRoleListReqParam reqParam) {
+        return RespInfo.success(buildUserRoleInfoList(reqParam.getUserId()));
+    }
+
+    @Override
+    public RespInfo<List<UserRoleInfo>> grantUserRoles(GrantUserRolesReqParam reqParam) {
+        sysUserRoleManager.replaceUserRoles(reqParam.getUserId(), reqParam.getRoleIds());
+        return RespInfo.success(buildUserRoleInfoList(reqParam.getUserId()));
+    }
+
+    private List<UserRoleInfo> buildUserRoleInfoList(Long userId) {
         List<SysUserRole> userRoles = sysUserRoleManager.listByUserId(userId);
         if (userRoles.isEmpty()) {
             return Collections.emptyList();
@@ -43,21 +54,5 @@ public class UserRoleServiceImpl implements UserRoleService {
             result.add(roleInfo);
         }
         return result;
-    }
-
-    @Override
-    public RespInfo<List<UserRoleInfo>> listUserRolesResp(Long userId) {
-        return RespInfo.success(listUserRoles(userId));
-    }
-
-    @Override
-    public List<UserRoleInfo> grantUserRoles(GrantUserRolesReqParam reqParam) {
-        sysUserRoleManager.replaceUserRoles(reqParam.getUserId(), reqParam.getRoleIds());
-        return listUserRoles(reqParam.getUserId());
-    }
-
-    @Override
-    public RespInfo<List<UserRoleInfo>> grantUserRolesResp(GrantUserRolesReqParam reqParam) {
-        return RespInfo.success(grantUserRoles(reqParam));
     }
 }

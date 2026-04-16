@@ -1,15 +1,11 @@
 package dn.spring.scaffold.console.service;
 
 import dn.spring.scaffold.common.page.PageData;
-import dn.spring.scaffold.common.page.PageReqParam;
 import dn.spring.scaffold.common.pojo.RespInfo;
-import dn.spring.scaffold.system.entity.OperationLog;
+import dn.spring.scaffold.console.pojo.req.ListOperationLogReqParam;
+import dn.spring.scaffold.console.pojo.resp.OperationLogDTO;
 
 public interface OperationLogService {
 
-    PageData<OperationLog> page(PageReqParam reqParam);
-
-    RespInfo<PageData<OperationLog>> pageResp(PageReqParam reqParam);
-
-    void save(OperationLog operationLog);
+    RespInfo<PageData<OperationLogDTO>> listOperationLog(ListOperationLogReqParam reqParam);
 }

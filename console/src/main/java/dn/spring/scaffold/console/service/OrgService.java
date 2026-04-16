@@ -1,44 +1,27 @@
 package dn.spring.scaffold.console.service;
 
 import dn.spring.scaffold.common.page.PageData;
-import dn.spring.scaffold.common.page.PageReqParam;
 import dn.spring.scaffold.common.pojo.RespInfo;
-import dn.spring.scaffold.console.pojo.req.GrantOrgUsersReqParam;
-import dn.spring.scaffold.system.entity.Org;
+import dn.spring.scaffold.console.pojo.req.CreateOrgReqParam;
+import dn.spring.scaffold.console.pojo.req.DeleteOrgReqParam;
+import dn.spring.scaffold.console.pojo.req.GetOrgByIdReqParam;
+import dn.spring.scaffold.console.pojo.req.ListOrgReqParam;
+import dn.spring.scaffold.console.pojo.req.UpdateOrgReqParam;
+import dn.spring.scaffold.console.pojo.resp.OrgDTO;
 
 import java.util.List;
 
 public interface OrgService {
 
-    List<Org> tree();
+    RespInfo<List<OrgDTO>> listAllOrgTree();
 
-    RespInfo<List<Org>> treeResp();
+    RespInfo<PageData<OrgDTO>> listOrg(ListOrgReqParam reqParam);
 
-    PageData<Org> page(PageReqParam reqParam);
+    RespInfo<OrgDTO> getOrgById(GetOrgByIdReqParam reqParam);
 
-    RespInfo<PageData<Org>> pageResp(PageReqParam reqParam);
+    RespInfo<OrgDTO> createOrg(CreateOrgReqParam reqParam);
 
-    Org detail(Long id);
+    RespInfo<OrgDTO> updateOrg(UpdateOrgReqParam reqParam);
 
-    RespInfo<Org> detailResp(Long id);
-
-    Org save(Org org);
-
-    RespInfo<Org> saveResp(Org org);
-
-    Org update(Org org);
-
-    RespInfo<Org> updateResp(Org org);
-
-    void delete(Long orgId);
-
-    RespInfo<Void> deleteResp(Long orgId);
-
-    List<?> listOrgUsers(Long orgId);
-
-    RespInfo<List<?>> listOrgUsersResp(Long orgId);
-
-    List<?> grantOrgUsers(GrantOrgUsersReqParam reqParam);
-
-    RespInfo<List<?>> grantOrgUsersResp(GrantOrgUsersReqParam reqParam);
+    RespInfo<Void> deleteOrg(DeleteOrgReqParam reqParam);
 }
