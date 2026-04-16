@@ -26,7 +26,7 @@ public class OperationLogController {
         this.operationLogService = operationLogService;
     }
 
-    @Operation(summary = "分页查询操作日志")
+    @Operation(summary = "分页查询操作日志", description = "权限：system:operationLog:query")
     @PostMapping("/list-operation-log")
     @SaCheckPermission("system:operationLog:query")
     public RespInfo<PageData<OperationLogDTO>> listOperationLog(@Valid @RequestBody ListOperationLogReqParam reqParam) {

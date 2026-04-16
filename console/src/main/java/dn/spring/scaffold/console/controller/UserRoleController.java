@@ -26,14 +26,14 @@ public class UserRoleController {
     @Resource
     private UserRoleService userRoleService;
 
-    @Operation(summary = "查询用户角色列表")
+    @Operation(summary = "查询用户角色列表", description = "权限：system:user:query")
     @PostMapping("/list-user-role")
     @SaCheckPermission("system:user:query")
     public RespInfo<List<UserRoleInfo>> listUserRole(@Valid @RequestBody GetUserRoleListReqParam reqParam) {
         return userRoleService.listUserRole(reqParam);
     }
 
-    @Operation(summary = "分配用户角色")
+    @Operation(summary = "分配用户角色", description = "权限：system:user:update")
     @PostMapping("/grant-user-roles")
     @OperateLog(module = "userRole", action = "分配用户角色")
     @SaCheckPermission("system:user:update")

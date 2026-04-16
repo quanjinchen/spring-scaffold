@@ -35,21 +35,21 @@ public class OrgController {
         this.orgService = orgService;
     }
 
-    @Operation(summary = "查询组织树")
+    @Operation(summary = "查询组织树", description = "权限：system:org:query")
     @PostMapping("/list-all-org-tree")
     @SaCheckPermission("system:org:query")
     public RespInfo<List<OrgDTO>> listAllOrgTree() {
         return orgService.listAllOrgTree();
     }
 
-    @Operation(summary = "分页查询组织")
+    @Operation(summary = "分页查询组织", description = "权限：system:org:query")
     @PostMapping("/list-org")
     @SaCheckPermission("system:org:query")
     public RespInfo<PageData<OrgDTO>> listOrg(@Valid @RequestBody ListOrgReqParam reqParam) {
         return orgService.listOrg(reqParam);
     }
 
-    @Operation(summary = "根据 ID 查询组织详情")
+    @Operation(summary = "根据 ID 查询组织详情", description = "权限：system:org:query")
     @GetMapping("/get-org-by-id/{id}")
     @SaCheckPermission("system:org:query")
     public RespInfo<OrgDTO> getOrgById(@Parameter(description = "组织 ID") @PathVariable Long id) {
@@ -58,7 +58,7 @@ public class OrgController {
         return orgService.getOrgById(reqParam);
     }
 
-    @Operation(summary = "创建组织")
+    @Operation(summary = "创建组织", description = "权限：system:org:update")
     @PostMapping("/create-org")
     @OperateLog(module = "org", action = "创建组织")
     @SaCheckPermission("system:org:update")
@@ -66,7 +66,7 @@ public class OrgController {
         return orgService.createOrg(reqParam);
     }
 
-    @Operation(summary = "更新组织")
+    @Operation(summary = "更新组织", description = "权限：system:org:update")
     @PostMapping("/update-org")
     @OperateLog(module = "org", action = "更新组织")
     @SaCheckPermission("system:org:update")
@@ -74,7 +74,7 @@ public class OrgController {
         return orgService.updateOrg(reqParam);
     }
 
-    @Operation(summary = "删除组织")
+    @Operation(summary = "删除组织", description = "权限：system:org:delete")
     @PostMapping("/delete-org")
     @OperateLog(module = "org", action = "删除组织")
     @SaCheckPermission("system:org:delete")

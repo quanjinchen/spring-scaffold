@@ -1,6 +1,7 @@
 package dn.spring.scaffold.console.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import dn.spring.scaffold.common.page.PageData;
 import dn.spring.scaffold.common.pojo.RespInfo;
 import dn.spring.scaffold.console.pojo.req.CreateUserReqParam;
 import dn.spring.scaffold.console.pojo.req.DeleteUserReqParam;
@@ -31,7 +32,7 @@ public class UserController {
     @Resource
     private UserService userService;
 
-    @Operation(summary = "创建用户")
+    @Operation(summary = "创建用户", description = "权限：system:user:add")
     @OperateLog(module = "user", action = "创建用户")
     @PostMapping("/create-user")
     @SaCheckPermission("system:user:add")
@@ -39,7 +40,7 @@ public class UserController {
         return userService.createUser(createUserReqParam);
     }
 
-    @Operation(summary = "更新用户")
+    @Operation(summary = "更新用户", description = "权限：system:user:update")
     @OperateLog(module = "user", action = "更新用户")
     @PostMapping("/update-user")
     @SaCheckPermission("system:user:update")
@@ -47,7 +48,7 @@ public class UserController {
         return userService.updateUser(updateUserReqParam);
     }
 
-    @Operation(summary = "删除用户")
+    @Operation(summary = "删除用户", description = "权限：system:user:delete")
     @OperateLog(module = "user", action = "删除用户")
     @PostMapping("/delete-user")
     @SaCheckPermission("system:user:delete")
@@ -55,7 +56,7 @@ public class UserController {
         return userService.deleteUser(deleteUserReqParam);
     }
 
-    @Operation(summary = "根据 ID 查询用户")
+    @Operation(summary = "根据 ID 查询用户", description = "权限：system:user:query")
     @GetMapping("/get-user-by-id/{id}")
     @SaCheckPermission("system:user:query")
     public RespInfo<UserDTO> getUserById(@Parameter(description = "用户 ID") @PathVariable Long id) {
@@ -64,7 +65,7 @@ public class UserController {
         return userService.getUserById(reqParam);
     }
 
-    @Operation(summary = "重置用户密码")
+    @Operation(summary = "重置用户密码", description = "权限：system:user:resetPassword")
     @OperateLog(module = "user", action = "重置用户密码")
     @PostMapping("/reset-user-password")
     @SaCheckPermission("system:user:resetPassword")
@@ -72,10 +73,10 @@ public class UserController {
         return userService.resetUserPassword(resetUserPasswordReqParam);
     }
 
-    @Operation(summary = "分页查询用户")
+    @Operation(summary = "分页查询用户", description = "权限：system:user:query")
     @PostMapping("/list-user")
     @SaCheckPermission("system:user:query")
-    public RespInfo<?> listUser(@Valid @RequestBody ListUserReqParam reqParam) {
+    public RespInfo<PageData<UserDTO>> listUser(@Valid @RequestBody ListUserReqParam reqParam) {
         return userService.listUser(reqParam);
     }
 }

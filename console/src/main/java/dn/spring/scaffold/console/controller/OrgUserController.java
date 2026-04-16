@@ -26,14 +26,14 @@ public class OrgUserController {
     @Resource
     private OrgUserService orgUserService;
 
-    @Operation(summary = "查询组织用户列表")
+    @Operation(summary = "查询组织用户列表", description = "权限：system:org:query")
     @PostMapping("/list-org-user")
     @SaCheckPermission("system:org:query")
     public RespInfo<List<OrgUserInfo>> listOrgUser(@Valid @RequestBody GetOrgUserListReqParam reqParam) {
         return orgUserService.listOrgUser(reqParam);
     }
 
-    @Operation(summary = "分配组织用户")
+    @Operation(summary = "分配组织用户", description = "权限：system:org:update")
     @PostMapping("/grant-org-users")
     @OperateLog(module = "orgUser", action = "分配组织用户")
     @SaCheckPermission("system:org:update")

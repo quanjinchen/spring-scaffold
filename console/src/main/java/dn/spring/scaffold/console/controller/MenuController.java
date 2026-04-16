@@ -36,21 +36,21 @@ public class MenuController {
         this.menuService = menuService;
     }
 
-    @Operation(summary = "查询菜单树")
+    @Operation(summary = "查询菜单树", description = "权限：system:menu:query")
     @PostMapping("/list-all-menu-tree")
     @SaCheckPermission("system:menu:query")
     public RespInfo<List<MenuTreeNode>> listAllMenuTree() {
         return menuService.listAllMenuTree();
     }
 
-    @Operation(summary = "分页查询菜单")
+    @Operation(summary = "分页查询菜单", description = "权限：system:menu:query")
     @PostMapping("/list-menu")
     @SaCheckPermission("system:menu:query")
     public RespInfo<PageData<MenuDTO>> listMenu(@Valid @RequestBody ListMenuReqParam reqParam) {
         return menuService.listMenu(reqParam);
     }
 
-    @Operation(summary = "根据 ID 查询菜单详情")
+    @Operation(summary = "根据 ID 查询菜单详情", description = "权限：system:menu:query")
     @GetMapping("/get-menu-by-id/{id}")
     @SaCheckPermission("system:menu:query")
     public RespInfo<MenuDTO> getMenuById(@Parameter(description = "菜单 ID") @PathVariable Long id) {
@@ -59,7 +59,7 @@ public class MenuController {
         return menuService.getMenuById(reqParam);
     }
 
-    @Operation(summary = "创建菜单")
+    @Operation(summary = "创建菜单", description = "权限：system:menu:update")
     @PostMapping("/create-menu")
     @OperateLog(module = "menu", action = "创建菜单")
     @SaCheckPermission("system:menu:update")
@@ -67,7 +67,7 @@ public class MenuController {
         return menuService.createMenu(reqParam);
     }
 
-    @Operation(summary = "更新菜单")
+    @Operation(summary = "更新菜单", description = "权限：system:menu:update")
     @PostMapping("/update-menu")
     @OperateLog(module = "menu", action = "更新菜单")
     @SaCheckPermission("system:menu:update")
@@ -75,7 +75,7 @@ public class MenuController {
         return menuService.updateMenu(reqParam);
     }
 
-    @Operation(summary = "删除菜单")
+    @Operation(summary = "删除菜单", description = "权限：system:menu:delete")
     @PostMapping("/delete-menu")
     @OperateLog(module = "menu", action = "删除菜单")
     @SaCheckPermission("system:menu:delete")

@@ -46,6 +46,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public RespInfo<Void> createUser(CreateUserReqParam createUserReqParam) {
+        User sameUsernameUser = userManager.getByUsername(createUserReqParam.getUsername());
+        ResultCode.BAD_REQUEST.assertIsFalse(sameUsernameUser != null, "用户名已存在");
+
+        if (StringUtils.hasText(createUserReqParam.getEmail())) {
+            User sameEmailUser = userManager.getByEmail(createUserReqParam.getEmail());
+            ResultCode.BAD_REQUEST.assertIsFalse(sameEmailUser != null, "邮箱已存在");
+        }
+
+        if (StringUtils.hasText(createUserReqParam.getPhone())) {
+            User samePhoneUser = userManager.getByPhone(createUserReqParam.getPhone());
+            ResultCode.BAD_REQUEST.assertIsFalse(samePhoneUser != null, "手机号已存在");
+        }
+
         User user = new User();
         user.setUsername(createUserReqParam.getUsername());
         user.setNickname(createUserReqParam.getNickname());
@@ -53,8 +66,6 @@ public class UserServiceImpl implements UserService {
         user.setPhone(StringUtils.hasText(createUserReqParam.getPhone()) ? new EncryptField(createUserReqParam.getPhone()) : null);
         user.setOrgId(createUserReqParam.getOrgId());
         user.setStatus(createUserReqParam.getStatus() == null ? 1 : createUserReqParam.getStatus());
-
-        validateBeforeSave(user, null);
 
         String password = createUserReqParam.getPassword();
         if (!StringUtils.hasText(password)) {
@@ -96,17 +107,31 @@ public class UserServiceImpl implements UserService {
         User existedUser = userManager.getById(updateUserReqParam.getId());
         ResultCode.USER_NOT_FOUND.assertNotNull(existedUser);
 
+        String username = StringUtils.hasText(updateUserReqParam.getUsername()) ? updateUserReqParam.getUsername() : existedUser.getUsername();
+        User sameUsernameUser = userManager.getByUsername(username);
+        ResultCode.BAD_REQUEST.assertIsFalse(sameUsernameUser != null && !Objects.equals(sameUsernameUser.getId(), existedUser.getId()), "用户名已存在");
+
+        String email = updateUserReqParam.getEmail() != null ? updateUserReqParam.getEmail() : existedUser.getEmail();
+        if (StringUtils.hasText(email)) {
+            User sameEmailUser = userManager.getByEmail(email);
+            ResultCode.BAD_REQUEST.assertIsFalse(sameEmailUser != null && !Objects.equals(sameEmailUser.getId(), existedUser.getId()), "邮箱已存在");
+        }
+
+        String phone = updateUserReqParam.getPhone() != null ? updateUserReqParam.getPhone() : existedUser.getPhone() == null ? null : existedUser.getPhone().getPlainText();
+        if (StringUtils.hasText(phone)) {
+            User samePhoneUser = userManager.getByPhone(phone);
+            ResultCode.BAD_REQUEST.assertIsFalse(samePhoneUser != null && !Objects.equals(samePhoneUser.getId(), existedUser.getId()), "手机号已存在");
+        }
+
         User updateUser = new User();
         updateUser.setId(existedUser.getId());
-        updateUser.setUsername(StringUtils.hasText(updateUserReqParam.getUsername()) ? updateUserReqParam.getUsername() : existedUser.getUsername());
+        updateUser.setUsername(username);
         updateUser.setNickname(StringUtils.hasText(updateUserReqParam.getNickname()) ? updateUserReqParam.getNickname() : existedUser.getNickname());
-        updateUser.setEmail(updateUserReqParam.getEmail() != null ? updateUserReqParam.getEmail() : existedUser.getEmail());
+        updateUser.setEmail(email);
         updateUser.setPhone(updateUserReqParam.getPhone() != null ? new EncryptField(updateUserReqParam.getPhone()) : existedUser.getPhone());
         updateUser.setOrgId(updateUserReqParam.getOrgId() != null ? updateUserReqParam.getOrgId() : existedUser.getOrgId());
         updateUser.setStatus(updateUserReqParam.getStatus() != null ? updateUserReqParam.getStatus() : existedUser.getStatus());
         updateUser.setPassword(existedUser.getPassword());
-
-        validateBeforeSave(updateUser, existedUser.getId());
         User savedUser = userManager.save(updateUser);
         bindOrgUser(savedUser.getId(), savedUser.getOrgId());
         return RespInfo.success();
@@ -131,35 +156,6 @@ public class UserServiceImpl implements UserService {
         user.setPassword(PASSWORD_ENCODER.encode(DEFAULT_RESET_PASSWORD));
         userManager.save(user);
         return RespInfo.success();
-    }
-
-    private void validateBeforeSave(User user, Long excludeUserId) {
-        ResultCode.BAD_REQUEST.assertNotEmpty(user.getUsername(), "用户名不能为空");
-        ResultCode.BAD_REQUEST.assertNotEmpty(user.getNickname(), "昵称不能为空");
-
-        User sameUsernameUser = userManager.getByUsername(user.getUsername());
-        ResultCode.BAD_REQUEST.assertIsFalse(existsOtherUser(sameUsernameUser, excludeUserId), "用户名已存在");
-
-        if (StringUtils.hasText(user.getEmail())) {
-            User sameEmailUser = userManager.getByEmail(user.getEmail());
-            ResultCode.BAD_REQUEST.assertIsFalse(existsOtherUser(sameEmailUser, excludeUserId), "邮箱已存在");
-        }
-
-        String phone = user.getPhone() == null ? null : user.getPhone().getPlainText();
-        if (StringUtils.hasText(phone)) {
-            User samePhoneUser = userManager.getByPhone(phone);
-            ResultCode.BAD_REQUEST.assertIsFalse(existsOtherUser(samePhoneUser, excludeUserId), "手机号已存在");
-        }
-    }
-
-    private boolean existsOtherUser(User sameUser, Long excludeUserId) {
-        if (sameUser == null) {
-            return false;
-        }
-        if (excludeUserId == null) {
-            return true;
-        }
-        return !Objects.equals(sameUser.getId(), excludeUserId);
     }
 
     private void bindOrgUser(Long userId, Long orgId) {

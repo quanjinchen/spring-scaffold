@@ -37,7 +37,7 @@ public class FileController {
         this.fileService = fileService;
     }
 
-    @Operation(summary = "上传文件")
+    @Operation(summary = "上传文件", description = "权限：system:file:upload")
     @PostMapping(value = "/upload-file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @OperateLog(module = "file", action = "上传文件")
     @SaCheckPermission("system:file:upload")
@@ -45,14 +45,14 @@ public class FileController {
         return fileService.upload(file, publicUrlPrefix);
     }
 
-    @Operation(summary = "下载文件")
+    @Operation(summary = "下载文件", description = "权限：system:file:download")
     @GetMapping("/download-file/{fileId}")
     @SaCheckPermission("system:file:download")
     public void downloadFile(@Parameter(description = "文件 ID") @PathVariable String fileId, HttpServletResponse response) {
         fileService.download(fileId, response);
     }
 
-    @Operation(summary = "删除文件")
+    @Operation(summary = "删除文件", description = "权限：system:file:delete")
     @PostMapping("/delete-file")
     @OperateLog(module = "file", action = "删除文件")
     @SaCheckPermission("system:file:delete")

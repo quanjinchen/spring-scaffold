@@ -69,6 +69,7 @@
 8. `ReqParam` 必须补充 `@Schema` 说明。
 9. `ReqParam` 有必填、非空、范围、长度等限制时，必须补充对应校验注解。
 10. 如果 `ReqParam` 注解已经完成了必填、非空这类基础参数校验，`service/serviceImpl` 中不要再重复写同样的基础校验；`service` 只保留业务语义校验，例如唯一性校验、状态流转校验、关联关系校验等。
+11. 接口如果配置了权限注解，例如 `@SaCheckPermission`，必须同步在 Swagger 的 `@Operation` 备注中标明权限信息，便于联调和排查，推荐格式为 `权限：system:user:query`。
 
 五、注释约定
 

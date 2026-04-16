@@ -33,21 +33,21 @@ public class RoleController {
     @Resource
     private RoleService roleService;
 
-    @Operation(summary = "分页查询角色")
+    @Operation(summary = "分页查询角色", description = "权限：system:role:query")
     @PostMapping("/list-role")
     @SaCheckPermission("system:role:query")
     public RespInfo<PageData<RoleDTO>> listRole(@Valid @RequestBody ListRoleReqParam reqParam) {
         return roleService.listRole(reqParam);
     }
 
-    @Operation(summary = "根据 ID 查询角色详情")
+    @Operation(summary = "根据 ID 查询角色详情", description = "权限：system:role:query")
     @GetMapping("/get-role-by-id/{id}")
     @SaCheckPermission("system:role:query")
     public RespInfo<RoleDTO> getRoleById(@Parameter(description = "角色 ID") @PathVariable Long id) {
         return roleService.getRoleById(id);
     }
 
-    @Operation(summary = "创建角色")
+    @Operation(summary = "创建角色", description = "权限：system:role:update")
     @PostMapping("/create-role")
     @OperateLog(module = "role", action = "创建角色")
     @SaCheckPermission("system:role:update")
@@ -55,7 +55,7 @@ public class RoleController {
         return roleService.createRole(reqParam);
     }
 
-    @Operation(summary = "更新角色")
+    @Operation(summary = "更新角色", description = "权限：system:role:update")
     @PostMapping("/update-role")
     @OperateLog(module = "role", action = "更新角色")
     @SaCheckPermission("system:role:update")
@@ -63,7 +63,7 @@ public class RoleController {
         return roleService.updateRole(reqParam);
     }
 
-    @Operation(summary = "删除角色")
+    @Operation(summary = "删除角色", description = "权限：system:role:delete")
     @PostMapping("/delete-role")
     @OperateLog(module = "role", action = "删除角色")
     @SaCheckPermission("system:role:delete")
@@ -71,14 +71,14 @@ public class RoleController {
         return roleService.deleteRole(reqParam);
     }
 
-    @Operation(summary = "查询角色授权信息")
+    @Operation(summary = "查询角色授权信息", description = "权限：system:role:query")
     @GetMapping("/get-role-grant-info-by-role-id/{id}")
     @SaCheckPermission("system:role:query")
     public RespInfo<RoleGrantInfoDTO> getRoleGrantInfoByRoleId(@Parameter(description = "角色 ID") @PathVariable Long id) {
         return roleService.getRoleGrantInfoByRoleId(id);
     }
 
-    @Operation(summary = "分配角色菜单")
+    @Operation(summary = "分配角色菜单", description = "权限：system:role:update")
     @PostMapping("/grant-role-menus")
     @OperateLog(module = "role", action = "分配角色菜单")
     @SaCheckPermission("system:role:update")
