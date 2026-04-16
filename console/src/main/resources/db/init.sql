@@ -1,14 +1,14 @@
-drop table if exists sys_role_menu;
-drop table if exists sys_org_user;
-drop table if exists sys_user_role;
-drop table if exists sys_operation_log;
-drop table if exists tb_file;
-drop table if exists sys_menu;
-drop table if exists sys_user;
-drop table if exists sys_role;
-drop table if exists sys_org;
+drop table if exists tb_sys_role_menu;
+drop table if exists tb_org_user;
+drop table if exists tb_sys_role_user;
+drop table if exists tb_operation_log;
+drop table if exists tb_file_record;
+drop table if exists tb_sys_menu;
+drop table if exists tb_user;
+drop table if exists tb_sys_role;
+drop table if exists tb_org;
 
-create table sys_org (
+create table tb_org (
     id bigint not null auto_increment comment '主键 ID',
     parent_id bigint not null default 0 comment '父组织 ID，0 表示根节点',
     org_code varchar(64) not null comment '组织编码',
@@ -24,11 +24,11 @@ create table sys_org (
     primary key (id)
 ) comment='组织表';
 
-create index idx_sys_org_parent_id_deleted on sys_org (parent_id, deleted);
-create index idx_sys_org_org_code_deleted on sys_org (org_code, deleted);
-create index idx_sys_org_status_deleted on sys_org (status, deleted);
+create index idx_tb_org_parent_id_deleted on tb_org (parent_id, deleted);
+create index idx_tb_org_org_code_deleted on tb_org (org_code, deleted);
+create index idx_tb_org_status_deleted on tb_org (status, deleted);
 
-create table sys_user (
+create table tb_user (
     id bigint not null auto_increment comment '主键 ID',
     username varchar(64) not null comment '用户名',
     nickname varchar(64) null comment '昵称',
@@ -45,12 +45,12 @@ create table sys_user (
     primary key (id)
 ) comment='用户表';
 
-create index idx_sys_user_username_deleted on sys_user (username, deleted);
-create index idx_sys_user_email_deleted on sys_user (email, deleted);
-create index idx_sys_user_phone_deleted on sys_user (phone, deleted);
-create index idx_sys_user_org_id_status_deleted on sys_user (org_id, status, deleted);
+create index idx_tb_user_username_deleted on tb_user (username, deleted);
+create index idx_tb_user_email_deleted on tb_user (email, deleted);
+create index idx_tb_user_phone_deleted on tb_user (phone, deleted);
+create index idx_tb_user_org_id_status_deleted on tb_user (org_id, status, deleted);
 
-create table sys_role (
+create table tb_sys_role (
     id bigint not null auto_increment comment '主键 ID',
     code varchar(64) not null comment '角色编码',
     name varchar(128) not null comment '角色名称',
@@ -64,11 +64,11 @@ create table sys_role (
     primary key (id)
 ) comment='角色表';
 
-create index idx_sys_role_code_deleted on sys_role (code, deleted);
-create index idx_sys_role_name_deleted on sys_role (name, deleted);
-create index idx_sys_role_status_deleted on sys_role (status, deleted);
+create index idx_tb_sys_role_code_deleted on tb_sys_role (code, deleted);
+create index idx_tb_sys_role_name_deleted on tb_sys_role (name, deleted);
+create index idx_tb_sys_role_status_deleted on tb_sys_role (status, deleted);
 
-create table sys_menu (
+create table tb_sys_menu (
     id bigint not null auto_increment comment '主键 ID',
     parent_id bigint not null default 0 comment '父菜单 ID，0 表示根节点',
     name varchar(128) not null comment '菜单名称',
@@ -85,11 +85,11 @@ create table sys_menu (
     primary key (id)
 ) comment='菜单表';
 
-create index idx_sys_menu_parent_id_deleted on sys_menu (parent_id, deleted);
-create index idx_sys_menu_permission_code_deleted on sys_menu (permission_code, deleted);
-create index idx_sys_menu_menu_type_deleted on sys_menu (menu_type, deleted);
+create index idx_tb_sys_menu_parent_id_deleted on tb_sys_menu (parent_id, deleted);
+create index idx_tb_sys_menu_permission_code_deleted on tb_sys_menu (permission_code, deleted);
+create index idx_tb_sys_menu_menu_type_deleted on tb_sys_menu (menu_type, deleted);
 
-create table sys_operation_log (
+create table tb_operation_log (
     id bigint not null auto_increment comment '主键 ID',
     module_name varchar(64) not null comment '模块名称',
     action_name varchar(64) not null comment '操作名称',
@@ -105,12 +105,12 @@ create table sys_operation_log (
     primary key (id)
 ) comment='操作日志表';
 
-create index idx_sys_operation_log_request_time_deleted on sys_operation_log (request_time, deleted);
-create index idx_sys_operation_log_module_name_deleted on sys_operation_log (module_name, deleted);
-create index idx_sys_operation_log_operator_name_deleted on sys_operation_log (operator_name, deleted);
-create index idx_sys_operation_log_success_flag_deleted on sys_operation_log (success_flag, deleted);
+create index idx_tb_operation_log_request_time_deleted on tb_operation_log (request_time, deleted);
+create index idx_tb_operation_log_module_name_deleted on tb_operation_log (module_name, deleted);
+create index idx_tb_operation_log_operator_name_deleted on tb_operation_log (operator_name, deleted);
+create index idx_tb_operation_log_success_flag_deleted on tb_operation_log (success_flag, deleted);
 
-create table sys_user_role (
+create table tb_sys_role_user (
     id bigint not null auto_increment comment '主键 ID',
     user_id bigint not null comment '用户 ID',
     role_id bigint not null comment '角色 ID',
@@ -122,10 +122,10 @@ create table sys_user_role (
     primary key (id)
 ) comment='用户角色关联表';
 
-create index idx_sys_user_role_user_id_deleted on sys_user_role (user_id, deleted);
-create index idx_sys_user_role_role_id_deleted on sys_user_role (role_id, deleted);
+create index idx_tb_sys_role_user_user_id_deleted on tb_sys_role_user (user_id, deleted);
+create index idx_tb_sys_role_user_role_id_deleted on tb_sys_role_user (role_id, deleted);
 
-create table sys_org_user (
+create table tb_org_user (
     id bigint not null auto_increment comment '主键 ID',
     org_id bigint not null comment '组织 ID',
     user_id bigint not null comment '用户 ID',
@@ -137,10 +137,10 @@ create table sys_org_user (
     primary key (id)
 ) comment='组织用户关联表';
 
-create index idx_sys_org_user_org_id_deleted on sys_org_user (org_id, deleted);
-create index idx_sys_org_user_user_id_deleted on sys_org_user (user_id, deleted);
+create index idx_tb_org_user_org_id_deleted on tb_org_user (org_id, deleted);
+create index idx_tb_org_user_user_id_deleted on tb_org_user (user_id, deleted);
 
-create table sys_role_menu (
+create table tb_sys_role_menu (
     id bigint not null auto_increment comment '主键 ID',
     role_id bigint not null comment '角色 ID',
     menu_id bigint not null comment '菜单 ID',
@@ -152,10 +152,10 @@ create table sys_role_menu (
     primary key (id)
 ) comment='角色菜单关联表';
 
-create index idx_sys_role_menu_role_id_deleted on sys_role_menu (role_id, deleted);
-create index idx_sys_role_menu_menu_id_deleted on sys_role_menu (menu_id, deleted);
+create index idx_tb_sys_role_menu_role_id_deleted on tb_sys_role_menu (role_id, deleted);
+create index idx_tb_sys_role_menu_menu_id_deleted on tb_sys_role_menu (menu_id, deleted);
 
-create table tb_file (
+create table tb_file_record (
     id bigint not null auto_increment comment '主键 ID',
     file_id varchar(100) null comment '文件业务 ID',
     file_name varchar(100) null comment '文件名称',
@@ -171,11 +171,11 @@ create table tb_file (
     primary key (id)
 ) comment='文件记录表';
 
-create index idx_tb_file_file_id_deleted on tb_file (file_id, deleted);
-create index idx_tb_file_object_name_deleted on tb_file (object_name, deleted);
-create index idx_tb_file_create_time_deleted on tb_file (create_time, deleted);
+create index idx_tb_file_record_file_id_deleted on tb_file_record (file_id, deleted);
+create index idx_tb_file_record_object_name_deleted on tb_file_record (object_name, deleted);
+create index idx_tb_file_record_create_time_deleted on tb_file_record (create_time, deleted);
 
-insert into sys_org (
+insert into tb_org (
     id,
     parent_id,
     org_code,
@@ -203,7 +203,7 @@ insert into sys_org (
     0
 );
 
-insert into sys_role (
+insert into tb_sys_role (
     id,
     code,
     name,
@@ -240,7 +240,7 @@ insert into sys_role (
         0
     );
 
-insert into sys_user (
+insert into tb_user (
     id,
     username,
     nickname,
@@ -270,7 +270,7 @@ insert into sys_user (
     0
 );
 
-insert into sys_menu (
+insert into tb_sys_menu (
     id,
     parent_id,
     name,
@@ -312,7 +312,7 @@ insert into sys_menu (
     (118, 2, '菜单删除', '/system/menu/delete', 'BUTTON', 'system:menu:delete', 121, 1, 1, now(), 1, now(), 0),
     (119, 4, '角色删除', '/system/role/delete', 'BUTTON', 'system:role:delete', 111, 1, 1, now(), 1, now(), 0);
 
-insert into sys_user_role (
+insert into tb_sys_role_user (
     id,
     user_id,
     role_id,
@@ -325,7 +325,7 @@ insert into sys_user_role (
     (1, 1, 1, 1, now(), 1, now(), 0),
     (2, 1, 2, 1, now(), 1, now(), 0);
 
-insert into sys_org_user (
+insert into tb_org_user (
     id,
     org_id,
     user_id,
@@ -337,7 +337,7 @@ insert into sys_org_user (
 ) values
     (1, 1, 1, 1, now(), 1, now(), 0);
 
-insert into sys_role_menu (
+insert into tb_sys_role_menu (
     id,
     role_id,
     menu_id,

@@ -16,7 +16,7 @@ import dn.spring.scaffold.console.service.UserService;
 import dn.spring.scaffold.system.entity.OrgUser;
 import dn.spring.scaffold.system.entity.User;
 import dn.spring.scaffold.system.manager.OrgUserManager;
-import dn.spring.scaffold.system.manager.SysUserRoleManager;
+import dn.spring.scaffold.system.manager.SysRoleUserManager;
 import dn.spring.scaffold.system.manager.UserManager;
 import dn.spring.scaffold.system.pojo.query.ListUserQuery;
 import com.github.pagehelper.PageHelper;
@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserManager userManager;
     @Resource
-    private SysUserRoleManager sysUserRoleManager;
+    private SysRoleUserManager sysRoleUserManager;
     @Resource
     private OrgUserManager orgUserManager;
 
@@ -143,7 +143,7 @@ public class UserServiceImpl implements UserService {
         Long userId = deleteUserReqParam.getUserId();
         User user = userManager.getById(userId);
         ResultCode.USER_NOT_FOUND.assertNotNull(user);
-        sysUserRoleManager.deleteByUserId(userId);
+        sysRoleUserManager.deleteByUserId(userId);
         orgUserManager.deleteByUserId(userId);
         userManager.deleteById(userId);
         return RespInfo.success();

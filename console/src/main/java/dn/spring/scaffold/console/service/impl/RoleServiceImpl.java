@@ -18,7 +18,7 @@ import dn.spring.scaffold.system.entity.SysRole;
 import dn.spring.scaffold.system.entity.SysRoleMenu;
 import dn.spring.scaffold.system.manager.SysRoleManager;
 import dn.spring.scaffold.system.manager.SysRoleMenuManager;
-import dn.spring.scaffold.system.manager.SysUserRoleManager;
+import dn.spring.scaffold.system.manager.SysRoleUserManager;
 import dn.spring.scaffold.system.pojo.query.ListRoleQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +36,7 @@ public class RoleServiceImpl implements RoleService {
     @Resource
     private SysRoleMenuManager sysRoleMenuManager;
     @Resource
-    private SysUserRoleManager sysUserRoleManager;
+    private SysRoleUserManager sysRoleUserManager;
 
     @Override
     public RespInfo<PageData<RoleDTO>> listRole(ListRoleReqParam reqParam) {
@@ -119,7 +119,7 @@ public class RoleServiceImpl implements RoleService {
         SysRole role = sysRoleManager.getById(roleId);
         ResultCode.ROLE_NOT_FOUND.assertNotNull(role);
         // 已分配给用户的角色不允许直接删除，避免留下用户角色脏数据。
-        ResultCode.ROLE_IN_USE.assertIsFalse(sysUserRoleManager.existsByRoleId(roleId));
+        ResultCode.ROLE_IN_USE.assertIsFalse(sysRoleUserManager.existsByRoleId(roleId));
 
         // 先删角色菜单关联，再删角色本体，保证关系数据和主数据保持一致。
         sysRoleMenuManager.deleteByRoleId(roleId);

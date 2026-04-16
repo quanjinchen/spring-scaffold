@@ -1,4 +1,4 @@
-create table if not exists sys_org (
+create table if not exists tb_org (
     id bigint primary key,
     parent_id bigint not null default 0,
     org_code varchar(64) not null,
@@ -13,7 +13,7 @@ create table if not exists sys_org (
     deleted tinyint not null default 0
 );
 
-create table if not exists sys_user (
+create table if not exists tb_user (
     id bigint primary key,
     username varchar(64) not null,
     nickname varchar(64) null,
@@ -29,7 +29,7 @@ create table if not exists sys_user (
     deleted tinyint not null default 0
 );
 
-create table if not exists sys_role (
+create table if not exists tb_sys_role (
     id bigint primary key,
     code varchar(64) not null,
     name varchar(128) not null,
@@ -42,7 +42,7 @@ create table if not exists sys_role (
     deleted tinyint not null default 0
 );
 
-create table if not exists sys_menu (
+create table if not exists tb_sys_menu (
     id bigint primary key,
     parent_id bigint not null default 0,
     name varchar(128) not null,
@@ -58,7 +58,7 @@ create table if not exists sys_menu (
     deleted tinyint not null default 0
 );
 
-create table if not exists sys_operation_log (
+create table if not exists tb_operation_log (
     id bigint primary key,
     module_name varchar(64) not null,
     action_name varchar(64) not null,
@@ -73,25 +73,25 @@ create table if not exists sys_operation_log (
     deleted tinyint not null default 0
 );
 
-create table if not exists sys_user_role (
+create table if not exists tb_sys_role_user (
     user_id bigint not null,
     role_id bigint not null,
     primary key (user_id, role_id)
 );
 
-create table if not exists sys_org_user (
+create table if not exists tb_org_user (
     org_id bigint not null,
     user_id bigint not null,
     primary key (org_id, user_id)
 );
 
-create table if not exists sys_role_menu (
+create table if not exists tb_sys_role_menu (
     role_id bigint not null,
     menu_id bigint not null,
     primary key (role_id, menu_id)
 );
 
-create table if not exists tb_file (
+create table if not exists tb_file_record (
     id bigint primary key,
     file_id varchar(100) null,
     file_name varchar(100) null,
@@ -106,21 +106,21 @@ create table if not exists tb_file (
     deleted tinyint not null default 0
 );
 
-create index idx_tb_file_file_id on tb_file (file_id);
+create index idx_tb_file_record_file_id_deleted on tb_file_record (file_id, deleted);
 
-insert into sys_org (id, parent_id, org_code, name, leader_name, sort_order, status, create_time, deleted)
+insert into tb_org (id, parent_id, org_code, name, leader_name, sort_order, status, create_time, deleted)
 values (1, 0, 'ROOT', '总部', '系统负责人', 1, 1, now(), 0)
 on duplicate key update name = values(name);
 
-insert into sys_role (id, code, name, status, remark, create_time, deleted)
+insert into tb_sys_role (id, code, name, status, remark, create_time, deleted)
 values (1, 'ADMIN', '系统管理员', 1, '系统初始化管理员角色', now(), 0)
 on duplicate key update name = values(name), remark = values(remark);
 
-insert into sys_user (id, username, nickname, email, phone, org_id, password, status, create_time, deleted)
+insert into tb_user (id, username, nickname, email, phone, org_id, password, status, create_time, deleted)
 values (1, 'admin', '系统管理员', 'admin@example.com', 'kGyYSFD/ZqsdmzSZp8sH9A==', 1, '$2a$10$7EqJtq98hPqEX7fNZaFWoOHiB7C9HfM9vDOMkMt2rt7NmBGG99nmW', 1, now(), 0)
 on duplicate key update nickname = values(nickname);
 
-insert into sys_menu (id, parent_id, name, path, menu_type, permission_code, sort_order, visible, create_time, deleted)
+insert into tb_sys_menu (id, parent_id, name, path, menu_type, permission_code, sort_order, visible, create_time, deleted)
 values
     (1, 0, '系统管理', '/system', 'CATALOG', null, 1, 1, now(), 0),
     (2, 1, '菜单管理', '/system/menu', 'MENU', 'system:menu:query', 10, 1, now(), 0),
@@ -140,15 +140,15 @@ values
     (118, 2, '菜单删除', '/system/menu/delete', 'BUTTON', 'system:menu:delete', 131, 1, now(), 0)
 on duplicate key update name = values(name);
 
-insert into sys_user_role (user_id, role_id)
+insert into tb_sys_role_user (user_id, role_id)
 values (1, 1)
 on duplicate key update role_id = values(role_id);
 
-insert into sys_org_user (org_id, user_id)
+insert into tb_org_user (org_id, user_id)
 values (1, 1)
 on duplicate key update user_id = values(user_id);
 
-insert into sys_role_menu (role_id, menu_id)
+insert into tb_sys_role_menu (role_id, menu_id)
 values
     (1, 1),
     (1, 2),

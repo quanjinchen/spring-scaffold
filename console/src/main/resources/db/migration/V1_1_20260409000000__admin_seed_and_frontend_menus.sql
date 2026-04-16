@@ -2,7 +2,7 @@
 -- Password plaintext for user `admin`: Admin@123
 -- BCrypt hash generated locally for this project.
 
-insert into sys_role (
+insert into tb_sys_role (
     id,
     code,
     name,
@@ -35,7 +35,7 @@ on duplicate key update
     update_time = values(update_time),
     deleted = values(deleted);
 
-insert into sys_user (
+insert into tb_user (
     id,
     username,
     nickname,
@@ -76,17 +76,17 @@ on duplicate key update
     update_time = values(update_time),
     deleted = values(deleted);
 
-insert into sys_user_role (user_id, role_id)
+insert into tb_sys_role_user (user_id, role_id)
 values (1, 2)
 on duplicate key update
     role_id = values(role_id);
 
-insert into sys_org_user (org_id, user_id)
+insert into tb_org_user (org_id, user_id)
 values (1, 1)
 on duplicate key update
     user_id = values(user_id);
 
-insert into sys_menu (
+insert into tb_sys_menu (
     id,
     parent_id,
     name,
@@ -126,7 +126,7 @@ on duplicate key update
     update_time = values(update_time),
     deleted = values(deleted);
 
-insert into sys_role_menu (role_id, menu_id)
+insert into tb_sys_role_menu (role_id, menu_id)
 values
     (2, 1),
     (2, 2),

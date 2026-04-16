@@ -278,6 +278,135 @@ console
 - 统一请求日志采集
 - 统一客户端环境信息采集
 
+### 6.6 常见命名语义说明
+
+为了避免阅读代码时只看名字却误解职责，这里补充项目中几类常见命名的语义边界。
+
+#### 6.6.1 Utils
+
+典型类：
+
+- `common/utils/JsonUtils`
+- `framework/utils/IpUtils`
+- `common/utils/PasswordUtils`
+
+语义：
+
+- `Utils` 主要表示通用静态工具能力
+- 通常不承载业务状态
+- 主要用于字符串、JSON、密码、IP、时间、文件等纯辅助处理
+
+理解方式：
+
+- 更偏“纯工具函数集合”
+- 输入给定，输出基本确定
+- 不强调当前请求、当前登录态这类上下文语义
+
+#### 6.6.2 Context
+
+典型类：
+
+- `web/trace/TraceContext`
+- `web/trace/TraceContextHolder`
+- `satoken/LoginUserContext`
+
+语义：
+
+- `Context` 表示“当前环境中的一组上下文信息”
+- 常用于表达当前请求、当前线程、当前登录用户、当前链路等运行时状态
+- 这类对象通常不是业务处理器，而是上下文读取入口或上下文载体
+
+理解方式：
+
+- `TraceContext` 是当前请求链路信息的载体
+- `TraceContextHolder` 是当前线程中的链路上下文存取入口
+- `LoginUserContext` 是当前登录用户信息的读取入口
+
+为什么 `LoginUserContext` 不叫 `LoginUserUtils`：
+
+- 它虽然使用方式上像工具，但本质上读取的是“当前登录上下文”
+- 它依赖运行时登录态，而不是纯静态计算
+- 因此使用 `Context` 比 `Utils` 更准确
+
+#### 6.6.3 Manager
+
+典型类：
+
+- `system/manager/UserManager`
+- `system/manager/SysMenuManager`
+- `file/manager/FileManager`
+
+语义：
+
+- `Manager` 是数据访问与领域对象操作的封装层
+- 负责承接 `service` 下钻的数据查询、保存、删除、关系维护
+- `manager impl` 才允许直接依赖 `mapper`
+
+理解方式：
+
+- `Manager` 更接近“数据访问封装器”
+- 关注的是实体、查询条件、持久化动作
+- 不负责完整业务编排
+
+#### 6.6.4 Service
+
+典型类：
+
+- `console/service/UserService`
+- `console/service/MenuService`
+- `console/service/AdminAuthService`
+
+语义：
+
+- `Service` 是业务编排层
+- 负责业务校验、流程组织、跨 manager 协作、接口出参组织
+- 成功响应统一由 `service/serviceImpl` 返回 `RespInfo`
+
+理解方式：
+
+- `Service` 更接近“业务流程执行器”
+- 关注的是接口行为和业务语义，而不是单点数据访问
+
+#### 6.6.5 Filter 与 Aspect
+
+典型类：
+
+- `web/filter/TraceFilter`
+- `web/log/WebLogAspect`
+- `operationlog/aspect/OperateLogAspect`
+
+语义：
+
+- `Filter` 作用于 HTTP 请求入口，位于请求进入 Controller 之前
+- `Aspect` 作用于方法执行过程，用于在方法前后统一织入逻辑
+
+理解方式：
+
+- `TraceFilter` 负责请求最前面的链路初始化、耗时统计、上下文清理
+- `WebLogAspect` 负责在 Controller 方法前后打印请求参数和响应信息
+- `OperateLogAspect` 负责对带 `@OperateLog` 的方法记录业务操作日志
+
+#### 6.6.6 ThreadLocal、MDC、上下文透传
+
+相关类：
+
+- `web/trace/TraceContextHolder`
+- `threadpool/ContextDecorator`
+- `web/filter/TraceFilter`
+
+语义：
+
+- `ThreadLocal` 可以理解为“当前线程私有的小型上下文存储”
+- `MDC` 是日志框架提供的线程级键值存储，常用于给日志附加 `traceId`
+- 当异步任务切到线程池中的其他线程时，原线程的上下文默认不会自动带过去
+- `ContextDecorator` 的作用就是把原线程中的 `TraceContext` 和 `MDC traceId` 复制到异步线程，执行后再清理
+
+理解方式：
+
+- `TraceFilter` 在请求开始时创建链路上下文
+- `TraceContextHolder` 负责把上下文绑定到当前线程
+- `ContextDecorator` 负责异步线程中的上下文透传
+
 ### 6.6 Web 上下文能力
 
 核心类：

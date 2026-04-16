@@ -1,12 +1,12 @@
 package dn.spring.scaffold.system.manager;
 
-import dn.spring.scaffold.system.entity.SysUserRole;
+import dn.spring.scaffold.system.entity.SysRoleUser;
 
 import java.util.List;
 
-public interface SysUserRoleManager {
+public interface SysRoleUserManager {
 
-    List<SysUserRole> listByUserId(Long userId);
+    List<SysRoleUser> listByUserId(Long userId);
 
     boolean existsByRoleId(Long roleId);
 

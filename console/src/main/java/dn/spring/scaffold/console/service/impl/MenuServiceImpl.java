@@ -14,11 +14,11 @@ import dn.spring.scaffold.console.service.MenuService;
 import dn.spring.scaffold.system.entity.SysMenu;
 import dn.spring.scaffold.system.entity.SysRole;
 import dn.spring.scaffold.system.entity.SysRoleMenu;
-import dn.spring.scaffold.system.entity.SysUserRole;
+import dn.spring.scaffold.system.entity.SysRoleUser;
 import dn.spring.scaffold.system.manager.SysMenuManager;
 import dn.spring.scaffold.system.manager.SysRoleManager;
 import dn.spring.scaffold.system.manager.SysRoleMenuManager;
-import dn.spring.scaffold.system.manager.SysUserRoleManager;
+import dn.spring.scaffold.system.manager.SysRoleUserManager;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.util.CollectionUtils;
@@ -42,7 +42,7 @@ public class MenuServiceImpl implements MenuService {
     @Resource
     private SysRoleMenuManager sysRoleMenuManager;
     @Resource
-    private SysUserRoleManager sysUserRoleManager;
+    private SysRoleUserManager sysRoleUserManager;
     @Resource
     private SysRoleManager sysRoleManager;
 
@@ -53,21 +53,21 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public List<MenuTreeNode> listMenuTreeByUserId(Long userId) {
-        List<SysUserRole> userRoles = sysUserRoleManager.listByUserId(userId);
-        if (userRoles.isEmpty()) {
+        List<SysRoleUser> roleUsers = sysRoleUserManager.listByUserId(userId);
+        if (roleUsers.isEmpty()) {
             return Collections.emptyList();
         }
 
-        for (SysUserRole userRole : userRoles) {
-            SysRole role = sysRoleManager.getById(userRole.getRoleId());
+        for (SysRoleUser roleUser : roleUsers) {
+            SysRole role = sysRoleManager.getById(roleUser.getRoleId());
             if (role != null && SYSTEM_ADMIN_ROLE_CODE.equals(role.getCode())) {
                 return buildTree(sysMenuManager.listAll());
             }
         }
 
         Set<Long> menuIds = new LinkedHashSet<Long>();
-        for (SysUserRole userRole : userRoles) {
-            List<SysRoleMenu> roleMenus = sysRoleMenuManager.listByRoleId(userRole.getRoleId());
+        for (SysRoleUser roleUser : roleUsers) {
+            List<SysRoleMenu> roleMenus = sysRoleMenuManager.listByRoleId(roleUser.getRoleId());
             for (SysRoleMenu roleMenu : roleMenus) {
                 menuIds.add(roleMenu.getMenuId());
             }

@@ -14,11 +14,11 @@ import dn.spring.scaffold.framework.captcha.CaptchaManager;
 import dn.spring.scaffold.framework.satoken.LoginUserContext;
 import dn.spring.scaffold.system.entity.SysRole;
 import dn.spring.scaffold.system.entity.SysRoleMenu;
-import dn.spring.scaffold.system.entity.SysUserRole;
+import dn.spring.scaffold.system.entity.SysRoleUser;
 import dn.spring.scaffold.system.entity.User;
 import dn.spring.scaffold.system.manager.SysRoleManager;
 import dn.spring.scaffold.system.manager.SysRoleMenuManager;
-import dn.spring.scaffold.system.manager.SysUserRoleManager;
+import dn.spring.scaffold.system.manager.SysRoleUserManager;
 import dn.spring.scaffold.system.manager.UserManager;
 import cn.dev33.satoken.stp.StpUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -37,7 +37,7 @@ public class AdminAuthServiceImpl implements AdminAuthService {
     @Resource
     private UserManager userManager;
     @Resource
-    private SysUserRoleManager sysUserRoleManager;
+    private SysRoleUserManager sysRoleUserManager;
     @Resource
     private SysRoleManager sysRoleManager;
     @Resource
@@ -95,11 +95,11 @@ public class AdminAuthServiceImpl implements AdminAuthService {
         loginData.setUsername(admin.getUsername());
         loginData.setNickname(admin.getNickname());
 
-        java.util.List<SysUserRole> userRoles = sysUserRoleManager.listByUserId(loginUserId);
-        java.util.List<RoleGrantInfoDTO> roleGrantInfoDTOList = new java.util.ArrayList<RoleGrantInfoDTO>(userRoles.size());
-        java.util.List<String> roleCodes = new java.util.ArrayList<String>(userRoles.size());
-        for (SysUserRole userRole : userRoles) {
-            SysRole role = sysRoleManager.getById(userRole.getRoleId());
+        java.util.List<SysRoleUser> roleUsers = sysRoleUserManager.listByUserId(loginUserId);
+        java.util.List<RoleGrantInfoDTO> roleGrantInfoDTOList = new java.util.ArrayList<RoleGrantInfoDTO>(roleUsers.size());
+        java.util.List<String> roleCodes = new java.util.ArrayList<String>(roleUsers.size());
+        for (SysRoleUser roleUser : roleUsers) {
+            SysRole role = sysRoleManager.getById(roleUser.getRoleId());
             if (role == null) {
                 continue;
             }

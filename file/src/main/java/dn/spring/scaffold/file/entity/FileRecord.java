@@ -2,13 +2,11 @@ package dn.spring.scaffold.file.entity;
 
 import dn.spring.scaffold.common.entity.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("tb_file")
 public class FileRecord extends BaseEntity {
 
     @TableField("file_id")

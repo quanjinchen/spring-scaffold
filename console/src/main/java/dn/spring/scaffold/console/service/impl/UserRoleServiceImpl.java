@@ -6,9 +6,9 @@ import dn.spring.scaffold.console.pojo.req.GrantUserRolesReqParam;
 import dn.spring.scaffold.console.pojo.resp.UserRoleInfo;
 import dn.spring.scaffold.console.service.UserRoleService;
 import dn.spring.scaffold.system.entity.SysRole;
-import dn.spring.scaffold.system.entity.SysUserRole;
+import dn.spring.scaffold.system.entity.SysRoleUser;
 import dn.spring.scaffold.system.manager.SysRoleManager;
-import dn.spring.scaffold.system.manager.SysUserRoleManager;
+import dn.spring.scaffold.system.manager.SysRoleUserManager;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -20,7 +20,7 @@ import java.util.List;
 public class UserRoleServiceImpl implements UserRoleService {
 
     @Resource
-    private SysUserRoleManager sysUserRoleManager;
+    private SysRoleUserManager sysRoleUserManager;
     @Resource
     private SysRoleManager sysRoleManager;
 
@@ -31,18 +31,18 @@ public class UserRoleServiceImpl implements UserRoleService {
 
     @Override
     public RespInfo<List<UserRoleInfo>> grantUserRoles(GrantUserRolesReqParam reqParam) {
-        sysUserRoleManager.replaceUserRoles(reqParam.getUserId(), reqParam.getRoleIds());
+        sysRoleUserManager.replaceUserRoles(reqParam.getUserId(), reqParam.getRoleIds());
         return RespInfo.success(buildUserRoleInfoList(reqParam.getUserId()));
     }
 
     private List<UserRoleInfo> buildUserRoleInfoList(Long userId) {
-        List<SysUserRole> userRoles = sysUserRoleManager.listByUserId(userId);
-        if (userRoles.isEmpty()) {
+        List<SysRoleUser> roleUsers = sysRoleUserManager.listByUserId(userId);
+        if (roleUsers.isEmpty()) {
             return Collections.emptyList();
         }
         List<UserRoleInfo> result = new ArrayList<UserRoleInfo>();
-        for (SysUserRole userRole : userRoles) {
-            SysRole role = sysRoleManager.getById(userRole.getRoleId());
+        for (SysRoleUser roleUser : roleUsers) {
+            SysRole role = sysRoleManager.getById(roleUser.getRoleId());
             if (role == null) {
                 continue;
             }

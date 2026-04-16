@@ -3,11 +3,11 @@ package dn.spring.scaffold.framework.satoken;
 import dn.spring.scaffold.system.entity.SysMenu;
 import dn.spring.scaffold.system.entity.SysRole;
 import dn.spring.scaffold.system.entity.SysRoleMenu;
-import dn.spring.scaffold.system.entity.SysUserRole;
+import dn.spring.scaffold.system.entity.SysRoleUser;
 import dn.spring.scaffold.system.manager.SysMenuManager;
 import dn.spring.scaffold.system.manager.SysRoleManager;
 import dn.spring.scaffold.system.manager.SysRoleMenuManager;
-import dn.spring.scaffold.system.manager.SysUserRoleManager;
+import dn.spring.scaffold.system.manager.SysRoleUserManager;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -24,7 +24,7 @@ public class PermissionService {
     private static final String SYSTEM_ADMIN_ROLE_CODE = "systemAdmin";
 
     @Resource
-    private SysUserRoleManager sysUserRoleManager;
+    private SysRoleUserManager sysRoleUserManager;
     @Resource
     private SysRoleManager sysRoleManager;
     @Resource
@@ -89,10 +89,10 @@ public class PermissionService {
     }
 
     private List<Long> listUserRoleIds(Long userId) {
-        List<SysUserRole> userRoles = sysUserRoleManager.listByUserId(userId);
-        List<Long> roleIds = new ArrayList<Long>(userRoles.size());
-        for (SysUserRole userRole : userRoles) {
-            roleIds.add(userRole.getRoleId());
+        List<SysRoleUser> roleUsers = sysRoleUserManager.listByUserId(userId);
+        List<Long> roleIds = new ArrayList<Long>(roleUsers.size());
+        for (SysRoleUser roleUser : roleUsers) {
+            roleIds.add(roleUser.getRoleId());
         }
         return roleIds;
     }
