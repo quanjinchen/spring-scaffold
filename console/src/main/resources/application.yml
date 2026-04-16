@@ -87,6 +87,9 @@ project:
     bucket-name: spring-scaffold
     path-style-access-enabled: true
     public-url-prefix: ""
+  log:
+    path: ${PROJECT_LOG_PATH:./logs}
+    max-history: ${PROJECT_LOG_MAX_HISTORY:30}
 
 logging:
   level:

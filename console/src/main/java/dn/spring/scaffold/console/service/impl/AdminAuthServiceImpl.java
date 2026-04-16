@@ -11,6 +11,7 @@ import dn.spring.scaffold.console.service.AdminAuthService;
 import dn.spring.scaffold.console.service.MenuService;
 import dn.spring.scaffold.framework.captcha.Captcha;
 import dn.spring.scaffold.framework.captcha.CaptchaManager;
+import dn.spring.scaffold.framework.satoken.LoginUserContext;
 import dn.spring.scaffold.system.entity.SysRole;
 import dn.spring.scaffold.system.entity.SysRoleMenu;
 import dn.spring.scaffold.system.entity.SysUserRole;
@@ -72,6 +73,7 @@ public class AdminAuthServiceImpl implements AdminAuthService {
         ResultCode.ACCOUNT_OR_PASSWORD_INVALID.assertIsTrue(passwordMatched);
 
         StpUtil.login(admin.getId());
+        StpUtil.getSession().set(LoginUserContext.LOGIN_USERNAME_SESSION_KEY, admin.getUsername());
 
         SysAdminLoginData loginData = new SysAdminLoginData();
         loginData.setUserId(admin.getId());

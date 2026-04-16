@@ -19,6 +19,14 @@ public final class UserAgentUtils {
         return userAgent == null || userAgent.getOperatingSystem() == null ? "" : userAgent.getOperatingSystem().getName();
     }
 
+    public static String getUserAgent(HttpServletRequest request) {
+        if (request == null) {
+            return "";
+        }
+        String userAgent = request.getHeader("User-Agent");
+        return userAgent == null ? "" : userAgent;
+    }
+
     private static UserAgent parse(HttpServletRequest request) {
         if (request == null) {
             return null;
