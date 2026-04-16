@@ -156,3 +156,19 @@
    拆分后能明显提升可读性，而不是增加来回跳转成本。
 3. 仅被单处调用、逻辑较短、上下文强依赖当前方法的代码，不要强行提炼成私有方法。
 4. 方法拆分的目标是提升可读性和复用性，不是为了形式上把方法拆短。
+
+十四、数据库约定
+
+1. 业务表、关系表默认统一继承 `BaseEntity` 对应的基础字段结构，包括 `id`、`create_by`、`create_time`、`update_by`、`update_time`、`deleted`。
+2. 主键字段 `id` 统一使用数据库自增，表结构使用 `bigint not null auto_increment`，实体主键策略与之保持一致。
+3. 逻辑删除统一使用字段 `deleted`，约定 `0` 为正常，`1` 为删除。
+4. 逻辑删除统一通过 MyBatis-Plus 实现，并在配置文件中配置逻辑删除规则，不在 Java 配置类中单独硬编码。
+5. 所有建表 SQL 中的字段都必须补充中文 `comment` 说明，表本身也应补充表级 `comment`。
+6. `create_time` 和 `update_time` 统一在 SQL 层维护：
+   `create_time` 使用 `datetime not null default current_timestamp`；
+   `update_time` 使用 `datetime not null default current_timestamp on update current_timestamp`。
+7. `create_by` 和 `update_by` 统一通过 MyBatis-Plus 自动填充实现：
+   有登录态时写当前登录用户 ID；
+   无登录态时默认写 `0`，不能因为接口未鉴权而报错。
+8. 记录相关表必须按实际查询场景补充索引，不要只建主键；索引设计优先结合逻辑删除查询习惯，优先使用 `(业务字段, deleted)` 这类组合索引。
+9. 初始化数据库时，如果当前不启用 Flyway，则以 `console/src/main/resources/db/init.sql` 作为最终初始化脚本，结构必须与当前代码约定保持一致。

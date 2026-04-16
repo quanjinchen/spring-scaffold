@@ -50,6 +50,13 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
 
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-not-delete-value: 0
+      logic-delete-value: 1
+
 project:
   encryptor:
     key: 1234567890abcdef

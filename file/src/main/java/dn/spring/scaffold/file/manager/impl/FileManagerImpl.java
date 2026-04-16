@@ -16,7 +16,6 @@ import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
@@ -124,18 +123,6 @@ public class FileManagerImpl implements FileManager {
         if (fileRecord == null) {
             throw new BizException(ResultCode.FILE_NOT_FOUND);
         }
-
-        try {
-            ossClient.deleteObject(DeleteObjectRequest.builder()
-                    .bucket(fileStorageProperties.getBucketName())
-                    .key(fileRecord.getObjectName())
-                    .build());
-        } catch (NoSuchKeyException | NoSuchBucketException exception) {
-            throw new BizException(ResultCode.FILE_NOT_FOUND);
-        } catch (AwsServiceException exception) {
-            throw new BizException("file delete failed: " + exception.getMessage());
-        }
-
         fileRecordMapper.deleteById(fileRecord.getId());
     }
 
