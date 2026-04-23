@@ -108,10 +108,10 @@ values
     (103, 101, '活跃用户', '/index/baseInfo/userActive', 'BUTTON', 'system:index:userActive', 12, 1, 1, now(), 1, now(), 0),
     (104, 101, '应用排行', '/index/baseInfo/appRank', 'BUTTON', 'system:index:appRank', 13, 1, 1, now(), 1, now(), 0),
     (105, 101, '设备统计', '/index/baseInfo/userDevice', 'BUTTON', 'system:index:userDevice', 14, 1, 1, now(), 1, now(), 0),
-    (106, 1, '用户新增', '/system/user/create', 'BUTTON', 'system:user:add', 21, 1, 1, now(), 1, now(), 0),
-    (107, 3, '用户删除', '/system/user/delete', 'BUTTON', 'system:user:delete', 22, 1, 1, now(), 1, now(), 0),
-    (108, 5, '组织新增', '/system/org/create', 'BUTTON', 'system:org:add', 41, 1, 1, now(), 1, now(), 0),
-    (109, 5, '组织删除', '/system/org/delete', 'BUTTON', 'system:org:delete', 42, 1, 1, now(), 1, now(), 0),
+    (106, 3, '用户新增', '/user/create', 'BUTTON', 'system:user:add', 21, 1, 1, now(), 1, now(), 0),
+    (107, 3, '用户删除', '/user/delete', 'BUTTON', 'system:user:delete', 22, 1, 1, now(), 1, now(), 0),
+    (108, 5, '组织新增', '/organization/create', 'BUTTON', 'system:org:add', 41, 1, 1, now(), 1, now(), 0),
+    (109, 5, '组织删除', '/organization/delete', 'BUTTON', 'system:org:delete', 42, 1, 1, now(), 1, now(), 0),
     (118, 2, '菜单删除', '/system/menu/delete', 'BUTTON', 'system:menu:delete', 121, 1, 1, now(), 1, now(), 0),
     (119, 4, '角色删除', '/system/role/delete', 'BUTTON', 'system:role:delete', 101, 1, 1, now(), 1, now(), 0)
 on duplicate key update
