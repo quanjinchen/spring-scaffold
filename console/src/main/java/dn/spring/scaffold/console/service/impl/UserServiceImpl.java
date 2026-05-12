@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
 
         User user = new User();
         user.setUsername(createUserReqParam.getUsername());
-        user.setNickname(createUserReqParam.getNickname());
+        user.setFullName(createUserReqParam.getFullName());
         user.setEmail(createUserReqParam.getEmail());
         user.setPhone(StringUtils.hasText(createUserReqParam.getPhone()) ? new EncryptField(createUserReqParam.getPhone()) : null);
         user.setOrgId(createUserReqParam.getOrgId());
@@ -126,7 +126,7 @@ public class UserServiceImpl implements UserService {
         User updateUser = new User();
         updateUser.setId(existedUser.getId());
         updateUser.setUsername(username);
-        updateUser.setNickname(StringUtils.hasText(updateUserReqParam.getNickname()) ? updateUserReqParam.getNickname() : existedUser.getNickname());
+        updateUser.setFullName(StringUtils.hasText(updateUserReqParam.getFullName()) ? updateUserReqParam.getFullName() : existedUser.getFullName());
         updateUser.setEmail(email);
         updateUser.setPhone(updateUserReqParam.getPhone() != null ? new EncryptField(updateUserReqParam.getPhone()) : existedUser.getPhone());
         updateUser.setOrgId(updateUserReqParam.getOrgId() != null ? updateUserReqParam.getOrgId() : existedUser.getOrgId());

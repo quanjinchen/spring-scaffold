@@ -38,7 +38,7 @@ on duplicate key update
 insert into tb_user (
     id,
     username,
-    nickname,
+    full_name,
     email,
     phone,
     org_id,
@@ -67,7 +67,7 @@ values (
 )
 on duplicate key update
     username = values(username),
-    nickname = values(nickname),
+    full_name = values(full_name),
     email = values(email),
     org_id = values(org_id),
     password = values(password),

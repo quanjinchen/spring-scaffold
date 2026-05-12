@@ -126,15 +126,17 @@ public class UserManagerImpl implements UserManager {
         if (query == null) {
             return queryWrapper;
         }
-        if (StringUtils.hasText(query.getKeyword())) {
-            queryWrapper.and(wrapper -> wrapper
-                    .like(User::getUsername, query.getKeyword())
-                    .or()
-                    .like(User::getNickname, query.getKeyword())
-                    .or()
-                    .like(User::getEmail, query.getKeyword())
-                    .or()
-                    .eq(User::getPhone, new EncryptField(query.getKeyword())));
+        if (StringUtils.hasText(query.getUsername())) {
+            queryWrapper.like(User::getUsername, query.getUsername());
+        }
+        if (StringUtils.hasText(query.getFullName())) {
+            queryWrapper.like(User::getFullName, query.getFullName());
+        }
+        if (StringUtils.hasText(query.getPhone())) {
+            queryWrapper.eq(User::getPhone, new EncryptField(query.getPhone()));
+        }
+        if (StringUtils.hasText(query.getEmail())) {
+            queryWrapper.like(User::getEmail, query.getEmail());
         }
         if (query.getOrgId() != null) {
             queryWrapper.eq(User::getOrgId, query.getOrgId());

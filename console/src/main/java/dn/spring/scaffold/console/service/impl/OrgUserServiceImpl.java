@@ -51,7 +51,7 @@ public class OrgUserServiceImpl implements OrgUserService {
             info.setOrgId(orgId);
             info.setUserId(user.getId());
             info.setUsername(user.getUsername());
-            info.setNickname(user.getNickname());
+            info.setFullName(user.getFullName());
             result.add(info);
         }
         return result;

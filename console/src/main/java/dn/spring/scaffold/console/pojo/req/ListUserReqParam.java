@@ -10,8 +10,17 @@ import lombok.EqualsAndHashCode;
 @Schema(description = "查询用户列表请求")
 public class ListUserReqParam extends PageReqParam {
 
-    @Schema(description = "关键字，支持用户名、昵称、手机号、邮箱搜索")
-    private String keyword;
+    @Schema(description = "用户名", example = "admin")
+    private String username;
+
+    @Schema(description = "姓名", example = "张三")
+    private String fullName;
+
+    @Schema(description = "手机号", example = "13800138000")
+    private String phone;
+
+    @Schema(description = "邮箱", example = "admin@example.com")
+    private String email;
 
     @Schema(description = "组织机构 ID", example = "1")
     private Long orgId;

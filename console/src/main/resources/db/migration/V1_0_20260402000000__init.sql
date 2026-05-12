@@ -16,7 +16,7 @@ create table if not exists tb_org (
 create table if not exists tb_user (
     id bigint primary key,
     username varchar(64) not null,
-    nickname varchar(64) null,
+    full_name varchar(64) null,
     email varchar(128) null,
     phone varchar(32) null,
     org_id bigint null,
@@ -116,9 +116,9 @@ insert into tb_sys_role (id, code, name, status, remark, create_time, deleted)
 values (1, 'ADMIN', '系统管理员', 1, '系统初始化管理员角色', now(), 0)
 on duplicate key update name = values(name), remark = values(remark);
 
-insert into tb_user (id, username, nickname, email, phone, org_id, password, status, create_time, deleted)
+insert into tb_user (id, username, full_name, email, phone, org_id, password, status, create_time, deleted)
 values (1, 'admin', '系统管理员', 'admin@example.com', 'kGyYSFD/ZqsdmzSZp8sH9A==', 1, '$2a$10$7EqJtq98hPqEX7fNZaFWoOHiB7C9HfM9vDOMkMt2rt7NmBGG99nmW', 1, now(), 0)
-on duplicate key update nickname = values(nickname);
+on duplicate key update full_name = values(full_name);
 
 insert into tb_sys_menu (id, parent_id, name, path, menu_type, permission_code, sort_order, visible, create_time, deleted)
 values

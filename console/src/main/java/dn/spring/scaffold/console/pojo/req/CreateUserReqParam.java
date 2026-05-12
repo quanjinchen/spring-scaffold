@@ -13,9 +13,9 @@ public class CreateUserReqParam {
     @NotBlank(message = "用户名不能为空")
     private String username;
 
-    @Schema(description = "昵称", required = true, example = "系统管理员")
-    @NotBlank(message = "昵称不能为空")
-    private String nickname;
+    @Schema(description = "姓名", required = true, example = "张三")
+    @NotBlank(message = "姓名不能为空")
+    private String fullName;
 
     @Schema(description = "邮箱", example = "admin@example.com")
     private String email;

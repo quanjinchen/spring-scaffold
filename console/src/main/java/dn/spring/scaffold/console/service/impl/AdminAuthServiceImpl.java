@@ -93,7 +93,7 @@ public class AdminAuthServiceImpl implements AdminAuthService {
         LoginData loginData = new LoginData();
         loginData.setAdminId(admin.getId());
         loginData.setUsername(admin.getUsername());
-        loginData.setNickname(admin.getNickname());
+        loginData.setFullName(admin.getFullName());
 
         java.util.List<SysRoleUser> roleUsers = sysRoleUserManager.listByUserId(loginUserId);
         java.util.List<RoleGrantInfoDTO> roleGrantInfoDTOList = new java.util.ArrayList<RoleGrantInfoDTO>(roleUsers.size());

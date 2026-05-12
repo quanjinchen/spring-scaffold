@@ -31,7 +31,7 @@ create index idx_tb_org_status_deleted on tb_org (status, deleted);
 create table tb_user (
     id bigint not null auto_increment comment '主键 ID',
     username varchar(64) not null comment '用户名',
-    nickname varchar(64) null comment '昵称',
+    full_name varchar(64) null comment '姓名',
     email varchar(128) null comment '邮箱',
     phone varchar(32) null comment '手机号',
     org_id bigint null comment '所属组织 ID',
@@ -46,6 +46,7 @@ create table tb_user (
 ) comment='用户表';
 
 create index idx_tb_user_username_deleted on tb_user (username, deleted);
+create index idx_tb_user_full_name_deleted on tb_user (full_name, deleted);
 create index idx_tb_user_email_deleted on tb_user (email, deleted);
 create index idx_tb_user_phone_deleted on tb_user (phone, deleted);
 create index idx_tb_user_org_id_status_deleted on tb_user (org_id, status, deleted);
@@ -243,7 +244,7 @@ insert into tb_sys_role (
 insert into tb_user (
     id,
     username,
-    nickname,
+    full_name,
     email,
     phone,
     org_id,
