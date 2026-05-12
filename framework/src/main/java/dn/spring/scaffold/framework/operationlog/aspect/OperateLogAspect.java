@@ -76,13 +76,17 @@ public class OperateLogAspect {
 
     private void handleOperateLog(JoinPoint joinPoint, OperateLog operateLog, Throwable throwable) {
         try {
+            Long operatorId = loginUserContext.getLoginUserId();
+            String operatorName = loginUserContext.getLoginUsername();
             OperationLog operationLog = new OperationLog();
             operationLog.setModuleName(operateLog.module());
             operationLog.setActionName(operateLog.action());
-            operationLog.setOperatorName(loginUserContext.getLoginUsername());
+            operationLog.setOperatorName(operatorName);
             operationLog.setRequestPath(httpServletRequest.getRequestURI());
             operationLog.setSuccessFlag(throwable == null);
             operationLog.setRequestTime(LocalDateTime.now());
+            operationLog.setCreateBy(operatorId == null ? 0L : operatorId);
+            operationLog.setUpdateBy(operatorId == null ? 0L : operatorId);
 
             long startTime = START_TIME_THREAD_LOCAL.get() == null ? System.currentTimeMillis() : START_TIME_THREAD_LOCAL.get().longValue();
             long cost = System.currentTimeMillis() - startTime;
@@ -95,7 +99,7 @@ public class OperateLogAspect {
             operationLogMessage.put("costMillis", cost);
             operationLogMessage.put("method", joinPoint.getSignature().toShortString());
             operationLogMessage.put("requestPath", httpServletRequest.getRequestURI());
-            operationLogMessage.put("operatorName", operationLog.getOperatorName());
+            operationLogMessage.put("operatorName", operatorName);
             operationLogMessage.put("clientIp", IpUtils.getIpAddr(httpServletRequest));
             operationLogMessage.put("userAgent", UserAgentUtils.getUserAgent(httpServletRequest));
             operationLogMessage.put("failMsg", parseFailMsg(throwable));
