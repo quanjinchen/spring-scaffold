@@ -24,20 +24,20 @@ public class FileServiceImpl implements FileService {
     private FileManager fileManager;
 
     @Override
-    public RespInfo<FileUploadRespData> upload(MultipartFile multipartFile, String publicUrlPrefix) {
-        FileRecord fileRecord = fileManager.upload(multipartFile);
+    public RespInfo<FileUploadRespData> upload(MultipartFile multipartFile, String fileCategory, String publicUrlPrefix) {
+        FileRecord fileRecord = fileManager.upload(multipartFile, fileCategory);
         return RespInfo.success(buildUploadResp(fileRecord.getFileId(), publicUrlPrefix));
     }
 
     @Override
-    public RespInfo<FileUploadRespData> uploadBytes(String fileName, byte[] fileBytes, String publicUrlPrefix) {
-        FileRecord fileRecord = fileManager.upload(fileName, fileBytes);
+    public RespInfo<FileUploadRespData> uploadBytes(String fileName, byte[] fileBytes, String fileCategory, String publicUrlPrefix) {
+        FileRecord fileRecord = fileManager.upload(fileName, fileBytes, fileCategory);
         return RespInfo.success(buildUploadResp(fileRecord.getFileId(), publicUrlPrefix));
     }
 
     @Override
-    public RespInfo<FileUploadRespData> uploadDataUrl(String fileName, String dataUrl, String publicUrlPrefix) {
-        FileRecord fileRecord = fileManager.upload(fileName, dataUrl);
+    public RespInfo<FileUploadRespData> uploadDataUrl(String fileName, String dataUrl, String fileCategory, String publicUrlPrefix) {
+        FileRecord fileRecord = fileManager.upload(fileName, dataUrl, fileCategory);
         return RespInfo.success(buildUploadResp(fileRecord.getFileId(), publicUrlPrefix));
     }
 

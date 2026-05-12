@@ -23,6 +23,12 @@ public class CreateUserReqParam {
     @Schema(description = "手机号", example = "13800138000")
     private String phone;
 
+    @Schema(description = "人脸图片 base64", example = "data:image/png;base64,xxxx")
+    private String faceBase64;
+
+    @Schema(description = "人脸文件 ID", example = "202605120001")
+    private String faceFileId;
+
     @Schema(description = "组织机构 ID", example = "1")
     private Long orgId;
 

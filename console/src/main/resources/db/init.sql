@@ -34,6 +34,7 @@ create table tb_user (
     full_name varchar(64) null comment '姓名',
     email varchar(128) null comment '邮箱',
     phone varchar(32) null comment '手机号',
+    face_file_id varchar(100) null comment '人脸文件 ID',
     org_id bigint null comment '所属组织 ID',
     password varchar(255) null comment '密码密文',
     status tinyint not null default 1 comment '状态，1 启用，0 禁用',
@@ -49,6 +50,7 @@ create index idx_tb_user_username_deleted on tb_user (username, deleted);
 create index idx_tb_user_full_name_deleted on tb_user (full_name, deleted);
 create index idx_tb_user_email_deleted on tb_user (email, deleted);
 create index idx_tb_user_phone_deleted on tb_user (phone, deleted);
+create index idx_tb_user_face_file_id_deleted on tb_user (face_file_id, deleted);
 create index idx_tb_user_org_id_status_deleted on tb_user (org_id, status, deleted);
 
 create table tb_sys_role (
@@ -160,6 +162,7 @@ create table tb_file_record (
     id bigint not null auto_increment comment '主键 ID',
     file_id varchar(100) null comment '文件业务 ID',
     file_name varchar(100) null comment '文件名称',
+    file_category varchar(32) not null default 'COMMON' comment '文件分类',
     object_name varchar(200) null comment '对象存储中的对象名',
     content_type varchar(100) null comment '文件内容类型',
     file_suffix varchar(100) null comment '文件后缀',
@@ -173,6 +176,7 @@ create table tb_file_record (
 ) comment='文件记录表';
 
 create index idx_tb_file_record_file_id_deleted on tb_file_record (file_id, deleted);
+create index idx_tb_file_record_file_category_deleted on tb_file_record (file_category, deleted);
 create index idx_tb_file_record_object_name_deleted on tb_file_record (object_name, deleted);
 create index idx_tb_file_record_create_time_deleted on tb_file_record (create_time, deleted);
 
@@ -247,6 +251,7 @@ insert into tb_user (
     full_name,
     email,
     phone,
+    face_file_id,
     org_id,
     password,
     status,
@@ -260,6 +265,7 @@ insert into tb_user (
     'admin',
     '超级管理员',
     'admin@local.test',
+    null,
     null,
     1,
     '$2a$10$5jEE.2xAuijvcRpFVjhXt.ZODYlK/bsYzAxn6EPnmh0tOw0B5ArjG',

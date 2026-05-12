@@ -15,6 +15,9 @@ public class FileRecord extends BaseEntity {
     @TableField("file_name")
     private String fileName;
 
+    @TableField("file_category")
+    private String fileCategory;
+
     @TableField("file_suffix")
     private String fileSuffix;
 

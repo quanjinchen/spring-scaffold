@@ -9,11 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface FileService {
 
-    RespInfo<FileUploadRespData> upload(MultipartFile multipartFile, String publicUrlPrefix);
+    RespInfo<FileUploadRespData> upload(MultipartFile multipartFile, String fileCategory, String publicUrlPrefix);
 
-    RespInfo<FileUploadRespData> uploadBytes(String fileName, byte[] fileBytes, String publicUrlPrefix);
+    RespInfo<FileUploadRespData> uploadBytes(String fileName, byte[] fileBytes, String fileCategory, String publicUrlPrefix);
 
-    RespInfo<FileUploadRespData> uploadDataUrl(String fileName, String dataUrl, String publicUrlPrefix);
+    RespInfo<FileUploadRespData> uploadDataUrl(String fileName, String dataUrl, String fileCategory, String publicUrlPrefix);
 
     void download(String fileId, HttpServletResponse response);
 

@@ -7,9 +7,15 @@ public interface FileManager {
 
     FileRecord upload(String fileName, String dataUrl);
 
+    FileRecord upload(String fileName, String dataUrl, String fileCategory);
+
     FileRecord upload(MultipartFile multipartFile);
 
+    FileRecord upload(MultipartFile multipartFile, String fileCategory);
+
     FileRecord upload(String fileName, byte[] fileBytes);
+
+    FileRecord upload(String fileName, byte[] fileBytes, String fileCategory);
 
     byte[] download(String objectName);
 

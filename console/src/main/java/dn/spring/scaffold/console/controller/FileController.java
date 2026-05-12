@@ -41,8 +41,11 @@ public class FileController {
     @PostMapping(value = "/upload-file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @OperateLog(module = "file", action = "上传文件")
     @SaCheckPermission("system:file:upload")
-    public RespInfo<FileUploadRespData> uploadFile(@RequestParam("file") MultipartFile file) {
-        return fileService.upload(file, publicUrlPrefix);
+    public RespInfo<FileUploadRespData> uploadFile(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "fileCategory", required = false) String fileCategory
+    ) {
+        return fileService.upload(file, fileCategory, publicUrlPrefix);
     }
 
     @Operation(summary = "下载文件", description = "权限：system:file:download")

@@ -22,6 +22,9 @@ public class UserDTO {
     @Schema(description = "手机号")
     private String phone;
 
+    @Schema(description = "人脸文件 ID")
+    private String faceFileId;
+
     @Schema(description = "组织机构 ID")
     private Long orgId;
 

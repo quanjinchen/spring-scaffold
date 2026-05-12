@@ -3,6 +3,7 @@ package dn.spring.scaffold.file.manager.impl;
 import dn.spring.scaffold.common.constant.ResultCode;
 import dn.spring.scaffold.common.exception.BizException;
 import dn.spring.scaffold.file.config.FileStorageProperties;
+import dn.spring.scaffold.file.constant.FileCategoryConstants;
 import dn.spring.scaffold.file.entity.FileRecord;
 import dn.spring.scaffold.file.manager.FileManager;
 import dn.spring.scaffold.file.mapper.FileRecordMapper;
@@ -45,6 +46,11 @@ public class FileManagerImpl implements FileManager {
 
     @Override
     public FileRecord upload(String fileName, String dataUrl) {
+        return upload(fileName, dataUrl, FileCategoryConstants.COMMON);
+    }
+
+    @Override
+    public FileRecord upload(String fileName, String dataUrl, String fileCategory) {
         DataUrlUtils.DataUrlInfo dataUrlInfo = DataUrlUtils.parseDataUrl(dataUrl);
         String suffix = dataUrlInfo.getMediaType().getSubtype();
         String fileId = newFileId();
@@ -59,6 +65,7 @@ public class FileManagerImpl implements FileManager {
         fileRecord.setFileSize((long) contentBytes.length);
         fileRecord.setContentType(contentType);
         fileRecord.setObjectName(objectName);
+        fileRecord.setFileCategory(resolveFileCategory(fileCategory));
         fileRecord.setFileSuffix(suffix);
         fileRecord.setFileName(resolveFileName(fileName, buildFallbackFileName(fileId, suffix)));
         saveFile(fileRecord);
@@ -67,11 +74,16 @@ public class FileManagerImpl implements FileManager {
 
     @Override
     public FileRecord upload(MultipartFile multipartFile) {
+        return upload(multipartFile, FileCategoryConstants.COMMON);
+    }
+
+    @Override
+    public FileRecord upload(MultipartFile multipartFile, String fileCategory) {
         if (multipartFile == null || multipartFile.isEmpty()) {
             throw new BizException(ResultCode.FILE_NOT_EMPTY);
         }
         try {
-            return upload(multipartFile.getOriginalFilename(), multipartFile.getBytes());
+            return upload(multipartFile.getOriginalFilename(), multipartFile.getBytes(), fileCategory);
         } catch (IOException exception) {
             throw new BizException("file upload failed: " + exception.getMessage());
         }
@@ -79,6 +91,11 @@ public class FileManagerImpl implements FileManager {
 
     @Override
     public FileRecord upload(String fileName, byte[] fileBytes) {
+        return upload(fileName, fileBytes, FileCategoryConstants.COMMON);
+    }
+
+    @Override
+    public FileRecord upload(String fileName, byte[] fileBytes, String fileCategory) {
         if (fileBytes == null || fileBytes.length == 0) {
             throw new BizException(ResultCode.FILE_NOT_EMPTY);
         }
@@ -95,6 +112,7 @@ public class FileManagerImpl implements FileManager {
         fileRecord.setFileSize((long) fileBytes.length);
         fileRecord.setContentType(contentType);
         fileRecord.setObjectName(objectName);
+        fileRecord.setFileCategory(resolveFileCategory(fileCategory));
         fileRecord.setFileSuffix(suffix);
         fileRecord.setFileName(resolveFileName(fileName, buildFallbackFileName(fileId, suffix)));
         saveFile(fileRecord);
@@ -166,6 +184,13 @@ public class FileManagerImpl implements FileManager {
             return fallbackFileName;
         }
         return fileName;
+    }
+
+    private String resolveFileCategory(String fileCategory) {
+        if (fileCategory == null || fileCategory.trim().isEmpty()) {
+            return FileCategoryConstants.COMMON;
+        }
+        return fileCategory.trim();
     }
 
     private String buildFallbackFileName(String fileId, String suffix) {
