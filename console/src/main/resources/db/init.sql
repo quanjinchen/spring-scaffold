@@ -3,6 +3,7 @@ drop table if exists tb_org_user;
 drop table if exists tb_sys_role_user;
 drop table if exists tb_operation_log;
 drop table if exists tb_file_record;
+drop table if exists tb_app;
 drop table if exists tb_sys_menu;
 drop table if exists tb_user;
 drop table if exists tb_sys_role;
@@ -181,6 +182,25 @@ create index idx_tb_file_record_file_category_deleted on tb_file_record (file_ca
 create index idx_tb_file_record_object_name_deleted on tb_file_record (object_name, deleted);
 create index idx_tb_file_record_create_time_deleted on tb_file_record (create_time, deleted);
 
+create table tb_app (
+    id bigint not null auto_increment comment '主键 ID',
+    app_name varchar(128) not null comment '应用名称',
+    app_code varchar(64) not null comment '应用编码',
+    client_id varchar(128) not null comment '客户端 ID',
+    client_secret varchar(255) not null comment '客户端密钥',
+    remark varchar(255) null comment '备注',
+    create_by bigint null comment '创建人 ID',
+    create_time datetime not null default current_timestamp comment '创建时间，默认当前时间',
+    update_by bigint null comment '更新人 ID',
+    update_time datetime not null default current_timestamp on update current_timestamp comment '更新时间，默认当前时间并在更新时自动刷新',
+    deleted tinyint not null default 0 comment '逻辑删除标记，0 正常，1 删除',
+    primary key (id)
+) comment='应用表';
+
+create index idx_tb_app_app_code_deleted on tb_app (app_code, deleted);
+create index idx_tb_app_client_id_deleted on tb_app (client_id, deleted);
+create index idx_tb_app_app_name_deleted on tb_app (app_name, deleted);
+
 insert into tb_org (
     id,
     parent_id,
@@ -318,6 +338,9 @@ insert into tb_sys_menu (
     (107, 3, '用户删除', '/user/delete', null, 'BUTTON', 'system:user:delete', 22, 1, 1, now(), 1, now(), 0),
     (108, 5, '组织新增', '/organization/create', null, 'BUTTON', 'system:org:add', 41, 1, 1, now(), 1, now(), 0),
     (109, 5, '组织删除', '/organization/delete', null, 'BUTTON', 'system:org:delete', 42, 1, 1, now(), 1, now(), 0),
+    (120, 0, '应用管理', '/application', 'Grid', 'MENU', 'system:app:query', 4, 1, 1, now(), 1, now(), 0),
+    (121, 120, '应用保存', '/application/save', null, 'BUTTON', 'system:app:update', 10, 1, 1, now(), 1, now(), 0),
+    (122, 120, '应用删除', '/application/delete', null, 'BUTTON', 'system:app:delete', 20, 1, 1, now(), 1, now(), 0),
     (118, 2, '菜单删除', '/system/menu/delete', null, 'BUTTON', 'system:menu:delete', 121, 1, 1, now(), 1, now(), 0),
     (119, 4, '角色删除', '/system/role/delete', null, 'BUTTON', 'system:role:delete', 111, 1, 1, now(), 1, now(), 0);
 
@@ -372,29 +395,35 @@ insert into tb_sys_role_menu (
     (14, 1, 14, 1, now(), 1, now(), 0),
     (15, 1, 118, 1, now(), 1, now(), 0),
     (16, 1, 119, 1, now(), 1, now(), 0),
-    (17, 2, 1, 1, now(), 1, now(), 0),
-    (18, 2, 2, 1, now(), 1, now(), 0),
-    (19, 2, 3, 1, now(), 1, now(), 0),
-    (20, 2, 4, 1, now(), 1, now(), 0),
-    (21, 2, 5, 1, now(), 1, now(), 0),
-    (22, 2, 6, 1, now(), 1, now(), 0),
-    (23, 2, 7, 1, now(), 1, now(), 0),
-    (24, 2, 8, 1, now(), 1, now(), 0),
-    (25, 2, 9, 1, now(), 1, now(), 0),
-    (26, 2, 10, 1, now(), 1, now(), 0),
-    (27, 2, 11, 1, now(), 1, now(), 0),
-    (28, 2, 12, 1, now(), 1, now(), 0),
-    (29, 2, 13, 1, now(), 1, now(), 0),
-    (30, 2, 14, 1, now(), 1, now(), 0),
-    (31, 2, 100, 1, now(), 1, now(), 0),
-    (32, 2, 101, 1, now(), 1, now(), 0),
-    (33, 2, 102, 1, now(), 1, now(), 0),
-    (34, 2, 103, 1, now(), 1, now(), 0),
-    (35, 2, 104, 1, now(), 1, now(), 0),
-    (36, 2, 105, 1, now(), 1, now(), 0),
-    (37, 2, 106, 1, now(), 1, now(), 0),
-    (38, 2, 107, 1, now(), 1, now(), 0),
-    (39, 2, 108, 1, now(), 1, now(), 0),
-    (40, 2, 109, 1, now(), 1, now(), 0),
-    (41, 2, 118, 1, now(), 1, now(), 0),
-    (42, 2, 119, 1, now(), 1, now(), 0);
+    (17, 1, 120, 1, now(), 1, now(), 0),
+    (18, 1, 121, 1, now(), 1, now(), 0),
+    (19, 1, 122, 1, now(), 1, now(), 0),
+    (20, 2, 1, 1, now(), 1, now(), 0),
+    (21, 2, 2, 1, now(), 1, now(), 0),
+    (22, 2, 3, 1, now(), 1, now(), 0),
+    (23, 2, 4, 1, now(), 1, now(), 0),
+    (24, 2, 5, 1, now(), 1, now(), 0),
+    (25, 2, 6, 1, now(), 1, now(), 0),
+    (26, 2, 7, 1, now(), 1, now(), 0),
+    (27, 2, 8, 1, now(), 1, now(), 0),
+    (28, 2, 9, 1, now(), 1, now(), 0),
+    (29, 2, 10, 1, now(), 1, now(), 0),
+    (30, 2, 11, 1, now(), 1, now(), 0),
+    (31, 2, 12, 1, now(), 1, now(), 0),
+    (32, 2, 13, 1, now(), 1, now(), 0),
+    (33, 2, 14, 1, now(), 1, now(), 0),
+    (34, 2, 100, 1, now(), 1, now(), 0),
+    (35, 2, 101, 1, now(), 1, now(), 0),
+    (36, 2, 102, 1, now(), 1, now(), 0),
+    (37, 2, 103, 1, now(), 1, now(), 0),
+    (38, 2, 104, 1, now(), 1, now(), 0),
+    (39, 2, 105, 1, now(), 1, now(), 0),
+    (40, 2, 106, 1, now(), 1, now(), 0),
+    (41, 2, 107, 1, now(), 1, now(), 0),
+    (42, 2, 108, 1, now(), 1, now(), 0),
+    (43, 2, 109, 1, now(), 1, now(), 0),
+    (44, 2, 118, 1, now(), 1, now(), 0),
+    (45, 2, 119, 1, now(), 1, now(), 0),
+    (46, 2, 120, 1, now(), 1, now(), 0),
+    (47, 2, 121, 1, now(), 1, now(), 0),
+    (48, 2, 122, 1, now(), 1, now(), 0);

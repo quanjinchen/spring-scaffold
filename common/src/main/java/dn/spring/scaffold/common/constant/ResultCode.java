@@ -45,6 +45,12 @@ public enum ResultCode implements Assert {
     ROLE_CODE_REQUIRED(15005, "角色编码不能为空"),
     ROLE_NAME_REQUIRED(15006, "角色名称不能为空"),
 
+    // ========== 应用错误段 [16000, 17000) ==========
+    APP_NOT_FOUND(16001, "应用不存在"),
+    APP_CODE_ALREADY_EXISTS(16002, "应用编码已存在"),
+    APP_CLIENT_ID_ALREADY_EXISTS(16003, "客户端 ID 已存在"),
+    APP_NAME_ALREADY_EXISTS(16004, "应用名称已存在"),
+
     // ========== 菜单错误段 [18000, 19000) ==========
     MENU_NOT_FOUND(18004, "菜单不存在"),
     CAN_NOT_DELETE_MENU_BECAUSE_HAS_CHILDREN(18005, "菜单下存在子菜单，无法删除"),
