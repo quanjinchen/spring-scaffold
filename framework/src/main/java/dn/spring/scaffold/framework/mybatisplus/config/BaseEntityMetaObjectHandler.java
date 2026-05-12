@@ -18,13 +18,19 @@ public class BaseEntityMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         Long operatorId = getCurrentOperatorId();
-        this.strictInsertFill(metaObject, "createBy", Long.class, operatorId);
-        this.strictInsertFill(metaObject, "updateBy", Long.class, operatorId);
+        if (this.getFieldValByName("createBy", metaObject) == null) {
+            this.strictInsertFill(metaObject, "createBy", Long.class, operatorId);
+        }
+        if (this.getFieldValByName("updateBy", metaObject) == null) {
+            this.strictInsertFill(metaObject, "updateBy", Long.class, operatorId);
+        }
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        this.strictUpdateFill(metaObject, "updateBy", Long.class, getCurrentOperatorId());
+        if (this.getFieldValByName("updateBy", metaObject) == null) {
+            this.strictUpdateFill(metaObject, "updateBy", Long.class, getCurrentOperatorId());
+        }
     }
 
     private Long getCurrentOperatorId() {

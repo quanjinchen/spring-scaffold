@@ -107,8 +107,11 @@ public class OperateLogAspect {
             asyncManager.execute(new Runnable() {
                 @Override
                 public void run() {
-                    operationLogRecorder.record(operationLog);
-                    OPERATION_LOGGER.info("操作日志：{}", JsonUtils.toJson(operationLogMessage));
+                    try {
+                        operationLogRecorder.record(operationLog);
+                    } catch (Exception exception) {
+                        log.error("异步记录操作日志失败，operationLog={}", JsonUtils.toJson(operationLog), exception);
+                    }
                 }
             });
         } catch (Exception exception) {
