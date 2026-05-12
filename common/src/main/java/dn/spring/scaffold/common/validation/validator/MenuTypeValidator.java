@@ -10,8 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class MenuTypeValidator implements ConstraintValidator<MenuType, String> {
-
-    private static final Set<String> ALLOWED_TYPES = new HashSet<String>(Arrays.asList("M", "C", "B"));
+    private static final Set<String> ALLOWED_TYPES = new HashSet<String>(Arrays.asList("DIR", "MENU", "PAGE", "BTN"));
 
     private boolean allowBlank;
 

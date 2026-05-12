@@ -17,19 +17,22 @@ public class MenuTreeNode {
     private Long parentId;
 
     @Schema(description = "菜单名称")
-    private String name;
+    private String menuName;
 
     @Schema(description = "菜单路径")
     private String path;
 
-    @Schema(description = "菜单类型，CATALOG/MENU/BUTTON")
+    @Schema(description = "菜单图标")
+    private String icon;
+
+    @Schema(description = "菜单类型，DIR/MENU/PAGE/BTN")
     private String menuType;
 
     @Schema(description = "权限编码")
-    private String permissionCode;
+    private String menuCode;
 
     @Schema(description = "排序值")
-    private Integer sortOrder;
+    private Integer orderNum;
 
     @Schema(description = "是否可见")
     private Boolean visible;

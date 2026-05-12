@@ -74,11 +74,12 @@ create index idx_tb_sys_role_status_deleted on tb_sys_role (status, deleted);
 create table tb_sys_menu (
     id bigint not null auto_increment comment '主键 ID',
     parent_id bigint not null default 0 comment '父菜单 ID，0 表示根节点',
-    name varchar(128) not null comment '菜单名称',
+    menu_name varchar(128) not null comment '菜单名称',
     path varchar(255) null comment '菜单路由路径',
+    icon varchar(128) null comment '菜单图标',
     menu_type varchar(32) not null comment '菜单类型',
-    permission_code varchar(128) null comment '权限编码',
-    sort_order int not null default 0 comment '排序值',
+    menu_code varchar(128) null comment '权限编码',
+    order_num int not null default 0 comment '排序值',
     visible tinyint not null default 1 comment '是否可见，1 可见，0 不可见',
     create_by bigint null comment '创建人 ID',
     create_time datetime not null default current_timestamp comment '创建时间，默认当前时间',
@@ -89,7 +90,7 @@ create table tb_sys_menu (
 ) comment='菜单表';
 
 create index idx_tb_sys_menu_parent_id_deleted on tb_sys_menu (parent_id, deleted);
-create index idx_tb_sys_menu_permission_code_deleted on tb_sys_menu (permission_code, deleted);
+create index idx_tb_sys_menu_menu_code_deleted on tb_sys_menu (menu_code, deleted);
 create index idx_tb_sys_menu_menu_type_deleted on tb_sys_menu (menu_type, deleted);
 
 create table tb_operation_log (
@@ -280,11 +281,12 @@ insert into tb_user (
 insert into tb_sys_menu (
     id,
     parent_id,
-    name,
+    menu_name,
     path,
+    icon,
     menu_type,
-    permission_code,
-    sort_order,
+    menu_code,
+    order_num,
     visible,
     create_by,
     create_time,
@@ -292,32 +294,32 @@ insert into tb_sys_menu (
     update_time,
     deleted
 ) values
-    (1, 0, '系统管理', '/system', 'CATALOG', null, 1, 1, 1, now(), 1, now(), 0),
-    (2, 1, '菜单管理', '/system/menu', 'MENU', 'system:menu:query', 10, 1, 1, now(), 1, now(), 0),
-    (3, 0, '用户管理', '/user', 'MENU', 'system:user:query', 2, 1, 1, now(), 1, now(), 0),
-    (4, 1, '角色管理', '/system/role', 'MENU', 'system:role:query', 30, 1, 1, now(), 1, now(), 0),
-    (5, 0, '组织管理', '/organization', 'MENU', 'system:org:query', 3, 1, 1, now(), 1, now(), 0),
-    (6, 1, '日志审计', '/system/operation-log', 'MENU', 'system:operationLog:query', 50, 1, 1, now(), 1, now(), 0),
-    (7, 1, '文件上传', '/system/file/upload', 'BUTTON', 'system:file:upload', 60, 1, 1, now(), 1, now(), 0),
-    (8, 1, '文件下载', '/system/file/download', 'BUTTON', 'system:file:download', 70, 1, 1, now(), 1, now(), 0),
-    (9, 1, '文件删除', '/system/file/delete', 'BUTTON', 'system:file:delete', 80, 1, 1, now(), 1, now(), 0),
-    (10, 3, '用户保存', '/user/save', 'BUTTON', 'system:user:update', 90, 1, 1, now(), 1, now(), 0),
-    (11, 3, '重置密码', '/user/reset-password', 'BUTTON', 'system:user:resetPassword', 100, 1, 1, now(), 1, now(), 0),
-    (12, 4, '角色保存', '/system/role/save', 'BUTTON', 'system:role:update', 110, 1, 1, now(), 1, now(), 0),
-    (13, 5, '组织保存', '/organization/save', 'BUTTON', 'system:org:update', 120, 1, 1, now(), 1, now(), 0),
-    (14, 2, '菜单保存', '/system/menu/save', 'BUTTON', 'system:menu:update', 130, 1, 1, now(), 1, now(), 0),
-    (100, 0, '首页', '/index', 'CATALOG', null, 1, 1, 1, now(), 1, now(), 0),
-    (101, 100, '基础信息', '/index/baseInfo', 'MENU', 'system:index:baseInfo', 10, 1, 1, now(), 1, now(), 0),
-    (102, 101, '用户总数', '/index/baseInfo/userNum', 'BUTTON', 'system:index:userNum', 11, 1, 1, now(), 1, now(), 0),
-    (103, 101, '活跃用户', '/index/baseInfo/userActive', 'BUTTON', 'system:index:userActive', 12, 1, 1, now(), 1, now(), 0),
-    (104, 101, '应用排行', '/index/baseInfo/appRank', 'BUTTON', 'system:index:appRank', 13, 1, 1, now(), 1, now(), 0),
-    (105, 101, '设备统计', '/index/baseInfo/userDevice', 'BUTTON', 'system:index:userDevice', 14, 1, 1, now(), 1, now(), 0),
-    (106, 3, '用户新增', '/user/create', 'BUTTON', 'system:user:add', 21, 1, 1, now(), 1, now(), 0),
-    (107, 3, '用户删除', '/user/delete', 'BUTTON', 'system:user:delete', 22, 1, 1, now(), 1, now(), 0),
-    (108, 5, '组织新增', '/organization/create', 'BUTTON', 'system:org:add', 41, 1, 1, now(), 1, now(), 0),
-    (109, 5, '组织删除', '/organization/delete', 'BUTTON', 'system:org:delete', 42, 1, 1, now(), 1, now(), 0),
-    (118, 2, '菜单删除', '/system/menu/delete', 'BUTTON', 'system:menu:delete', 121, 1, 1, now(), 1, now(), 0),
-    (119, 4, '角色删除', '/system/role/delete', 'BUTTON', 'system:role:delete', 111, 1, 1, now(), 1, now(), 0);
+    (1, 0, '系统管理', '/system', 'Setting', 'CATALOG', null, 1, 1, 1, now(), 1, now(), 0),
+    (2, 1, '菜单管理', '/system/menu', 'Menu', 'MENU', 'system:menu:query', 10, 1, 1, now(), 1, now(), 0),
+    (3, 0, '用户管理', '/user', 'User', 'MENU', 'system:user:query', 2, 1, 1, now(), 1, now(), 0),
+    (4, 1, '角色管理', '/system/role', 'Avatar', 'MENU', 'system:role:query', 30, 1, 1, now(), 1, now(), 0),
+    (5, 0, '组织管理', '/organization', 'OfficeBuilding', 'MENU', 'system:org:query', 3, 1, 1, now(), 1, now(), 0),
+    (6, 1, '日志审计', '/system/operation-log', 'Document', 'MENU', 'system:operationLog:query', 50, 1, 1, now(), 1, now(), 0),
+    (7, 1, '文件上传', '/system/file/upload', null, 'BUTTON', 'system:file:upload', 60, 1, 1, now(), 1, now(), 0),
+    (8, 1, '文件下载', '/system/file/download', null, 'BUTTON', 'system:file:download', 70, 1, 1, now(), 1, now(), 0),
+    (9, 1, '文件删除', '/system/file/delete', null, 'BUTTON', 'system:file:delete', 80, 1, 1, now(), 1, now(), 0),
+    (10, 3, '用户保存', '/user/save', null, 'BUTTON', 'system:user:update', 90, 1, 1, now(), 1, now(), 0),
+    (11, 3, '重置密码', '/user/reset-password', null, 'BUTTON', 'system:user:resetPassword', 100, 1, 1, now(), 1, now(), 0),
+    (12, 4, '角色保存', '/system/role/save', null, 'BUTTON', 'system:role:update', 110, 1, 1, now(), 1, now(), 0),
+    (13, 5, '组织保存', '/organization/save', null, 'BUTTON', 'system:org:update', 120, 1, 1, now(), 1, now(), 0),
+    (14, 2, '菜单保存', '/system/menu/save', null, 'BUTTON', 'system:menu:update', 130, 1, 1, now(), 1, now(), 0),
+    (100, 0, '首页', '/index', 'HomeFilled', 'CATALOG', null, 1, 1, 1, now(), 1, now(), 0),
+    (101, 100, '基础信息', '/index/baseInfo', 'DataAnalysis', 'MENU', 'system:index:baseInfo', 10, 1, 1, now(), 1, now(), 0),
+    (102, 101, '用户总数', '/index/baseInfo/userNum', null, 'BUTTON', 'system:index:userNum', 11, 1, 1, now(), 1, now(), 0),
+    (103, 101, '活跃用户', '/index/baseInfo/userActive', null, 'BUTTON', 'system:index:userActive', 12, 1, 1, now(), 1, now(), 0),
+    (104, 101, '应用排行', '/index/baseInfo/appRank', null, 'BUTTON', 'system:index:appRank', 13, 1, 1, now(), 1, now(), 0),
+    (105, 101, '设备统计', '/index/baseInfo/userDevice', null, 'BUTTON', 'system:index:userDevice', 14, 1, 1, now(), 1, now(), 0),
+    (106, 3, '用户新增', '/user/create', null, 'BUTTON', 'system:user:add', 21, 1, 1, now(), 1, now(), 0),
+    (107, 3, '用户删除', '/user/delete', null, 'BUTTON', 'system:user:delete', 22, 1, 1, now(), 1, now(), 0),
+    (108, 5, '组织新增', '/organization/create', null, 'BUTTON', 'system:org:add', 41, 1, 1, now(), 1, now(), 0),
+    (109, 5, '组织删除', '/organization/delete', null, 'BUTTON', 'system:org:delete', 42, 1, 1, now(), 1, now(), 0),
+    (118, 2, '菜单删除', '/system/menu/delete', null, 'BUTTON', 'system:menu:delete', 121, 1, 1, now(), 1, now(), 0),
+    (119, 4, '角色删除', '/system/role/delete', null, 'BUTTON', 'system:role:delete', 111, 1, 1, now(), 1, now(), 0);
 
 insert into tb_sys_role_user (
     id,

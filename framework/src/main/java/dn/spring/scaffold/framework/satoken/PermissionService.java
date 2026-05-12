@@ -56,8 +56,8 @@ public class PermissionService {
 
         List<SysMenu> menus = sysMenuManager.listByIds(menuIds);
         for (SysMenu menu : menus) {
-            if (StringUtils.hasText(menu.getPermissionCode())) {
-                permissions.add(menu.getPermissionCode());
+            if (StringUtils.hasText(menu.getMenuCode())) {
+                permissions.add(menu.getMenuCode());
             }
         }
         return new ArrayList<String>(permissions);

@@ -9,21 +9,19 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class SysMenu extends BaseEntity {
 
-    @TableField("parent_id")
     private Long parentId;
 
-    private String name;
+    private String menuName;
 
     private String path;
 
-    @TableField("menu_type")
+    private String icon;
+
     private String menuType;
 
-    @TableField("permission_code")
-    private String permissionCode;
+    private String menuCode;
 
-    @TableField("sort_order")
-    private Integer sortOrder;
+    private Integer orderNum;
 
     private Boolean visible;
 }

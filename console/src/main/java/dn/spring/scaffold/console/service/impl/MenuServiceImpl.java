@@ -125,11 +125,12 @@ public class MenuServiceImpl implements MenuService {
     public RespInfo<MenuDTO> createMenu(CreateMenuReqParam reqParam) {
         SysMenu menu = new SysMenu();
         menu.setParentId(reqParam.getParentId());
-        menu.setName(reqParam.getName());
+        menu.setMenuName(reqParam.getMenuName());
         menu.setPath(reqParam.getPath());
+        menu.setIcon(reqParam.getIcon());
         menu.setMenuType(reqParam.getMenuType());
-        menu.setPermissionCode(reqParam.getPermissionCode());
-        menu.setSortOrder(reqParam.getSortOrder() == null ? 0 : reqParam.getSortOrder());
+        menu.setMenuCode(reqParam.getMenuCode());
+        menu.setOrderNum(reqParam.getOrderNum() == null ? 0 : reqParam.getOrderNum());
         menu.setVisible(reqParam.getVisible() == null ? Boolean.TRUE : reqParam.getVisible());
         return RespInfo.created(toMenuDTO(sysMenuManager.save(menu)));
     }
@@ -140,11 +141,12 @@ public class MenuServiceImpl implements MenuService {
         ResultCode.MENU_NOT_FOUND.assertNotNull(existedMenu);
 
         existedMenu.setParentId(reqParam.getParentId());
-        existedMenu.setName(reqParam.getName());
+        existedMenu.setMenuName(reqParam.getMenuName());
         existedMenu.setPath(reqParam.getPath());
+        existedMenu.setIcon(reqParam.getIcon());
         existedMenu.setMenuType(reqParam.getMenuType());
-        existedMenu.setPermissionCode(reqParam.getPermissionCode());
-        existedMenu.setSortOrder(reqParam.getSortOrder() == null ? 0 : reqParam.getSortOrder());
+        existedMenu.setMenuCode(reqParam.getMenuCode());
+        existedMenu.setOrderNum(reqParam.getOrderNum() == null ? 0 : reqParam.getOrderNum());
         existedMenu.setVisible(reqParam.getVisible() == null ? Boolean.TRUE : reqParam.getVisible());
         return RespInfo.success(toMenuDTO(sysMenuManager.save(existedMenu)));
     }
@@ -155,7 +157,6 @@ public class MenuServiceImpl implements MenuService {
         SysMenu menu = sysMenuManager.getById(menuId);
         ResultCode.MENU_NOT_FOUND.assertNotNull(menu);
         ResultCode.CAN_NOT_DELETE_MENU_BECAUSE_HAS_CHILDREN.assertIsFalse(sysMenuManager.existsChildren(menuId));
-        ResultCode.MENU_IN_USE.assertIsFalse(sysRoleMenuManager.existsByMenuId(menuId));
         sysMenuManager.deleteById(menuId);
         return RespInfo.success();
     }
@@ -174,11 +175,12 @@ public class MenuServiceImpl implements MenuService {
         MenuTreeNode node = new MenuTreeNode();
         node.setId(menu.getId());
         node.setParentId(menu.getParentId());
-        node.setName(menu.getName());
+        node.setMenuName(menu.getMenuName());
         node.setPath(menu.getPath());
+        node.setIcon(menu.getIcon());
         node.setMenuType(menu.getMenuType());
-        node.setPermissionCode(menu.getPermissionCode());
-        node.setSortOrder(menu.getSortOrder());
+        node.setMenuCode(menu.getMenuCode());
+        node.setOrderNum(menu.getOrderNum());
         node.setVisible(menu.getVisible());
 
         List<MenuTreeNode> children = allMenus.stream()
@@ -193,11 +195,12 @@ public class MenuServiceImpl implements MenuService {
         MenuDTO menuDTO = new MenuDTO();
         menuDTO.setId(menu.getId());
         menuDTO.setParentId(menu.getParentId());
-        menuDTO.setName(menu.getName());
+        menuDTO.setMenuName(menu.getMenuName());
         menuDTO.setPath(menu.getPath());
+        menuDTO.setIcon(menu.getIcon());
         menuDTO.setMenuType(menu.getMenuType());
-        menuDTO.setPermissionCode(menu.getPermissionCode());
-        menuDTO.setSortOrder(menu.getSortOrder());
+        menuDTO.setMenuCode(menu.getMenuCode());
+        menuDTO.setOrderNum(menu.getOrderNum());
         menuDTO.setVisible(menu.getVisible());
         menuDTO.setCreateTime(menu.getCreateTime());
         menuDTO.setUpdateTime(menu.getUpdateTime());

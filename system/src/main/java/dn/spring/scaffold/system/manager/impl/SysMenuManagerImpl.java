@@ -20,7 +20,7 @@ public class SysMenuManagerImpl implements SysMenuManager {
     @Override
     public List<SysMenu> listAll() {
         return sysMenuMapper.selectList(new LambdaQueryWrapper<SysMenu>()
-                .orderByAsc(SysMenu::getSortOrder)
+                .orderByAsc(SysMenu::getOrderNum)
                 .orderByAsc(SysMenu::getId));
     }
 

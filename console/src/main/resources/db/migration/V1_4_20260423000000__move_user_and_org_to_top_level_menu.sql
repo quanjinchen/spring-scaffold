@@ -2,7 +2,7 @@ update tb_sys_menu
 set
     parent_id = 0,
     path = '/user',
-    sort_order = 2
+    order_num = 2
 where id = 3;
 
 update tb_sys_menu
@@ -30,7 +30,7 @@ update tb_sys_menu
 set
     parent_id = 0,
     path = '/organization',
-    sort_order = 3
+    order_num = 3
 where id = 5;
 
 update tb_sys_menu
@@ -48,4 +48,3 @@ update tb_sys_menu
 set
     path = '/organization/delete'
 where id = 109;
-
