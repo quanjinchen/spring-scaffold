@@ -17,11 +17,13 @@ public interface UserConverter extends BaseConverter {
     UserConverter INSTANCE = Mappers.getMapper(UserConverter.class);
 
     @Mapping(target = "phone", source = "phone", qualifiedByName = TO_PLAIN_TEXT)
+    @Mapping(target = "idCard", source = "idCard", qualifiedByName = TO_PLAIN_TEXT)
     UserDTO convert(User user);
 
     List<UserDTO> convert(List<User> users);
 
     @Mapping(target = "phone", source = "phone", qualifiedByName = TO_ENCRYPT_FIELD)
+    @Mapping(target = "idCard", source = "idCard", qualifiedByName = TO_ENCRYPT_FIELD)
     User convert(UserDTO userDTO);
 
     ListUserQuery convert(ListUserReqParam reqParam);

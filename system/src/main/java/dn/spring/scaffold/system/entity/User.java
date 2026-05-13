@@ -18,7 +18,11 @@ public class User extends BaseEntity {
 
     private EncryptField phone;
 
+    private EncryptField idCard;
+
     private String faceFileId;
+
+    private String faceFeature;
 
     @TableField("org_id")
     private Long orgId;

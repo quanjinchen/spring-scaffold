@@ -25,6 +25,9 @@ public class UpdateUserReqParam {
     @Schema(description = "手机号", example = "13800138000")
     private String phone;
 
+    @Schema(description = "身份证号", example = "110101199001011234")
+    private String idCard;
+
     @Schema(description = "人脸图片 base64", example = "data:image/png;base64,xxxx")
     private String faceBase64;
 

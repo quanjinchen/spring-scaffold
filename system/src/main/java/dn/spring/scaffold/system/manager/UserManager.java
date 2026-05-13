@@ -22,7 +22,11 @@ public interface UserManager {
 
     User getByPhone(String phone);
 
+    User getByIdCard(String idCard);
+
     List<User> listByIds(Collection<Long> userIds);
+
+    List<User> listUsersWithFaceFeature();
 
     List<User> listUsers(ListUserQuery query);
 

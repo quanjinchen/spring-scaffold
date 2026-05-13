@@ -13,6 +13,7 @@ import dn.spring.scaffold.console.pojo.req.ResetUserPasswordReqParam;
 import dn.spring.scaffold.console.pojo.req.UpdateUserReqParam;
 import dn.spring.scaffold.console.pojo.resp.UserDTO;
 import dn.spring.scaffold.console.service.UserService;
+import dn.spring.scaffold.console.service.face.FaceFeatureEngine;
 import dn.spring.scaffold.file.constant.FileCategoryConstants;
 import dn.spring.scaffold.file.entity.FileRecord;
 import dn.spring.scaffold.file.manager.FileManager;
@@ -48,6 +49,8 @@ public class UserServiceImpl implements UserService {
     private OrgUserManager orgUserManager;
     @Resource
     private FileManager fileManager;
+    @Resource
+    private FaceFeatureEngine faceFeatureEngine;
 
     @Override
     public RespInfo<Void> createUser(CreateUserReqParam createUserReqParam) {
@@ -64,16 +67,24 @@ public class UserServiceImpl implements UserService {
             ResultCode.BAD_REQUEST.assertIsFalse(samePhoneUser != null, "手机号已存在");
         }
 
+        if (StringUtils.hasText(createUserReqParam.getIdCard())) {
+            User sameIdCardUser = userManager.getByIdCard(createUserReqParam.getIdCard());
+            ResultCode.BAD_REQUEST.assertIsFalse(sameIdCardUser != null, "身份证号已存在");
+        }
+
         User user = new User();
         user.setUsername(createUserReqParam.getUsername());
         user.setFullName(createUserReqParam.getFullName());
         user.setEmail(createUserReqParam.getEmail());
         user.setPhone(StringUtils.hasText(createUserReqParam.getPhone()) ? new EncryptField(createUserReqParam.getPhone()) : null);
+        user.setIdCard(StringUtils.hasText(createUserReqParam.getIdCard()) ? new EncryptField(createUserReqParam.getIdCard()) : null);
         if (StringUtils.hasText(createUserReqParam.getFaceBase64())) {
             FileRecord fileRecord = fileManager.upload(null, createUserReqParam.getFaceBase64(), FileCategoryConstants.FACE_IMAGE);
             user.setFaceFileId(fileRecord.getFileId());
+            user.setFaceFeature(faceFeatureEngine.extractFeatureBase64(createUserReqParam.getFaceBase64()));
         } else {
             user.setFaceFileId(StringUtils.hasText(createUserReqParam.getFaceFileId()) ? createUserReqParam.getFaceFileId() : null);
+            user.setFaceFeature(null);
         }
         user.setOrgId(createUserReqParam.getOrgId());
         user.setStatus(createUserReqParam.getStatus() == null ? 1 : createUserReqParam.getStatus());
@@ -134,19 +145,29 @@ public class UserServiceImpl implements UserService {
             ResultCode.BAD_REQUEST.assertIsFalse(samePhoneUser != null && !Objects.equals(samePhoneUser.getId(), existedUser.getId()), "手机号已存在");
         }
 
+        String idCard = updateUserReqParam.getIdCard() != null ? updateUserReqParam.getIdCard() : existedUser.getIdCard() == null ? null : existedUser.getIdCard().getPlainText();
+        if (StringUtils.hasText(idCard)) {
+            User sameIdCardUser = userManager.getByIdCard(idCard);
+            ResultCode.BAD_REQUEST.assertIsFalse(sameIdCardUser != null && !Objects.equals(sameIdCardUser.getId(), existedUser.getId()), "身份证号已存在");
+        }
+
         User updateUser = new User();
         updateUser.setId(existedUser.getId());
         updateUser.setUsername(username);
         updateUser.setFullName(StringUtils.hasText(updateUserReqParam.getFullName()) ? updateUserReqParam.getFullName() : existedUser.getFullName());
         updateUser.setEmail(email);
         updateUser.setPhone(updateUserReqParam.getPhone() != null ? new EncryptField(updateUserReqParam.getPhone()) : existedUser.getPhone());
+        updateUser.setIdCard(updateUserReqParam.getIdCard() != null ? new EncryptField(updateUserReqParam.getIdCard()) : existedUser.getIdCard());
         if (StringUtils.hasText(updateUserReqParam.getFaceBase64())) {
             FileRecord fileRecord = fileManager.upload(null, updateUserReqParam.getFaceBase64(), FileCategoryConstants.FACE_IMAGE);
             updateUser.setFaceFileId(fileRecord.getFileId());
+            updateUser.setFaceFeature(faceFeatureEngine.extractFeatureBase64(updateUserReqParam.getFaceBase64()));
         } else if (updateUserReqParam.getFaceFileId() != null) {
             updateUser.setFaceFileId(StringUtils.hasText(updateUserReqParam.getFaceFileId()) ? updateUserReqParam.getFaceFileId() : null);
+            updateUser.setFaceFeature(StringUtils.hasText(updateUserReqParam.getFaceFileId()) ? existedUser.getFaceFeature() : null);
         } else {
             updateUser.setFaceFileId(existedUser.getFaceFileId());
+            updateUser.setFaceFeature(existedUser.getFaceFeature());
         }
         updateUser.setOrgId(updateUserReqParam.getOrgId() != null ? updateUserReqParam.getOrgId() : existedUser.getOrgId());
         updateUser.setStatus(updateUserReqParam.getStatus() != null ? updateUserReqParam.getStatus() : existedUser.getStatus());

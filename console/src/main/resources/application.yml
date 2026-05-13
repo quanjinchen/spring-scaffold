@@ -39,9 +39,13 @@ sa-token:
       - /api/admin/get-captcha
       - /api/admin/login
       - /api/auth/get-access-token
+      - /api/face/compare
+      - /api/face/search
       - /admin/get-captcha
       - /admin/login
       - /auth/get-access-token
+      - /face/compare
+      - /face/search
       - /swagger-ui.html
       - /swagger-ui/**
       - /v3/api-docs/**
@@ -75,6 +79,10 @@ project:
       exclude-paths:
         - /auth/get-access-token
         - /api/auth/get-access-token
+        - /face/compare
+        - /api/face/compare
+        - /face/search
+        - /api/face/search
         - /swagger-ui.html
         - /swagger-ui/**
         - /v3/api-docs/**
@@ -92,6 +100,11 @@ project:
     bucket-name: spring-scaffold
     path-style-access-enabled: true
     public-url-prefix: ""
+  face:
+    model-dir: model
+    detector-model: face_detector.csta
+    landmarker-model: face_landmarker_pts5.csta
+    recognizer-model: face_recognizer_light.csta
   log:
     path: ${PROJECT_LOG_PATH:./logs}
     max-history: ${PROJECT_LOG_MAX_HISTORY:30}

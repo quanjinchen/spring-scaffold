@@ -59,7 +59,16 @@ public enum ResultCode implements Assert {
 
     // ========== 文件错误段 [61000, 62000) ==========
     FILE_NOT_FOUND(61000, "文件不存在"),
-    FILE_NOT_EMPTY(61002, "文件内容不能为空");
+    FILE_NOT_EMPTY(61002, "文件内容不能为空"),
+
+    // ========== 人脸错误段 [62000, 63000) ==========
+    FACE_ENGINE_INIT_FAILED(62000, "人脸引擎初始化失败"),
+    FACE_MODEL_NOT_FOUND(62001, "人脸模型文件不存在: {0}"),
+    FACE_IMAGE_INVALID(62002, "人脸图片格式不正确"),
+    FACE_NOT_DETECTED(62003, "未检测到人脸"),
+    FACE_FEATURE_EXTRACT_FAILED(62004, "人脸特征提取失败"),
+    FACE_FEATURE_NOT_FOUND(62005, "未找到可比对的人脸特征"),
+    FACE_ACCESS_TOKEN_INVALID(62006, "accessToken 无效或已过期");
 
     private final int code;
 

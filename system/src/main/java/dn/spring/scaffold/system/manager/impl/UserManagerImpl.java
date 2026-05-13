@@ -76,11 +76,29 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
+    public User getByIdCard(String idCard) {
+        if (!StringUtils.hasText(idCard)) {
+            return null;
+        }
+        return userMapper.selectOne(new LambdaQueryWrapper<User>()
+                .eq(User::getIdCard, new EncryptField(idCard))
+                .last("limit 1"));
+    }
+
+    @Override
     public List<User> listByIds(Collection<Long> userIds) {
         if (userIds == null || userIds.isEmpty()) {
             return Collections.emptyList();
         }
         return userMapper.selectBatchIds(userIds);
+    }
+
+    @Override
+    public List<User> listUsersWithFaceFeature() {
+        return userMapper.selectList(new LambdaQueryWrapper<User>()
+                .isNotNull(User::getFaceFeature)
+                .ne(User::getFaceFeature, "")
+                .orderByAsc(User::getId));
     }
 
     @Override

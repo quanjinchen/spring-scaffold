@@ -35,7 +35,9 @@ create table tb_user (
     full_name varchar(64) null comment '姓名',
     email varchar(128) null comment '邮箱',
     phone varchar(32) null comment '手机号',
+    id_card varchar(128) null comment '身份证号',
     face_file_id varchar(100) null comment '人脸文件 ID',
+    face_feature text null comment '人脸特征值',
     org_id bigint null comment '所属组织 ID',
     password varchar(255) null comment '密码密文',
     status tinyint not null default 1 comment '状态，1 启用，0 禁用',
@@ -51,6 +53,7 @@ create index idx_tb_user_username_deleted on tb_user (username, deleted);
 create index idx_tb_user_full_name_deleted on tb_user (full_name, deleted);
 create index idx_tb_user_email_deleted on tb_user (email, deleted);
 create index idx_tb_user_phone_deleted on tb_user (phone, deleted);
+create index idx_tb_user_id_card_deleted on tb_user (id_card, deleted);
 create index idx_tb_user_face_file_id_deleted on tb_user (face_file_id, deleted);
 create index idx_tb_user_org_id_status_deleted on tb_user (org_id, status, deleted);
 
@@ -272,7 +275,9 @@ insert into tb_user (
     full_name,
     email,
     phone,
+    id_card,
     face_file_id,
+    face_feature,
     org_id,
     password,
     status,
@@ -286,6 +291,8 @@ insert into tb_user (
     'admin',
     '超级管理员',
     'admin@local.test',
+    null,
+    null,
     null,
     null,
     1,
