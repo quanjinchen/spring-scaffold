@@ -2,6 +2,7 @@ drop table if exists tb_sys_role_menu;
 drop table if exists tb_org_user;
 drop table if exists tb_sys_role_user;
 drop table if exists tb_operation_log;
+drop table if exists tb_face_auth_log;
 drop table if exists tb_file_record;
 drop table if exists tb_app;
 drop table if exists tb_sys_menu;
@@ -117,6 +118,30 @@ create index idx_tb_operation_log_request_time_deleted on tb_operation_log (requ
 create index idx_tb_operation_log_module_name_deleted on tb_operation_log (module_name, deleted);
 create index idx_tb_operation_log_operator_name_deleted on tb_operation_log (operator_name, deleted);
 create index idx_tb_operation_log_success_flag_deleted on tb_operation_log (success_flag, deleted);
+
+create table tb_face_auth_log (
+    id bigint not null auto_increment comment '主键 ID',
+    auth_api_type tinyint not null default 1 comment '认证接口类型，1 表示 1:1，2 表示 1:N',
+    ip varchar(64) null comment '请求 IP',
+    app_id bigint null comment '应用 ID',
+    app_name varchar(100) null comment '应用名称',
+    auth_full_name varchar(100) null comment '认证人员姓名',
+    auth_user_id bigint null comment '认证人员 ID',
+    status tinyint not null default 0 comment '状态，0 失败 1 成功',
+    errmsg varchar(500) null comment '失败原因',
+    create_by bigint null comment '创建人',
+    create_time datetime not null default current_timestamp comment '创建时间',
+    update_by bigint null comment '更新人',
+    update_time datetime not null default current_timestamp on update current_timestamp comment '更新时间',
+    deleted tinyint not null default 0 comment '逻辑删除标记',
+    primary key (id)
+) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci comment='人脸认证日志表';
+
+create index idx_tb_face_auth_log_auth_api_type_deleted on tb_face_auth_log (auth_api_type, deleted);
+create index idx_tb_face_auth_log_app_id_deleted on tb_face_auth_log (app_id, deleted);
+create index idx_tb_face_auth_log_auth_user_id_deleted on tb_face_auth_log (auth_user_id, deleted);
+create index idx_tb_face_auth_log_status_deleted on tb_face_auth_log (status, deleted);
+create index idx_tb_face_auth_log_create_time_deleted on tb_face_auth_log (create_time, deleted);
 
 create table tb_sys_role_user (
     id bigint not null auto_increment comment '主键 ID',
@@ -327,6 +352,7 @@ insert into tb_sys_menu (
     (4, 1, '角色管理', '/system/role', 'Avatar', 'MENU', 'system:role:query', 30, 1, 1, now(), 1, now(), 0),
     (5, 0, '组织管理', '/organization', 'OfficeBuilding', 'MENU', 'system:org:query', 3, 1, 1, now(), 1, now(), 0),
     (6, 1, '日志审计', '/system/operation-log', 'Document', 'MENU', 'system:operationLog:query', 50, 1, 1, now(), 1, now(), 0),
+    (15, 1, '人脸认证日志', '/system/face-auth-log', 'Document', 'MENU', 'system:operationLog:query', 55, 1, 1, now(), 1, now(), 0),
     (7, 1, '文件上传', '/system/file/upload', null, 'BUTTON', 'system:file:upload', 60, 1, 1, now(), 1, now(), 0),
     (8, 1, '文件下载', '/system/file/download', null, 'BUTTON', 'system:file:download', 70, 1, 1, now(), 1, now(), 0),
     (9, 1, '文件删除', '/system/file/delete', null, 'BUTTON', 'system:file:delete', 80, 1, 1, now(), 1, now(), 0),
@@ -392,6 +418,7 @@ insert into tb_sys_role_menu (
     (4, 1, 4, 1, now(), 1, now(), 0),
     (5, 1, 5, 1, now(), 1, now(), 0),
     (6, 1, 6, 1, now(), 1, now(), 0),
+    (49, 1, 15, 1, now(), 1, now(), 0),
     (7, 1, 7, 1, now(), 1, now(), 0),
     (8, 1, 8, 1, now(), 1, now(), 0),
     (9, 1, 9, 1, now(), 1, now(), 0),
@@ -411,6 +438,7 @@ insert into tb_sys_role_menu (
     (23, 2, 4, 1, now(), 1, now(), 0),
     (24, 2, 5, 1, now(), 1, now(), 0),
     (25, 2, 6, 1, now(), 1, now(), 0),
+    (50, 2, 15, 1, now(), 1, now(), 0),
     (26, 2, 7, 1, now(), 1, now(), 0),
     (27, 2, 8, 1, now(), 1, now(), 0),
     (28, 2, 9, 1, now(), 1, now(), 0),

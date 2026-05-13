@@ -31,6 +31,7 @@ public class AuthServiceImpl implements AuthService {
 
         AccessTokenInfo accessTokenInfo = new AccessTokenInfo();
         accessTokenInfo.setAppId(app.getId());
+        accessTokenInfo.setAppName(app.getAppName());
         accessTokenInfo.setExpiresIn(ACCESS_TOKEN_EXPIRE_SECONDS);
         String accessToken = accessTokenManager.getAccessToken(accessTokenInfo, ACCESS_TOKEN_EXPIRE_SECONDS);
 

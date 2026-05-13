@@ -11,5 +11,7 @@ public class AccessTokenInfo implements Serializable {
 
     private Long appId;
 
+    private String appName;
+
     private Integer expiresIn;
 }
