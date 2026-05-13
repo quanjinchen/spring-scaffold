@@ -38,8 +38,10 @@ sa-token:
     exclude-paths:
       - /api/admin/get-captcha
       - /api/admin/login
+      - /api/auth/get-access-token
       - /admin/get-captcha
       - /admin/login
+      - /auth/get-access-token
       - /swagger-ui.html
       - /swagger-ui/**
       - /v3/api-docs/**
@@ -71,6 +73,8 @@ project:
   web:
     interceptor:
       exclude-paths:
+        - /auth/get-access-token
+        - /api/auth/get-access-token
         - /swagger-ui.html
         - /swagger-ui/**
         - /v3/api-docs/**

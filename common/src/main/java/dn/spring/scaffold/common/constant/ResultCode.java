@@ -50,6 +50,7 @@ public enum ResultCode implements Assert {
     APP_CODE_ALREADY_EXISTS(16002, "应用编码已存在"),
     APP_CLIENT_ID_ALREADY_EXISTS(16003, "客户端 ID 已存在"),
     APP_NAME_ALREADY_EXISTS(16004, "应用名称已存在"),
+    APP_CLIENT_AUTH_FAILED(16005, "应用账号或应用秘钥错误"),
 
     // ========== 菜单错误段 [18000, 19000) ==========
     MENU_NOT_FOUND(18004, "菜单不存在"),
