@@ -14,8 +14,10 @@ import dn.spring.scaffold.framework.captcha.CaptchaManager;
 import dn.spring.scaffold.framework.satoken.LoginUserContext;
 import dn.spring.scaffold.system.entity.SysRole;
 import dn.spring.scaffold.system.entity.SysRoleMenu;
+import dn.spring.scaffold.system.entity.SysMenu;
 import dn.spring.scaffold.system.entity.SysRoleUser;
 import dn.spring.scaffold.system.entity.User;
+import dn.spring.scaffold.system.manager.SysMenuManager;
 import dn.spring.scaffold.system.manager.SysRoleManager;
 import dn.spring.scaffold.system.manager.SysRoleMenuManager;
 import dn.spring.scaffold.system.manager.SysRoleUserManager;
@@ -25,6 +27,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,6 +47,8 @@ public class AdminAuthServiceImpl implements AdminAuthService {
     private SysRoleManager sysRoleManager;
     @Resource
     private SysRoleMenuManager sysRoleMenuManager;
+    @Resource
+    private SysMenuManager sysMenuManager;
     @Resource
     private CaptchaManager captchaManager;
 
@@ -98,6 +105,7 @@ public class AdminAuthServiceImpl implements AdminAuthService {
         java.util.List<SysRoleUser> roleUsers = sysRoleUserManager.listByUserId(loginUserId);
         java.util.List<RoleGrantInfoDTO> roleGrantInfoDTOList = new java.util.ArrayList<RoleGrantInfoDTO>(roleUsers.size());
         java.util.List<String> roleCodes = new java.util.ArrayList<String>(roleUsers.size());
+        Set<Long> permissionMenuIdSet = new LinkedHashSet<Long>();
         for (SysRoleUser roleUser : roleUsers) {
             SysRole role = sysRoleManager.getById(roleUser.getRoleId());
             if (role == null) {
@@ -113,14 +121,22 @@ public class AdminAuthServiceImpl implements AdminAuthService {
             java.util.List<Long> menuIds = new java.util.ArrayList<Long>(roleMenus.size());
             for (SysRoleMenu roleMenu : roleMenus) {
                 menuIds.add(roleMenu.getMenuId());
+                permissionMenuIdSet.add(roleMenu.getMenuId());
             }
             roleGrantInfoDTO.setMenuIds(menuIds);
             roleGrantInfoDTOList.add(roleGrantInfoDTO);
             roleCodes.add(role.getCode());
         }
 
+        List<String> permissionCodes = sysMenuManager.listByIds(permissionMenuIdSet).stream()
+                .map(SysMenu::getMenuCode)
+                .filter(menuCode -> menuCode != null && !menuCode.trim().isEmpty())
+                .distinct()
+                .collect(Collectors.toList());
+
         loginData.setRoleCodes(roleCodes);
         loginData.setRoles(roleGrantInfoDTOList);
+        loginData.setPermissionCodes(permissionCodes);
         loginData.setMenus(menuService.listMenuTreeByUserId(loginUserId));
         return RespInfo.success(loginData);
     }

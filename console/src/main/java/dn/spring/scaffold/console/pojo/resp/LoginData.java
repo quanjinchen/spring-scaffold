@@ -24,6 +24,9 @@ public class LoginData {
     @Schema(description = "角色授权信息列表")
     private List<RoleGrantInfoDTO> roles;
 
+    @Schema(description = "当前登录用户拥有的权限编码列表")
+    private List<String> permissionCodes;
+
     @Schema(description = "菜单树")
     private List<MenuTreeNode> menus;
 }
