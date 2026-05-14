@@ -6,19 +6,29 @@ import dn.spring.scaffold.common.constant.ResultCode;
 import dn.spring.scaffold.common.page.PageData;
 import dn.spring.scaffold.common.pojo.RespInfo;
 import dn.spring.scaffold.console.converter.RoleConverter;
+import dn.spring.scaffold.console.converter.UserConverter;
 import dn.spring.scaffold.console.pojo.req.CreateRoleReqParam;
 import dn.spring.scaffold.console.pojo.req.DeleteRoleReqParam;
 import dn.spring.scaffold.console.pojo.req.GrantRoleMenusReqParam;
+import dn.spring.scaffold.console.pojo.req.GrantRoleUsersReqParam;
+import dn.spring.scaffold.console.pojo.req.GetRoleUserListReqParam;
+import dn.spring.scaffold.console.pojo.req.ListRoleAssignableUsersReqParam;
 import dn.spring.scaffold.console.pojo.req.ListRoleReqParam;
 import dn.spring.scaffold.console.pojo.req.UpdateRoleReqParam;
 import dn.spring.scaffold.console.pojo.resp.RoleDTO;
 import dn.spring.scaffold.console.pojo.resp.RoleGrantInfoDTO;
+import dn.spring.scaffold.console.pojo.resp.RoleUserInfo;
+import dn.spring.scaffold.console.pojo.resp.UserDTO;
 import dn.spring.scaffold.console.service.RoleService;
 import dn.spring.scaffold.system.entity.SysRole;
 import dn.spring.scaffold.system.entity.SysRoleMenu;
+import dn.spring.scaffold.system.entity.SysRoleUser;
+import dn.spring.scaffold.system.entity.User;
 import dn.spring.scaffold.system.manager.SysRoleManager;
 import dn.spring.scaffold.system.manager.SysRoleMenuManager;
 import dn.spring.scaffold.system.manager.SysRoleUserManager;
+import dn.spring.scaffold.system.manager.UserManager;
+import dn.spring.scaffold.system.pojo.query.ListUserQuery;
 import dn.spring.scaffold.system.pojo.query.ListRoleQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +36,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -37,6 +49,8 @@ public class RoleServiceImpl implements RoleService {
     private SysRoleMenuManager sysRoleMenuManager;
     @Resource
     private SysRoleUserManager sysRoleUserManager;
+    @Resource
+    private UserManager userManager;
 
     @Override
     public RespInfo<PageData<RoleDTO>> listRole(ListRoleReqParam reqParam) {
@@ -175,5 +189,97 @@ public class RoleServiceImpl implements RoleService {
         }
         grantInfo.setMenuIds(grantedMenuIds);
         return RespInfo.success(grantInfo);
+    }
+
+    @Override
+    public RespInfo<PageData<UserDTO>> listRoleAssignableUsers(ListRoleAssignableUsersReqParam reqParam) {
+        SysRole role = sysRoleManager.getById(reqParam.getRoleId());
+        ResultCode.ROLE_NOT_FOUND.assertNotNull(role);
+
+        Integer pageNum = reqParam.getPageNum();
+        Integer pageSize = reqParam.getPageSize();
+        PageHelper.startPage(pageNum, pageSize);
+
+        ListUserQuery query = UserConverter.INSTANCE.convert(reqParam);
+        List<User> userList = userManager.listUsers(query);
+        List<UserDTO> userDTOList = buildAssignableUserList(userList);
+
+        PageData<UserDTO> pageData = new PageData<UserDTO>();
+        pageData.setTotal(new PageInfo<User>(userList).getTotal());
+        pageData.setRecords(userDTOList);
+        pageData.setPageNum(pageNum);
+        pageData.setPageSize(pageSize);
+        return RespInfo.success(pageData);
+    }
+
+    @Override
+    public RespInfo<List<RoleUserInfo>> listRoleUsers(GetRoleUserListReqParam reqParam) {
+        SysRole role = sysRoleManager.getById(reqParam.getRoleId());
+        ResultCode.ROLE_NOT_FOUND.assertNotNull(role);
+        return RespInfo.success(buildRoleUserInfoList(reqParam.getRoleId()));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public RespInfo<List<RoleUserInfo>> grantRoleUsers(GrantRoleUsersReqParam reqParam) {
+        SysRole role = sysRoleManager.getById(reqParam.getRoleId());
+        ResultCode.ROLE_NOT_FOUND.assertNotNull(role);
+        List<Long> userIds = reqParam.getUserIds() == null ? Collections.emptyList() : reqParam.getUserIds();
+        sysRoleUserManager.replaceRoleUsers(reqParam.getRoleId(), userIds);
+        return RespInfo.success(buildRoleUserInfoList(reqParam.getRoleId()));
+    }
+
+    private List<RoleUserInfo> buildRoleUserInfoList(Long roleId) {
+        List<SysRoleUser> roleUsers = sysRoleUserManager.listByRoleId(roleId);
+        if (roleUsers.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<Long> userIds = new ArrayList<Long>(roleUsers.size());
+        for (SysRoleUser roleUser : roleUsers) {
+            userIds.add(roleUser.getUserId());
+        }
+        List<User> users = userManager.listByIds(userIds);
+        if (users.isEmpty()) {
+            return Collections.emptyList();
+        }
+        Map<Long, User> userMap = new LinkedHashMap<Long, User>(users.size());
+        for (User user : users) {
+            userMap.put(user.getId(), user);
+        }
+        List<RoleUserInfo> result = new ArrayList<RoleUserInfo>(roleUsers.size());
+        for (SysRoleUser roleUser : roleUsers) {
+            User user = userMap.get(roleUser.getUserId());
+            if (user == null) {
+                continue;
+            }
+            RoleUserInfo info = new RoleUserInfo();
+            info.setRoleId(roleId);
+            info.setUserId(user.getId());
+            info.setUsername(user.getUsername());
+            info.setFullName(user.getFullName());
+            result.add(info);
+        }
+        return result;
+    }
+
+    private List<UserDTO> buildAssignableUserList(List<User> users) {
+        if (users == null || users.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<UserDTO> result = new ArrayList<UserDTO>(users.size());
+        for (User user : users) {
+            UserDTO dto = new UserDTO();
+            dto.setId(user.getId());
+            dto.setUsername(user.getUsername());
+            dto.setFullName(user.getFullName());
+            dto.setEmail(user.getEmail());
+            dto.setPhone(user.getPhone() == null ? null : user.getPhone().getPlainText());
+            dto.setIdCard(user.getIdCard() == null ? null : user.getIdCard().getPlainText());
+            dto.setFaceFileId(user.getFaceFileId());
+            dto.setFaceFeature(user.getFaceFeature());
+            dto.setStatus(user.getStatus());
+            result.add(dto);
+        }
+        return result;
     }
 }

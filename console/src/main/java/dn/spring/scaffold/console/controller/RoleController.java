@@ -6,10 +6,15 @@ import dn.spring.scaffold.common.pojo.RespInfo;
 import dn.spring.scaffold.console.pojo.req.CreateRoleReqParam;
 import dn.spring.scaffold.console.pojo.req.DeleteRoleReqParam;
 import dn.spring.scaffold.console.pojo.req.GrantRoleMenusReqParam;
+import dn.spring.scaffold.console.pojo.req.GrantRoleUsersReqParam;
+import dn.spring.scaffold.console.pojo.req.GetRoleUserListReqParam;
+import dn.spring.scaffold.console.pojo.req.ListRoleAssignableUsersReqParam;
 import dn.spring.scaffold.console.pojo.req.ListRoleReqParam;
 import dn.spring.scaffold.console.pojo.req.UpdateRoleReqParam;
 import dn.spring.scaffold.console.pojo.resp.RoleDTO;
 import dn.spring.scaffold.console.pojo.resp.RoleGrantInfoDTO;
+import dn.spring.scaffold.console.pojo.resp.RoleUserInfo;
+import dn.spring.scaffold.console.pojo.resp.UserDTO;
 import dn.spring.scaffold.console.service.RoleService;
 import dn.spring.scaffold.framework.operationlog.annotation.OperateLog;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.List;
 
 @Tag(name = "角色管理")
 @RestController
@@ -84,5 +90,27 @@ public class RoleController {
     @SaCheckPermission("system:role:update")
     public RespInfo<RoleGrantInfoDTO> grantRoleMenus(@Valid @RequestBody GrantRoleMenusReqParam reqParam) {
         return roleService.grantRoleMenus(reqParam);
+    }
+
+    @Operation(summary = "查询角色可分配用户列表", description = "权限：system:role:query")
+    @PostMapping("/list-role-assignable-users")
+    @SaCheckPermission("system:role:query")
+    public RespInfo<PageData<UserDTO>> listRoleAssignableUsers(@Valid @RequestBody ListRoleAssignableUsersReqParam reqParam) {
+        return roleService.listRoleAssignableUsers(reqParam);
+    }
+
+    @Operation(summary = "查询角色关联用户列表", description = "权限：system:role:query")
+    @PostMapping("/list-role-users")
+    @SaCheckPermission("system:role:query")
+    public RespInfo<List<RoleUserInfo>> listRoleUsers(@Valid @RequestBody GetRoleUserListReqParam reqParam) {
+        return roleService.listRoleUsers(reqParam);
+    }
+
+    @Operation(summary = "分配角色关联用户", description = "权限：system:role:update")
+    @PostMapping("/grant-role-users")
+    @OperateLog(module = "角色管理", action = "分配关联用户")
+    @SaCheckPermission("system:role:update")
+    public RespInfo<List<RoleUserInfo>> grantRoleUsers(@Valid @RequestBody GrantRoleUsersReqParam reqParam) {
+        return roleService.grantRoleUsers(reqParam);
     }
 }
