@@ -61,7 +61,7 @@ public class MenuController {
 
     @Operation(summary = "创建菜单", description = "权限：system:menu:update")
     @PostMapping("/create-menu")
-    @OperateLog(module = "menu", action = "创建菜单")
+    @OperateLog(module = "菜单管理", action = "创建菜单")
     @SaCheckPermission("system:menu:update")
     public RespInfo<MenuDTO> createMenu(@Valid @RequestBody CreateMenuReqParam reqParam) {
         return menuService.createMenu(reqParam);
@@ -69,7 +69,7 @@ public class MenuController {
 
     @Operation(summary = "更新菜单", description = "权限：system:menu:update")
     @PostMapping("/update-menu")
-    @OperateLog(module = "menu", action = "更新菜单")
+    @OperateLog(module = "菜单管理", action = "更新菜单")
     @SaCheckPermission("system:menu:update")
     public RespInfo<MenuDTO> updateMenu(@Valid @RequestBody UpdateMenuReqParam reqParam) {
         return menuService.updateMenu(reqParam);
@@ -77,7 +77,7 @@ public class MenuController {
 
     @Operation(summary = "删除菜单", description = "权限：system:menu:delete")
     @PostMapping("/delete-menu")
-    @OperateLog(module = "menu", action = "删除菜单")
+    @OperateLog(module = "菜单管理", action = "删除菜单")
     @SaCheckPermission("system:menu:delete")
     public RespInfo<Void> deleteMenu(@Valid @RequestBody DeleteMenuReqParam reqParam) {
         return menuService.deleteMenu(reqParam);

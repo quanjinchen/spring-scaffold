@@ -39,7 +39,7 @@ public class FileController {
 
     @Operation(summary = "上传文件", description = "权限：system:file:upload")
     @PostMapping(value = "/upload-file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @OperateLog(module = "file", action = "上传文件")
+    @OperateLog(module = "文件管理", action = "上传文件")
     @SaCheckPermission("system:file:upload")
     public RespInfo<FileUploadRespData> uploadFile(
             @RequestParam("file") MultipartFile file,
@@ -57,7 +57,7 @@ public class FileController {
 
     @Operation(summary = "删除文件", description = "权限：system:file:delete")
     @PostMapping("/delete-file")
-    @OperateLog(module = "file", action = "删除文件")
+    @OperateLog(module = "文件管理", action = "删除文件")
     @SaCheckPermission("system:file:delete")
     public RespInfo<Void> deleteFile(@Valid @RequestBody DeleteFileReqParam reqParam) {
         return fileService.deleteFile(reqParam);

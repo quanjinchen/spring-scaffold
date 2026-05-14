@@ -37,7 +37,7 @@ public class FaceController {
 
     @Operation(summary = "人脸特征值比对", description = "权限：system:user:query")
     @PostMapping("/compare-face-feature")
-    @OperateLog(module = "face", action = "人脸特征值比对")
+    @OperateLog(module = "人脸识别", action = "人脸特征值比对")
     public RespInfo<FaceCompareDTO> compareFaceFeature(@Valid @RequestBody CompareFaceFeatureReqParam reqParam) {
         return faceService.compareFaceFeature(reqParam);
     }

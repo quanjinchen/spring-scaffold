@@ -49,7 +49,7 @@ public class RoleController {
 
     @Operation(summary = "创建角色", description = "权限：system:role:update")
     @PostMapping("/create-role")
-    @OperateLog(module = "role", action = "创建角色")
+    @OperateLog(module = "角色管理", action = "创建角色")
     @SaCheckPermission("system:role:update")
     public RespInfo<RoleDTO> createRole(@Valid @RequestBody CreateRoleReqParam reqParam) {
         return roleService.createRole(reqParam);
@@ -57,7 +57,7 @@ public class RoleController {
 
     @Operation(summary = "更新角色", description = "权限：system:role:update")
     @PostMapping("/update-role")
-    @OperateLog(module = "role", action = "更新角色")
+    @OperateLog(module = "角色管理", action = "更新角色")
     @SaCheckPermission("system:role:update")
     public RespInfo<RoleDTO> updateRole(@Valid @RequestBody UpdateRoleReqParam reqParam) {
         return roleService.updateRole(reqParam);
@@ -65,7 +65,7 @@ public class RoleController {
 
     @Operation(summary = "删除角色", description = "权限：system:role:delete")
     @PostMapping("/delete-role")
-    @OperateLog(module = "role", action = "删除角色")
+    @OperateLog(module = "角色管理", action = "删除角色")
     @SaCheckPermission("system:role:delete")
     public RespInfo<Void> deleteRole(@Valid @RequestBody DeleteRoleReqParam reqParam) {
         return roleService.deleteRole(reqParam);
@@ -80,7 +80,7 @@ public class RoleController {
 
     @Operation(summary = "分配角色菜单", description = "权限：system:role:update")
     @PostMapping("/grant-role-menus")
-    @OperateLog(module = "role", action = "分配角色菜单")
+    @OperateLog(module = "角色管理", action = "分配角色菜单")
     @SaCheckPermission("system:role:update")
     public RespInfo<RoleGrantInfoDTO> grantRoleMenus(@Valid @RequestBody GrantRoleMenusReqParam reqParam) {
         return roleService.grantRoleMenus(reqParam);

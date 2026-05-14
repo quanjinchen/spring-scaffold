@@ -35,7 +35,7 @@ public class OrgUserController {
 
     @Operation(summary = "分配组织用户", description = "权限：system:org:update")
     @PostMapping("/grant-org-users")
-    @OperateLog(module = "orgUser", action = "分配组织用户")
+    @OperateLog(module = "组织用户管理", action = "分配组织用户")
     @SaCheckPermission("system:org:update")
     public RespInfo<List<OrgUserInfo>> grantOrgUsers(@Valid @RequestBody GrantOrgUsersReqParam reqParam) {
         return orgUserService.grantOrgUsers(reqParam);

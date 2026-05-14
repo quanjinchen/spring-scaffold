@@ -33,6 +33,7 @@ public class AppController {
     private AppService appService;
 
     @Operation(summary = "分页查询应用", description = "权限：system:app:query")
+    @OperateLog(module = "应用管理", action = "分页查询应用")
     @PostMapping("/list-app")
     @SaCheckPermission("system:app:query")
     public RespInfo<PageData<AppDTO>> listApp(@Valid @RequestBody ListAppReqParam reqParam) {
@@ -40,6 +41,7 @@ public class AppController {
     }
 
     @Operation(summary = "根据 ID 查询应用详情", description = "权限：system:app:query")
+    @OperateLog(module = "应用管理", action = "查询应用详情")
     @GetMapping("/get-app-by-id/{id}")
     @SaCheckPermission("system:app:query")
     public RespInfo<AppDTO> getAppById(@Parameter(description = "应用 ID") @PathVariable Long id) {
@@ -50,7 +52,7 @@ public class AppController {
 
     @Operation(summary = "创建应用", description = "权限：system:app:update")
     @PostMapping("/create-app")
-    @OperateLog(module = "app", action = "创建应用")
+    @OperateLog(module = "应用管理", action = "创建应用")
     @SaCheckPermission("system:app:update")
     public RespInfo<AppDTO> createApp(@Valid @RequestBody CreateAppReqParam reqParam) {
         return appService.createApp(reqParam);
@@ -58,7 +60,7 @@ public class AppController {
 
     @Operation(summary = "更新应用", description = "权限：system:app:update")
     @PostMapping("/update-app")
-    @OperateLog(module = "app", action = "更新应用")
+    @OperateLog(module = "应用管理", action = "更新应用")
     @SaCheckPermission("system:app:update")
     public RespInfo<AppDTO> updateApp(@Valid @RequestBody UpdateAppReqParam reqParam) {
         return appService.updateApp(reqParam);
@@ -66,7 +68,7 @@ public class AppController {
 
     @Operation(summary = "删除应用", description = "权限：system:app:delete")
     @PostMapping("/delete-app")
-    @OperateLog(module = "app", action = "删除应用")
+    @OperateLog(module = "应用管理", action = "删除应用")
     @SaCheckPermission("system:app:delete")
     public RespInfo<Void> deleteApp(@Valid @RequestBody DeleteAppReqParam reqParam) {
         return appService.deleteApp(reqParam);

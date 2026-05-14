@@ -33,7 +33,7 @@ public class UserController {
     private UserService userService;
 
     @Operation(summary = "创建用户", description = "权限：system:user:add")
-    @OperateLog(module = "user", action = "创建用户")
+    @OperateLog(module = "用户管理", action = "创建用户")
     @PostMapping("/create-user")
     @SaCheckPermission("system:user:add")
     public RespInfo<Void> createUser(@Valid @RequestBody CreateUserReqParam createUserReqParam) {
@@ -41,7 +41,7 @@ public class UserController {
     }
 
     @Operation(summary = "更新用户", description = "权限：system:user:update")
-    @OperateLog(module = "user", action = "更新用户")
+    @OperateLog(module = "用户管理", action = "更新用户")
     @PostMapping("/update-user")
     @SaCheckPermission("system:user:update")
     public RespInfo<Void> updateUser(@Valid @RequestBody UpdateUserReqParam updateUserReqParam) {
@@ -49,7 +49,7 @@ public class UserController {
     }
 
     @Operation(summary = "删除用户", description = "权限：system:user:delete")
-    @OperateLog(module = "user", action = "删除用户")
+    @OperateLog(module = "用户管理", action = "删除用户")
     @PostMapping("/delete-user")
     @SaCheckPermission("system:user:delete")
     public RespInfo<Void> deleteUser(@Valid @RequestBody DeleteUserReqParam deleteUserReqParam) {
@@ -57,6 +57,7 @@ public class UserController {
     }
 
     @Operation(summary = "根据 ID 查询用户", description = "权限：system:user:query")
+    @OperateLog(module = "用户管理", action = "查询用户详情")
     @GetMapping("/get-user-by-id/{id}")
     @SaCheckPermission("system:user:query")
     public RespInfo<UserDTO> getUserById(@Parameter(description = "用户 ID") @PathVariable Long id) {
@@ -66,7 +67,7 @@ public class UserController {
     }
 
     @Operation(summary = "重置用户密码", description = "权限：system:user:resetPassword")
-    @OperateLog(module = "user", action = "重置用户密码")
+    @OperateLog(module = "用户管理", action = "重置用户密码")
     @PostMapping("/reset-user-password")
     @SaCheckPermission("system:user:resetPassword")
     public RespInfo<Void> resetUserPassword(@Valid @RequestBody ResetUserPasswordReqParam resetUserPasswordReqParam) {
@@ -74,6 +75,7 @@ public class UserController {
     }
 
     @Operation(summary = "分页查询用户", description = "权限：system:user:query")
+    @OperateLog(module = "用户管理", action = "分页查询用户")
     @PostMapping("/list-user")
     @SaCheckPermission("system:user:query")
     public RespInfo<PageData<UserDTO>> listUser(@Valid @RequestBody ListUserReqParam reqParam) {

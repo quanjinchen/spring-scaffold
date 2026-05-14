@@ -60,7 +60,7 @@ public class OrgController {
 
     @Operation(summary = "创建组织", description = "权限：system:org:update")
     @PostMapping("/create-org")
-    @OperateLog(module = "org", action = "创建组织")
+    @OperateLog(module = "组织机构管理", action = "创建组织")
     @SaCheckPermission("system:org:update")
     public RespInfo<OrgDTO> createOrg(@Valid @RequestBody CreateOrgReqParam reqParam) {
         return orgService.createOrg(reqParam);
@@ -68,7 +68,7 @@ public class OrgController {
 
     @Operation(summary = "更新组织", description = "权限：system:org:update")
     @PostMapping("/update-org")
-    @OperateLog(module = "org", action = "更新组织")
+    @OperateLog(module = "组织机构管理", action = "更新组织")
     @SaCheckPermission("system:org:update")
     public RespInfo<OrgDTO> updateOrg(@Valid @RequestBody UpdateOrgReqParam reqParam) {
         return orgService.updateOrg(reqParam);
@@ -76,7 +76,7 @@ public class OrgController {
 
     @Operation(summary = "删除组织", description = "权限：system:org:delete")
     @PostMapping("/delete-org")
-    @OperateLog(module = "org", action = "删除组织")
+    @OperateLog(module = "组织机构管理", action = "删除组织")
     @SaCheckPermission("system:org:delete")
     public RespInfo<Void> deleteOrg(@Valid @RequestBody DeleteOrgReqParam reqParam) {
         return orgService.deleteOrg(reqParam);

@@ -34,7 +34,7 @@ public class AdminController {
 
     @Operation(summary = "账号密码登录")
     @PostMapping("/login")
-    @OperateLog(module = "admin", action = "账号密码登录")
+    @OperateLog(module = "后台认证", action = "账号密码登录")
     public RespInfo<SysAdminLoginData> login(@Valid @RequestBody SysAdminLoginReqParam reqParam) {
         return adminAuthService.login(reqParam);
     }
@@ -47,7 +47,7 @@ public class AdminController {
 
     @Operation(summary = "退出登录")
     @PostMapping("/logout")
-    @OperateLog(module = "admin", action = "退出登录")
+    @OperateLog(module = "后台认证", action = "退出登录")
     public RespInfo<Void> logout() {
         return adminAuthService.logout();
     }

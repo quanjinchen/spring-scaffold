@@ -35,7 +35,7 @@ public class UserRoleController {
 
     @Operation(summary = "分配用户角色", description = "权限：system:user:update")
     @PostMapping("/grant-user-roles")
-    @OperateLog(module = "userRole", action = "分配用户角色")
+    @OperateLog(module = "用户角色管理", action = "分配用户角色")
     @SaCheckPermission("system:user:update")
     public RespInfo<List<UserRoleInfo>> grantUserRoles(@Valid @RequestBody GrantUserRolesReqParam reqParam) {
         return userRoleService.grantUserRoles(reqParam);
