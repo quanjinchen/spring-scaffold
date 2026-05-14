@@ -13,7 +13,5 @@ public class ListUserQuery {
 
     private String email;
 
-    private Long orgId;
-
     private Integer status;
 }

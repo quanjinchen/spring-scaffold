@@ -24,9 +24,6 @@ public class User extends BaseEntity {
 
     private String faceFeature;
 
-    @TableField("org_id")
-    private Long orgId;
-
     private String password;
 
     private Integer status;

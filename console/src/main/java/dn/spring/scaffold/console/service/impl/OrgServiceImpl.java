@@ -13,7 +13,6 @@ import dn.spring.scaffold.console.service.OrgService;
 import dn.spring.scaffold.system.entity.Org;
 import dn.spring.scaffold.system.manager.OrgManager;
 import dn.spring.scaffold.system.manager.OrgUserManager;
-import dn.spring.scaffold.system.manager.UserManager;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
@@ -30,8 +29,6 @@ public class OrgServiceImpl implements OrgService {
     private OrgManager orgManager;
     @Resource
     private OrgUserManager orgUserManager;
-    @Resource
-    private UserManager userManager;
 
     @Override
     public RespInfo<List<OrgDTO>> listAllOrgTree() {
@@ -100,7 +97,7 @@ public class OrgServiceImpl implements OrgService {
         Org org = orgManager.getById(orgId);
         ResultCode.ORG_NOT_FOUND.assertNotNull(org);
         ResultCode.DELETE_ORG_FAILED_BECAUSE_HAS_CHILD.assertIsFalse(orgManager.existsChildren(orgId));
-        ResultCode.DELETE_ORG_FAILED_BECAUSE_HAS_USER.assertIsFalse(orgUserManager.existsByOrgId(orgId) || userManager.existsByOrgId(orgId));
+        ResultCode.DELETE_ORG_FAILED_BECAUSE_HAS_USER.assertIsFalse(orgUserManager.existsByOrgId(orgId));
         orgUserManager.deleteByOrgId(orgId);
         orgManager.deleteById(orgId);
         return RespInfo.success();

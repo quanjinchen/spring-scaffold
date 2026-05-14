@@ -34,9 +34,6 @@ public class UpdateUserReqParam {
     @Schema(description = "人脸文件 ID", example = "202605120001")
     private String faceFileId;
 
-    @Schema(description = "组织机构 ID", example = "1")
-    private Long orgId;
-
     @Schema(description = "状态，1 启用，0 禁用", example = "1")
     private Integer status;
 }

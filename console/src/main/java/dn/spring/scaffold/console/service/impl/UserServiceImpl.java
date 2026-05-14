@@ -17,7 +17,6 @@ import dn.spring.scaffold.console.service.face.FaceFeatureEngine;
 import dn.spring.scaffold.file.constant.FileCategoryConstants;
 import dn.spring.scaffold.file.entity.FileRecord;
 import dn.spring.scaffold.file.manager.FileManager;
-import dn.spring.scaffold.system.entity.OrgUser;
 import dn.spring.scaffold.system.entity.User;
 import dn.spring.scaffold.system.manager.OrgUserManager;
 import dn.spring.scaffold.system.manager.SysRoleUserManager;
@@ -86,7 +85,6 @@ public class UserServiceImpl implements UserService {
             user.setFaceFileId(StringUtils.hasText(createUserReqParam.getFaceFileId()) ? createUserReqParam.getFaceFileId() : null);
             user.setFaceFeature(null);
         }
-        user.setOrgId(createUserReqParam.getOrgId());
         user.setStatus(createUserReqParam.getStatus() == null ? 1 : createUserReqParam.getStatus());
 
         String password = createUserReqParam.getPassword();
@@ -94,8 +92,7 @@ public class UserServiceImpl implements UserService {
             password = DEFAULT_RESET_PASSWORD;
         }
         user.setPassword(PASSWORD_ENCODER.encode(password));
-        User savedUser = userManager.save(user);
-        bindOrgUser(savedUser.getId(), savedUser.getOrgId());
+        userManager.save(user);
         return RespInfo.success();
     }
 
@@ -169,11 +166,9 @@ public class UserServiceImpl implements UserService {
             updateUser.setFaceFileId(existedUser.getFaceFileId());
             updateUser.setFaceFeature(existedUser.getFaceFeature());
         }
-        updateUser.setOrgId(updateUserReqParam.getOrgId() != null ? updateUserReqParam.getOrgId() : existedUser.getOrgId());
         updateUser.setStatus(updateUserReqParam.getStatus() != null ? updateUserReqParam.getStatus() : existedUser.getStatus());
         updateUser.setPassword(existedUser.getPassword());
-        User savedUser = userManager.save(updateUser);
-        bindOrgUser(savedUser.getId(), savedUser.getOrgId());
+        userManager.save(updateUser);
         return RespInfo.success();
     }
 
@@ -198,14 +193,4 @@ public class UserServiceImpl implements UserService {
         return RespInfo.success();
     }
 
-    private void bindOrgUser(Long userId, Long orgId) {
-        orgUserManager.deleteByUserId(userId);
-        if (orgId == null) {
-            return;
-        }
-        OrgUser orgUser = new OrgUser();
-        orgUser.setOrgId(orgId);
-        orgUser.setUserId(userId);
-        orgUserManager.save(orgUser);
-    }
 }

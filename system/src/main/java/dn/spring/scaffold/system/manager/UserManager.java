@@ -32,8 +32,6 @@ public interface UserManager {
 
     Page<User> page(PageReqParam reqParam, ListUserQuery query);
 
-    boolean existsByOrgId(Long orgId);
-
     User save(User user);
 
     void deleteById(Long userId);

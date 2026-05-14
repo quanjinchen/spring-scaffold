@@ -31,9 +31,6 @@ public class UserDTO {
     @Schema(description = "人脸特征值")
     private String faceFeature;
 
-    @Schema(description = "组织机构 ID")
-    private Long orgId;
-
     @Schema(description = "状态，1 启用，0 禁用")
     private Integer status;
 }

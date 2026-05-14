@@ -115,15 +115,6 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
-    public boolean existsByOrgId(Long orgId) {
-        if (orgId == null) {
-            return false;
-        }
-        Long count = userMapper.selectCount(new LambdaQueryWrapper<User>().eq(User::getOrgId, orgId));
-        return count != null && count > 0;
-    }
-
-    @Override
     public User save(User user) {
         if (user.getId() == null) {
             userMapper.insert(user);
@@ -155,9 +146,6 @@ public class UserManagerImpl implements UserManager {
         }
         if (StringUtils.hasText(query.getEmail())) {
             queryWrapper.like(User::getEmail, query.getEmail());
-        }
-        if (query.getOrgId() != null) {
-            queryWrapper.eq(User::getOrgId, query.getOrgId());
         }
         if (query.getStatus() != null) {
             queryWrapper.eq(User::getStatus, query.getStatus());

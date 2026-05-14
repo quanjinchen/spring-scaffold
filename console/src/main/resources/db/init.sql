@@ -39,7 +39,6 @@ create table tb_user (
     id_card varchar(128) null comment '身份证号',
     face_file_id varchar(100) null comment '人脸文件 ID',
     face_feature text null comment '人脸特征值',
-    org_id bigint null comment '所属组织 ID',
     password varchar(255) null comment '密码密文',
     status tinyint not null default 1 comment '状态，1 启用，0 禁用',
     create_by bigint null comment '创建人 ID',
@@ -56,7 +55,7 @@ create index idx_tb_user_email_deleted on tb_user (email, deleted);
 create index idx_tb_user_phone_deleted on tb_user (phone, deleted);
 create index idx_tb_user_id_card_deleted on tb_user (id_card, deleted);
 create index idx_tb_user_face_file_id_deleted on tb_user (face_file_id, deleted);
-create index idx_tb_user_org_id_status_deleted on tb_user (org_id, status, deleted);
+create index idx_tb_user_status_deleted on tb_user (status, deleted);
 
 create table tb_sys_role (
     id bigint not null auto_increment comment '主键 ID',
@@ -303,7 +302,6 @@ insert into tb_user (
     id_card,
     face_file_id,
     face_feature,
-    org_id,
     password,
     status,
     create_by,
@@ -320,7 +318,6 @@ insert into tb_user (
     null,
     null,
     null,
-    1,
     '$2a$10$5jEE.2xAuijvcRpFVjhXt.ZODYlK/bsYzAxn6EPnmh0tOw0B5ArjG',
     1,
     1,

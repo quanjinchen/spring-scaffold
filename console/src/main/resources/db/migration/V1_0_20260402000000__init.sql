@@ -21,7 +21,6 @@ create table if not exists tb_user (
     phone varchar(32) null,
     id_card varchar(128) null,
     face_file_id varchar(100) null,
-    org_id bigint null,
     password varchar(255) null,
     status tinyint not null default 1,
     create_by bigint null,
@@ -120,8 +119,8 @@ insert into tb_sys_role (id, code, name, status, remark, create_time, deleted)
 values (1, 'ADMIN', '系统管理员', 1, '系统初始化管理员角色', now(), 0)
 on duplicate key update name = values(name), remark = values(remark);
 
-insert into tb_user (id, username, full_name, email, phone, id_card, face_file_id, org_id, password, status, create_time, deleted)
-values (1, 'admin', '系统管理员', 'admin@example.com', 'kGyYSFD/ZqsdmzSZp8sH9A==', null, null, 1, '$2a$10$7EqJtq98hPqEX7fNZaFWoOHiB7C9HfM9vDOMkMt2rt7NmBGG99nmW', 1, now(), 0)
+insert into tb_user (id, username, full_name, email, phone, id_card, face_file_id, password, status, create_time, deleted)
+values (1, 'admin', '系统管理员', 'admin@example.com', 'kGyYSFD/ZqsdmzSZp8sH9A==', null, null, '$2a$10$7EqJtq98hPqEX7fNZaFWoOHiB7C9HfM9vDOMkMt2rt7NmBGG99nmW', 1, now(), 0)
 on duplicate key update full_name = values(full_name);
 
 insert into tb_sys_menu (id, parent_id, menu_name, path, icon, menu_type, menu_code, order_num, visible, create_time, deleted)
