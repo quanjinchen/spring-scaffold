@@ -24,6 +24,7 @@ public class CreateUserReqParam {
     private String phone;
 
     @Schema(description = "身份证号", example = "110101199001011234")
+    @NotBlank(message = "身份证号不能为空")
     private String idCard;
 
     @Schema(description = "人脸图片 base64", example = "data:image/png;base64,xxxx")
@@ -36,5 +37,6 @@ public class CreateUserReqParam {
     private Integer status;
 
     @Schema(description = "密码，不传则使用默认重置密码", example = "123456")
+    @NotBlank(message = "密码不能为空")
     private String password;
 }
